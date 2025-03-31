@@ -2,17 +2,19 @@ import { ThunkDispatch, UnknownAction, combineReducers, configureStore } from '@
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage
 import data from './data'
+import auth from './auth'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 const rootReducer = combineReducers({
-    data
+    data,
+    auth,
 })
 
 const persistedReducer = persistReducer(
     {
         key: 'root',
         storage,
-        whitelist: ['data']
+        whitelist: ['data', 'auth']
     },
     rootReducer
 )

@@ -1,0 +1,22 @@
+/* header et footer fixes */
+header {
+    background-color: blueviolet;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+footer {
+    text-align: center;
+    background-color: chartreuse;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+main {
+    padding: 0 1rem; /* horizontal */
+    z-index: 99;
+  }

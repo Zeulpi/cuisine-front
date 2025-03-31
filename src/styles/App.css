@@ -1,0 +1,20 @@
+/* structure globale */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* pleine hauteur de la fenêtre */
+}
+
+/* contenu qui prend l’espace restant entre header et footer */
+.page-content {
+    flex-grow: 1;
+    padding: 1rem;
+    background-color: aliceblue;
+}
