@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import HomePage from './pages/HomePage'
@@ -10,6 +10,7 @@ import UserPlanner from './pages/user/UserPlanner'
 import NotFoundPage from './pages/NotFoundPage'
 import UserLayout from './pages/UserLayout'
 import Register from './components/Header/Login/Register'
+
 
 const RootComponent: React.FC = () => {
   return (

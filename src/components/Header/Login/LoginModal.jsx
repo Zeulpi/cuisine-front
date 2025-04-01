@@ -7,6 +7,8 @@ import { getData } from './../../../resources/api-constants';  // Fonction pour 
 import PropTypes from 'prop-types';  // Validation des props
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Register from './Register';  // Importer le composant d'inscription
+import { jwtDecode } from "jwt-decode";
+import { getUserFromToken} from './../../../utility/getUserFromToken'
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
@@ -26,15 +28,18 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   
       if (response.data.token) {
-        const { token, user } = response.data;
-        const { roles, userImg, userName } = user;
-        // Mettre à jour le store avec Redux
-        dispatch(setUser({ token, userEmail: email, userRole: roles, userImage: userImg, userName: userName}));
-  
-        // Fermer la modale
-        onClose();
-        if (location.pathname.includes("/register")) {
-          navigate("/");  // Rediriger vers la page d'accueil si l'utilisateur est sur une page réservée
+        const token = response.data.token;
+        const user = getUserFromToken(token);
+      
+        if (user) {
+          dispatch(setUser({ token, ...user }));
+      
+          onClose();
+          if (location.pathname.includes("/register")) {
+            navigate("/");
+          }
+        } else {
+          setErrorMessage("Token invalide.");
         }
       }
     } catch (error) {

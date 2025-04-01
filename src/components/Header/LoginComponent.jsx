@@ -31,7 +31,7 @@ const LoginComponent = () => {
             {isLoggedIn ? (
                 <div className="log-info">
                     <Link to="user/account">
-                    <div className="user-image" id="logged-avatar">
+                    <div className="logged-image" id="logged-avatar">
                         <img 
                             src={getResource(RESOURCE_ROUTES.AVATAR_ROUTE, userImage ? userImage : RESOURCE_ROUTES.DEFAULT_AVATAR)}
                             alt="User Avatar" 

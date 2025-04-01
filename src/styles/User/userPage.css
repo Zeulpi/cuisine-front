@@ -13,6 +13,21 @@
     text-align: center;
   }
   
+  .success-message {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
+
+  .input-success {
+    border: 2px solid #00ff55;
+    background-color: #bbffcc;
+    transition: background-color 0.5s ease;
+  }
+
   .user-form .form-group {
     margin-bottom: 1.2rem;
     display: flex;
@@ -30,6 +45,7 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     transition: border-color 0.3s;
+    transition: background-color 0.5s ease;
   }
   
   .input-field:focus {
@@ -40,11 +56,43 @@
   .input-file {
     margin-bottom: 0.5rem;
   }
-  
-  .user-avatar {
+
+  .user-title{
+    display: flex;
+    justify-content:center;
+  }
+
+  .title-image-container {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    margin-right: 20px;
+  }
+
+  .title-avatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .title-name-container {
+    
+  }
+
+  .title-name {
+
+  }
+  .input-error {
+    border: 1px solid red;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
   }
   
   .submit-btn {
@@ -61,5 +109,36 @@
   
   .submit-btn:hover {
     background-color: #2980b9;
+  }
+  
+  .input-valid {
+    position: relative;
+  }
+  
+  .input-valid input {
+    width: 100%;
+    padding-right: 2rem; /* espace pour la coche à droite */
+    box-sizing: border-box;
+  }
+  
+  #pwd-valid, #pwd-confirm {
+    display: none;
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: green;
+  }
+
+  .password-rules {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding-left: 1.2rem;
+  }
+  
+  .password-rules li {
+    margin-bottom: 4px;
+    list-style: none;
   }
   
