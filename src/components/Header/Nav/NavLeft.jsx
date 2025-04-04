@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import ReactDOM from 'react-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
 const NavLeft = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -7,6 +10,7 @@ const NavLeft = () => {
     return (
         <div className="left-nav">
             <ul>
+                <li><Link to="/"><FontAwesomeIcon icon={faHouse} /></Link></li>
                 <li><Link to="/recipes">Recettes</Link></li>
                 <li>
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>

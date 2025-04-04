@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';  // Importer dispatch de Redux
 import { setUser } from './../../../store/actions/auth';  // Action pour connecter l'utilisateur
 import axios from 'axios';  // Pour effectuer la requête HTTP
@@ -6,17 +6,23 @@ import { ROUTES } from './../../../resources/routes-constants';  // Importation 
 import { getData } from './../../../resources/api-constants';  // Fonction pour obtenir l'URL de l'API
 import PropTypes from 'prop-types';  // Validation des props
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Register from './Register';  // Importer le composant d'inscription
+import Register from './../../../pages/Register';  // Importer le composant d'inscription
 import { jwtDecode } from "jwt-decode";
 import { getUserFromToken} from './../../../utility/getUserFromToken'
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();  // Utilisation de dispatch de Redux
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
   const location = useLocation(); // Récupérer l'URL actuelle de la page
+
+  useEffect(() => {
+    if (prefillEmail) {
+      setEmail(prefillEmail);
+    }
+  }, [prefillEmail]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,6 +99,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 LoginModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  prefillEmail: PropTypes.string
 };
 
 export default LoginModal;

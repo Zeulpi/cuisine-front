@@ -9,7 +9,7 @@ import UserFridge from './pages/user/UserFridge'
 import UserPlanner from './pages/user/UserPlanner'
 import NotFoundPage from './pages/NotFoundPage'
 import UserLayout from './pages/UserLayout'
-import Register from './components/Header/Login/Register'
+import Register from './pages/Register'
 
 
 const RootComponent: React.FC = () => {

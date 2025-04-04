@@ -4,10 +4,14 @@ export const ROUTES = {
     RECIPE_DETAIL: (id) => `/recipes/${id}`,
     LOGIN_ROUTE: '/login',
     USER_UPDATE_ROUTE: '/user/update',
-    USER_REFRESH_ROUTE: '/user/refresh'
+    USER_REFRESH_ROUTE: '/user/refresh',
+    REGISTER_ROUTE: '/user/register',
+    TAG_ROUTE: '/tags',
   }
 
 export const RESOURCE_ROUTES = {
     AVATAR_ROUTE: '/images/avatar/',
+    RECIPE_IMAGE_ROUTE: '/images/recipes/',
     DEFAULT_AVATAR: 'defaut-user.webp',
+    DEFAULT_RECIPE_IMAGE: 'defaut-recipe.png',
   }

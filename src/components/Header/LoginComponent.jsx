@@ -1,20 +1,35 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';  // Validation des props
 import { useAppSelector, useAppDispatch } from "../../store/reducers/store";
 import { logout } from "../../store/actions/auth";
 import LoginModal from "./Login/LoginModal";
 import { RESOURCE_ROUTES } from './../../resources/routes-constants';
 import { getResource } from './../../resources/back-constants';
 import './../../styles/login.css';
-import './../../styles/Header/user.css'
+import './../../styles/Header/login/user.css'
 import { Link } from "react-router-dom"; // Importer Link pour la navigation
 import { useNavigate, useLocation } from "react-router-dom";
 
-const LoginComponent = () => {
+const LoginComponent = ({ openLoginModal, prefillEmail }) => {
     const { userEmail, userImage, isLoggedIn } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();  // Récupérer dispatch pour envoyer des actions
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
     const location = useLocation(); // Récupérer l'URL actuelle de la page
+    const [showModal, setShowModal] = useState(false);
+    const [email, setEmail] = useState("");
+
+    useEffect(() => {
+        if (location.state?.openLoginModal) {
+            toggleModal();
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        if (location.state?.prefillEmail) {
+            setEmail(location.state.prefillEmail);
+        }
+    }, [location.state]);
 
     const toggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -50,9 +65,13 @@ const LoginComponent = () => {
             )}
 
             {/* Modale de connexion */}
-            <LoginModal isOpen={isModalOpen} onClose={toggleModal} />
+            <LoginModal isOpen={isModalOpen} onClose={toggleModal} prefillEmail={email} />
         </>
     );
+};
+LoginComponent.propTypes = {
+  openLoginModal: PropTypes.bool,
+  prefillEmail: PropTypes.string,
 };
 
 export default LoginComponent;

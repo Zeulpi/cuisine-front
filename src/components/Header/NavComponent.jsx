@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import NavLeft from './Nav/NavLeft';
 import NavRight from './Nav/NavRight';
+import './../../styles/Header/nav/nav.css'
 
 const NavComponent = () => {
   return (
