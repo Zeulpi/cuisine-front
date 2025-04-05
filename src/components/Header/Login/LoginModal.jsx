@@ -9,6 +9,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Register from './../../../pages/Register';  // Importer le composant d'inscription
 import { jwtDecode } from "jwt-decode";
 import { getUserFromToken} from './../../../utility/getUserFromToken'
+import LoadingComponent from '../../Utils/loadingComponent';
 
 const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
   const dispatch = useDispatch();  // Utilisation de dispatch de Redux
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
   const location = useLocation(); // Récupérer l'URL actuelle de la page
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (prefillEmail) {
@@ -26,8 +28,8 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     try {
+      setLoading(true);
       const response = await axios.post(getData(ROUTES.LOGIN_ROUTE), {
         email,
         password,
@@ -50,13 +52,15 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.error || 'Erreur lors de la connexion');
+    } finally {
+      setLoading(false);
     }
   };
 
   if (!isOpen) return null;  // Ne rien afficher si la modale n'est pas ouverte
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose} tabIndex={5}>X</button>
         <h2>Connexion</h2>
@@ -83,6 +87,7 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
             </div>
           </div>
           {errorMessage && <p>{errorMessage}</p>}
+          <LoadingComponent loading={loading} loadingText="Connecting" />
           <div className="form-btns">
             <button type="submit" className='login-connect' tabIndex={3}>Se connecter</button>
             <Link to="register" className="login-register" tabIndex={4}>

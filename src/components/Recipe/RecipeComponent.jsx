@@ -6,13 +6,12 @@ import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { getResource } from '../../resources/back-constants';
 import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants';
 
-const DEFAULT_IMAGE = '/images/default-recipe.jpg';
 
 export default function RecipeComponent({ name, image, duration, tags }) {
     const isDefaultImage = !image;
     const bgImage = isDefaultImage
   ? getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, RESOURCE_ROUTES.DEFAULT_RECIPE_IMAGE)
-  : getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, image);
+  : getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, encodeURIComponent(image));
 
   return (
     <div className="recipe-card">

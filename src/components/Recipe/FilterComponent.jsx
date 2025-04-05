@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/Recipes/FilterComponent.css';
 import { getData } from '../../resources/api-constants';
 import { ROUTES } from '../../resources/routes-constants';
@@ -9,6 +10,7 @@ const FilterComponent = ({ filters, onFilterChange }) => {
   const [search, setSearch] = useState(filters?.search || '');
   const [selectedTags, setSelectedTags] = useState(filters?.tags || []);
   const [availableTags, setAvailableTags] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setSearch(filters?.search || '');
@@ -28,6 +30,8 @@ const FilterComponent = ({ filters, onFilterChange }) => {
     fetchTags();
   }, []);
 
+  const hasActiveFilters = () => (filters.search?.trim() || filters.tags?.length > 0);
+
   const toggleTag = (tagName) => {
     let newTags;
     if (selectedTags.includes(tagName)) {
@@ -46,37 +50,60 @@ const FilterComponent = ({ filters, onFilterChange }) => {
     onFilterChange({ search, tags: selectedTags });
   };
 
+  const handleReset = () => {
+    setSearch('');
+    setSelectedTags([]);
+    onFilterChange({ search: '', tags: [] });
+
+    navigate('/recipes');
+  }
+
   return (
-    <form className="filter-container" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Rechercher une recette..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="filter-input"
-      />
-      <button type="submit" className="filter-button">Rechercher</button>
+      <div className='filter-container'>
+        <form className="filter-form" onSubmit={handleSubmit}>
+            <div className='filter-research'>
+                <input
+                    type="text"
+                    placeholder="Rechercher une recette..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="filter-input"
+                />
+                <button type="submit" className="filter-button">Rechercher</button>
+            </div>
 
-      <div className="tag-list">
-        {availableTags.map((tag) => {
-          const isSelected = selectedTags.includes(tag.name);
-          const isDisabled = !isSelected && selectedTags.length >= 3;
+            <div className="filter-tags">
+                <div className="tag-list">
+                    {availableTags.map((tag) => {
+                    const isSelected = selectedTags.includes(tag.name);
+                    const isDisabled = !isSelected && selectedTags.length >= 3;
 
-          return (
-            <button
-              key={tag.name}
-              type="button"
-              className={`tag-button ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
-              onClick={() => toggleTag(tag.name)}
-              disabled={isDisabled}
-              style={{ '--tag-color': tag.color, '--text-color': getTextColor(tag.color) }}
-            >
-              {tag.name}
+                    return (
+                        <button
+                        key={tag.name}
+                        type="button"
+                        className={`tag-button ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+                        onClick={() => toggleTag(tag.name)}
+                        disabled={isDisabled}
+                        style={{ '--tag-color': tag.color, '--text-color': getTextColor(tag.color) }}
+                        >
+                        {tag.name}
+                        </button>
+                    );
+                    })}
+                </div>
+            </div>
+        </form>
+        {hasActiveFilters() && (
+          <div className="filter-actions">
+            <button type="reset" className="filter-reset" onClick={handleReset}>
+              X
             </button>
-          );
-        })}
+          </div>
+        )}
+
+
       </div>
-    </form>
   );
 };
 

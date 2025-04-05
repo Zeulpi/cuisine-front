@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import RecipeComponent from '../components/Recipe/RecipeComponent';
 import PaginationComponent from '../components/Recipe/PaginationComponent';
 import FilterComponent from '../components/Recipe/FilterComponent';
+import LoadingComponent from '../components/Utils/loadingComponent';
 import { ROUTES } from '../resources/routes-constants';
 import { getData } from '../resources/api-constants';
 import '../styles/Recipes/RecipeList.css';
@@ -13,12 +15,23 @@ const RecipeList = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(9); // Nombre de recettes par page
-  const [filters, setFilters] = useState({}); // Pour les filtres de recherche, tags, etc.
+  const location = useLocation();
+  const [filters, setFilters] = useState({
+    search: location.state?.fastSearch || '',
+    tags: [],
+  });
+
+  useEffect(() => {
+    if (location.state?.fastSearch) {
+      setFilters((prev) => ({ ...prev, search: location.state.fastSearch }));
+      setPage(1);
+    }
+  }, [location.state?.nonce]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       setLoading(true);
-      console.log(filters.tags?.join(',')); // Debugging line
+      // console.log(filters.tags?.join(',')); // Debugging line
       
       try {
         const response = await axios.get(getData(ROUTES.RECIPE_ROUTE), {
@@ -27,11 +40,10 @@ const RecipeList = () => {
             limit,
             tags: filters.tags?.join(',') || '', // Passer les tags sélectionnés
             search: filters.search || '',
-            // + plus tard : limit, search, tags...
           },
         });
   
-        console.log('Response:', response.data); // Debugging line
+        // console.log('Response:', response.data); // Debugging line
         setRecipes(response.data.recipes);
         setPagination(response.data.pagination);
       } catch (error) {
@@ -59,13 +71,7 @@ const RecipeList = () => {
         }}
       />
 
-      {loading && (
-        <div className="loading-indicator">
-          <div className="spinner" />
-          <span>Chargement...</span>
-        </div>
-      )}
-
+      <LoadingComponent loading={loading} />
       
       <div className="recipe-list">
         {Object.values(recipes)
