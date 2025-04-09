@@ -87,7 +87,7 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
             </div>
           </div>
           {errorMessage && <p>{errorMessage}</p>}
-          <LoadingComponent loading={loading} loadingText="Connecting" />
+          <LoadingComponent loading={loading} loadingText="Connecting ..." />
           <div className="form-btns">
             <button type="submit" className='login-connect' tabIndex={3}>Se connecter</button>
             <Link to="register" className="login-register" tabIndex={4}>

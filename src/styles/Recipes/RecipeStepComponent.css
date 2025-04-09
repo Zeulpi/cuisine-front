@@ -1,0 +1,92 @@
+.step-container {
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 0 12px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  flex-grow: 1;
+}
+
+.step-header{
+  display: flex;
+  align-items: center;
+  justify-content:start;
+  color: #4b5563;
+  gap: 1rem;
+  padding: 5px;
+}
+
+.step-title{
+  display: flex;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.step-detail {
+  display: flex;  
+  flex-direction: row;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  width: 100%;
+  padding: 5px;
+  gap: 1rem;
+  flex-grow: 1;
+}
+
+.step-operation-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.step-operations {
+  border-right: 1px solid #e5e7eb;
+  padding: 0 0.5rem;
+  flex-shrink: 0;
+  min-width: 30%;
+  max-width: 35%;
+}
+.step-operation-item {
+  display: flex;
+  flex-direction: column;
+  column-gap: 1rem;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #4b5563;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 2px;
+}
+
+.base-ingredient {
+  color:blueviolet;
+}
+
+.intermediate-ingredient {
+  color: chocolate;
+}
+
+.step-operation-action {
+  display: flex;
+  flex-direction: row;
+  /* gap: 1rem; */
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #4b5563;
+  width: 100%;
+}
+
+.step-description{
+  display: flex;
+  flex-direction: row;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #4b5563;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  padding: 5px;
+}

@@ -5,9 +5,11 @@ import RootComponent from './RootComponent'
 import { persistor, store } from './store/reducers/store'
 import './styles/App.css'
 import { setupGlobalInputSanitizer } from './utility/inputSanitizer'
+import { clearPopStateHandler } from './utility/popStateManager'
 
 const App: React.FC = () => {
     useEffect(() => {
+        clearPopStateHandler();
         setupGlobalInputSanitizer();
     }, []);
 

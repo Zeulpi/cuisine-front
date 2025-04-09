@@ -1,3 +1,10 @@
+.recipe-link{
+    text-decoration: none; /* enlever le soulignement des liens */
+    color: inherit; /* garder la couleur du texte par défaut */
+    width: 100%;
+    max-width: 400px;
+}
+
 .recipe-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

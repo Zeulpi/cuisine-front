@@ -1,0 +1,48 @@
+.ingredient-container {
+  display: flex;
+  flex-direction: column;
+  width: 160px;
+  min-height: 70px;
+  align-self: stretch;
+}
+
+.ingredient-title{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-size: 1.3rem;
+  flex-grow: 1;
+}
+
+.ingredient-detail-card {
+    position: relative;
+    background-size:contain;
+    background-position: center;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    width: 100%;
+    aspect-ratio: 3 / 2; /* plus compact que 4/3 */
+  }
+  
+  .ingredient-detail-background {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    transition: opacity 0.3s ease;
+    border: 1px ridge #dfdfdf;
+  }
+  
+  .ingredient-quantity{
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  .default-background {
+    opacity: 0.25;
+    filter: grayscale(10%);
+  }
+

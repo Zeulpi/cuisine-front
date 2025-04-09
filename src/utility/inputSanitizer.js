@@ -1,7 +1,8 @@
-const presets = {
+export const presets = {
     default: /[a-zA-Z0-9\s.,()éèàç-]/,
     strict: /[a-zA-Z0-9]/,
     email: /[a-zA-Z0-9@._-]/,
+    number: /[0-9]/,
 };
   
 // Nettoie une chaîne en fonction d'une regex

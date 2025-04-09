@@ -1,0 +1,57 @@
+.arrow-container {
+    width: 100%;
+    display: flex;
+    /* margin: -1rem 0 -2rem 0; ajuste le placement vertical si nécessaire */
+  }
+
+  .arrow-d-container {
+    justify-content: center;
+    margin: 10px 0;
+  }
+  .arrow-d-d-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 10px 0;
+  }
+
+  .arrow-rd, .arrow-text-rd, .arrow-text-ld {
+    display: flex;
+    width: 100%;
+  }
+  .arrow-text-ld {
+    flex-direction: row-reverse;
+  }
+  .arrow-text-rd > p {
+    margin-left: 10%;
+  }
+  .arrow-text-ld > p {
+    margin-right: 10%;
+  }
+
+  .arrow-right-down {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  .arrow-left-down {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    translate: 0 -40px;
+  }
+  
+  .arrow-line-horizontal {
+    flex-grow: 1;
+    height: 2px;
+    background-color: black;
+    align-self:flex-start;
+  }
+  
+  .arrow-turn {
+    margin-top: 1px;
+    flex-shrink: 0;
+    overflow: visible;
+  }
+  

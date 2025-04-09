@@ -12,6 +12,8 @@ export const ROUTES = {
 export const RESOURCE_ROUTES = {
     AVATAR_ROUTE: '/images/avatar/',
     RECIPE_IMAGE_ROUTE: '/images/recipes/',
+    INGREDIENT_IMAGE_ROUTE: '/images/ingredients/',
     DEFAULT_AVATAR: 'defaut-user.webp',
     DEFAULT_RECIPE_IMAGE: 'defaut-recipe.png',
+    DEFAULT_INGREDIENT_IMAGE: 'defaut-ingredient.png',
   }

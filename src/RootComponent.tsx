@@ -25,9 +25,8 @@ const RootComponent: React.FC = () => {
             <Route path="inventory" element={<UserFridge />} />
             <Route path="planner" element={<UserPlanner />} />
           </Route>
-
           <Route path="recipes" element={<RecipeList />} />
-          <Route path="recipes/:id" element={<RecipeDetail />} />
+          <Route path="recipes/:sluggedId" element={<RecipeDetail />} />
           <Route path="register" element={<Register />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />

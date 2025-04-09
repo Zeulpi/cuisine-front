@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../../styles/Recipes/RecipeComponent.css';
+import { getTextColor } from '../../utility/getTextColor.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { getResource } from '../../resources/back-constants';
 import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants';
+import '../../styles/Recipes/RecipeComponent.css';
 
 
 export default function RecipeComponent({ name, image, duration, tags }) {
@@ -65,13 +66,3 @@ RecipeComponent.propTypes = {
     })
   )
 };
-
-function getTextColor(bgColor) {
-  if (!bgColor) return '#000';
-  const hex = bgColor.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-  return luminance > 160 ? '#000' : '#fff';
-}
