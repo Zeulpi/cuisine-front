@@ -52,6 +52,8 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.error || 'Erreur lors de la connexion');
+      console.log(error);
+      
     } finally {
       setLoading(false);
     }

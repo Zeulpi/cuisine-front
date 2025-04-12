@@ -1,1 +1,0 @@
-export const GRECAPTCHA_SITE_KEY = '6Len1QYrAAAAAJiuJpgAAFiX9_7XtzpaI0DpcnbR'

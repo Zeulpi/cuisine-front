@@ -63,7 +63,7 @@ const RecipeDetail = () => {
   
   // useEffect pour ramener sur la page RecipeList en cas de navigation back, mais ce n'est pas tout a fait au point
   useEffect(() => {
-    window.history.pushState(window.location.href, document.title, window.location.href);
+    window.history.pushState(null, document.title, window.location.href);
 
     const handlePopState = () => {
       // window.history.pushState(null, document.title, window.location.href);
@@ -130,57 +130,63 @@ const RecipeDetail = () => {
   }
 
   return (
-    <div className='recipe-detail-page'>
-      {loading && <LoadingComponent loading={loading} loadingText='Chargement de la recette ...'/>}
-      {recipe && (
-        <>
-          <div className='recipe-title'><h1>{recipe.name}</h1></div>
-          <RecipeDetailComponent image={recipe.image} duration={recipe.duration} tags={recipe.tags} />
-          <div className='recipe-ingredients-container'>
-            <div className='recipe-ingredients-header'>
-              <h2 className='recipe-ingredients-title'>Ingrédients</h2>
-              <div className='portion-container'>
-                <span className='portion-txt'>Pour &nbsp;</span>
-                <div className='portion-inputs'>
-                  <input type='text'
-                    id='portion-count' 
-                    ref={(el) => setupSecureInput(el, presets.number)}
-                    onChange={handlePortions} value={newPortions ?? ''}
-                    onBlur={() => {
-                      if (newPortions < portions) setNewPortions(portions);
-                      if (newPortions > MAX_PORTIONS) setNewPortions(MAX_PORTIONS);
-                    }}
-                  >
-                  </input>
-                  <div className='portion-btns'>
-                    <button id='portions-up' onClick={handlePortions} disabled={newPortions == MAX_PORTIONS}>+</button>
-                    <button id='portions-down' onClick={handlePortions} disabled={newPortions == portions}>-</button>
+    <>
+      <title>
+      {recipe?.name ? `${process.env.REACT_APP_APP_NAME} - ${recipe.name}` : process.env.REACT_APP_APP_NAME}
+      </title>
+      
+      <div className='recipe-detail-page'>
+        {loading && <LoadingComponent loading={loading} loadingText='Chargement de la recette ...'/>}
+        {recipe && (
+          <>
+            <div className='recipe-title'><h1>{recipe.name}</h1></div>
+            <RecipeDetailComponent image={recipe.image} duration={recipe.duration} tags={recipe.tags} />
+            <div className='recipe-ingredients-container'>
+              <div className='recipe-ingredients-header'>
+                <h2 className='recipe-ingredients-title'>Ingrédients</h2>
+                <div className='portion-container'>
+                  <span className='portion-txt'>Pour &nbsp;</span>
+                  <div className='portion-inputs'>
+                    <input type='text'
+                      id='portion-count' 
+                      ref={(el) => setupSecureInput(el, presets.number)}
+                      onChange={handlePortions} value={newPortions ?? ''}
+                      onBlur={() => {
+                        if (newPortions < portions) setNewPortions(portions);
+                        if (newPortions > MAX_PORTIONS) setNewPortions(MAX_PORTIONS);
+                      }}
+                    >
+                    </input>
+                    <div className='portion-btns'>
+                      <button id='portions-up' onClick={handlePortions} disabled={newPortions == MAX_PORTIONS}>+</button>
+                      <button id='portions-down' onClick={handlePortions} disabled={newPortions == portions}>-</button>
+                    </div>
                   </div>
+                  <span className='portion-txt'>&nbsp; Personnes</span>
                 </div>
-                <span className='portion-txt'>&nbsp; Personnes</span>
+              </div>
+              <div className='recipe-ingredients-list'>
+                {Object.entries(recipe.ingredients).map(([id, ingredient]) => (
+                  id > 0 && (
+                    <RecipeIngredientComponent key={id} name={ingredient.name} image={ingredient.image} quantity={ingredient.quantity} unit={ingredient.unit} ratio={Number((newPortions / portions).toFixed(2))} />
+                  )
+                ))}
               </div>
             </div>
-            <div className='recipe-ingredients-list'>
-              {Object.entries(recipe.ingredients).map(([id, ingredient]) => (
-                id > 0 && (
-                  <RecipeIngredientComponent key={id} name={ingredient.name} image={ingredient.image} quantity={ingredient.quantity} unit={ingredient.unit} ratio={Number((newPortions / portions).toFixed(2))} />
-                )
-              ))}
+            <div className='recipe-steps-container'>
+              <div className='recipe-steps-header'>
+                <h2 className='recipe-steps-title'>Etapes</h2>
+              </div>
+              <div className='recipe-steps-list'>
+                <StepBlocks steps={recipe.steps} ingredients={recipe.ingredients} />
+              </div>
             </div>
-          </div>
-          <div className='recipe-steps-container'>
-            <div className='recipe-steps-header'>
-              <h2 className='recipe-steps-title'>Etapes</h2>
-            </div>
-            <div className='recipe-steps-list'>
-              <StepBlocks steps={recipe.steps} ingredients={recipe.ingredients} />
-            </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {error && <div className="error-message">{error}</div>}
-    </div>
+        {error && <div className="error-message">{error}</div>}
+      </div>
+    </>
   );
 };
 

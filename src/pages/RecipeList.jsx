@@ -88,6 +88,10 @@ const RecipeList = () => {
 
   return (
     <>
+      <title>
+          {(`${process.env.REACT_APP_APP_NAME} - Liste des recettes`)}
+      </title>
+
       <FilterComponent
         filters={filters}
         onFilterChange={(newFilters) => {

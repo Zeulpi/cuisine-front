@@ -107,24 +107,30 @@ const UserPage = () => {
   
 
   return (
-    <div className="user-page container">
-      <UserForm
-        onSubmit={handleUserUpdate}
-        buttonText="Mettre à jour mes infos"
-        successMessage={successMessage}
-        defaultValues={{
-          userName,
-          userEmail,
-          userImage,
-        }}
-        updatedFields={updatedFields}
-        formErrors={formErrors}
-        onValidationError={setFormErrors}
-        resetImageTrigger={resetImageTrigger}
-        isEditMode={true}
-        awaitingServResponse={awaitingServResponse}
-      />
-    </div>
+    <>
+      <title>
+          {(`${process.env.REACT_APP_APP_NAME} - ${userName}`)}
+      </title>
+
+      <div className="user-page container">
+        <UserForm
+          onSubmit={handleUserUpdate}
+          buttonText="Mettre à jour mes infos"
+          successMessage={successMessage}
+          defaultValues={{
+            userName,
+            userEmail,
+            userImage,
+          }}
+          updatedFields={updatedFields}
+          formErrors={formErrors}
+          onValidationError={setFormErrors}
+          resetImageTrigger={resetImageTrigger}
+          isEditMode={true}
+          awaitingServResponse={awaitingServResponse}
+        />
+      </div>
+    </>
   );
 };
 

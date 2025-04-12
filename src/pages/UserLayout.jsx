@@ -9,9 +9,6 @@ const UserLayout = () => {
 
   return isLoggedIn ?
   <div className="user-layout">
-    {/* Ajouter des éléments communs comme une barre latérale, etc. */}
-
-    {/* Rendu des pages enfants sous /user */}
     <Outlet />
   </div>
   : <Navigate to="/" />;

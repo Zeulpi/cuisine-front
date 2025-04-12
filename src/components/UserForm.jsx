@@ -11,7 +11,6 @@ import {
 } from '../utility/formValidation';
 import PropTypes from 'prop-types';
 import '../styles/User/userForm.css'
-import {GRECAPTCHA_SITE_KEY} from '../resources/grecaptcha'
 
 const UserForm = ({ onSubmit, buttonText = "Enregistrer", defaultValues = {}, successMessage, updatedFields = [], formErrors = {}, onValidationError, resetImageTrigger = false, isEditMode, requireCaptcha, awaitingServResponse }) => {
   const { userName, userImage, userEmail } = useAppSelector((state) => state.auth);
@@ -36,7 +35,7 @@ const UserForm = ({ onSubmit, buttonText = "Enregistrer", defaultValues = {}, su
       if (window.grecaptcha && typeof window.grecaptcha.render === "function") {
         try {
           window.grecaptcha.render(recaptchaRef.current, {
-            sitekey: GRECAPTCHA_SITE_KEY,
+            sitekey: process.env.REACT_APP_GRECAPTCHA_SITE_KEY,
           });
           setRecaptchaRendered(true);
           clearInterval(interval);
