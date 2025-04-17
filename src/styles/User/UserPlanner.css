@@ -1,0 +1,13 @@
+.user-planner {
+    margin-bottom: 20px;
+}
+
+.planner-title{
+    display: flex;
+    justify-content: center;
+}
+
+.planner-container {
+    display: flex;
+    justify-content: center;
+}

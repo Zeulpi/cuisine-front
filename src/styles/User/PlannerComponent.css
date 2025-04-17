@@ -1,0 +1,98 @@
+/* PlannerComponent.css */
+
+  .planner {
+    display: flex;
+    justify-content: center;
+    min-width: var(--table-width);
+    margin-top: 20px;
+  }
+/* Styles généraux du tableau */
+.planner-table {
+    min-width: 70%;
+    border-collapse: collapse; /* Fusionner les bordures */
+  }
+  
+  /* Supprimer toutes les bordures */
+  .planner-table th:not(:first-child) {
+    height: 40px;  /* Réduire la hauteur des titres des jours */
+    padding: 10px 20px;  /* Ajuster le padding pour ne pas être trop grand */
+    background-color: #e0f7fa;      /* Couleur de fond plus claire et fraîche (bleu pâle) */
+    color: #00796b;
+  }
+  
+  .time-slot {
+    border: 1px solid lightgray;
+    padding: 0 8px;
+  }
+  .midday-slot{
+    border-bottom: none;;
+  }
+  .evening-slot{
+    border-top: none;
+  }
+  .morning-cell{
+    border: 1px solid lightgray;
+    height: calc(var(--table-width) * 0.1);
+  }
+  /* Style des cellules de chaque jour (Midi et Soir) */
+  .day-cell {
+    border: 1px solid lightgray;
+    height: calc(var(--table-width) * 0.2);   /* Hauteur plus grande pour les cellules de Midi et Soir */
+    padding: 10px; /* Ajuster le padding pour ne pas être trop grand */
+  }
+  .morning-cell{
+    border-bottom: none;;
+  }
+  .midday-cell {
+    border-top: none;
+    border-bottom: none;
+  }
+  .evening-cell {
+    border-top: none;
+  }
+
+  /* Conteneur des éléments "Midi" et "Soir" */
+  .time-slot-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 20px 0;
+  }
+  
+  /* Centre le texte verticalement dans chaque span */
+  .time-slot-container > span{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+    text-align: center;
+  }
+  
+  /* Conteneur des boutons alignés horizontalement */
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+  }
+  
+  /* Les boutons centrés dans chaque cellule de jour */
+  .select-button {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Hover des boutons */
+  .select-button:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }

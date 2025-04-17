@@ -16,6 +16,7 @@ export const getUserFromToken = (token) => {
       userName: decoded.username || '',
       userImage: decoded.userImage || null,
       userRole: decoded.roles || [],
+      userPlanner: decoded.planner || [],
     };
   } catch (error) {
     console.error("❌ Erreur de décodage du token :", error.message);

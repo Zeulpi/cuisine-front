@@ -6,7 +6,7 @@ import '../../styles/Recipes/FilterComponent.css';
 import { getData } from '../../resources/api-constants';
 import { ROUTES } from '../../resources/routes-constants';
 
-const FilterComponent = ({ filters, onFilterChange }) => {
+const RecipesFilterComponent = ({ filters, onFilterChange }) => {
   const [search, setSearch] = useState(filters?.search || '');
   const [selectedTags, setSelectedTags] = useState(filters?.tags || []);
   const [availableTags, setAvailableTags] = useState([]);
@@ -50,17 +50,10 @@ const FilterComponent = ({ filters, onFilterChange }) => {
     onFilterChange({ search, tags: selectedTags });
   };
 
-  const handleReset = () => {
-    setSearch('');
-    setSelectedTags([]);
-    onFilterChange({ search: '', tags: [] });
-
-    navigate('/recipes');
-  }
-
   return (
       <div className='filter-container'>
         <form className="filter-form" onSubmit={handleSubmit}>
+          <div>
             <div className='filter-research'>
                 <input
                     type="text"
@@ -93,21 +86,23 @@ const FilterComponent = ({ filters, onFilterChange }) => {
                     })}
                 </div>
             </div>
-        </form>
-        {hasActiveFilters() && (
+          </div>
+          {hasActiveFilters() && (
           <div className="filter-actions">
-            <button type="reset" className="filter-reset" onClick={handleReset}>
+            <button className="filter-reset" onClick={() => {setSearch(''); setSelectedTags([]);}}>
               X
             </button>
           </div>
-        )}
+          )}
+        </form>
+        
 
 
       </div>
   );
 };
 
-FilterComponent.propTypes = {
+RecipesFilterComponent.propTypes = {
   filters: PropTypes.shape({
     search: PropTypes.string,
     tags: PropTypes.arrayOf(PropTypes.string),
@@ -115,7 +110,7 @@ FilterComponent.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
 };
 
-export default FilterComponent;
+export default RecipesFilterComponent;
 
 function getTextColor(bgColor) {
   const hex = bgColor.replace('#', '');

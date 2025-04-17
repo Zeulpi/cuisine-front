@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';  // Validation des props
 import { useAppSelector, useAppDispatch } from "../../store/reducers/store";
 import { logout } from "../../store/actions/auth";
+import { clearRecipes } from "../../store/actions/recipe";
 import LoginModal from "./Login/LoginModal";
 import { RESOURCE_ROUTES } from './../../resources/routes-constants';
 import { getResource } from './../../resources/back-constants';
@@ -36,6 +37,7 @@ const LoginComponent = ({ openLoginModal, prefillEmail }) => {
     // Fonction pour se déconnecter
       const handleLogout = () => {
         dispatch(logout());  // Déconnecter l'utilisateur en envoyant l'action logout au store Redux
+        dispatch(clearRecipes());  // Vider les recettes du storage
         if (location.pathname.includes("/user")) {
             navigate("/");  // Rediriger vers la page d'accueil si l'utilisateur est sur une page réservée
         }

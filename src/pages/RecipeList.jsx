@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';  // Validation des props
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-import RecipeComponent from '../components/Recipe/RecipeComponent';
+import { useNavigate, useLocation } from 'react-router-dom';
+import RecipeCardComponent from '../components/Recipe/RecipeCardComponent';
 import PaginationComponent from '../components/Recipe/PaginationComponent';
-import FilterComponent from '../components/Recipe/FilterComponent';
+import RecipesFilterComponent from '../components/Recipe/RecipesFilterComponent';
 import LoadingComponent from '../components/Utils/loadingComponent';
 import { clearPopStateHandler } from '../utility/popStateManager.js'
 import { ROUTES } from '../resources/routes-constants';
 import { getData } from '../resources/api-constants';
 import '../styles/Recipes/RecipeList.css';
-import { slugify } from '../utility/slugify.js';
+import '../styles/Recipes/FilterComponent.css'
 
-const RecipeList = () => {
+const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
   const location = useLocation();
   const [recipes, setRecipes] = useState({});
   const [pagination, setPagination] = useState(null);
@@ -24,30 +24,24 @@ const RecipeList = () => {
     search: location.state?.fastSearch || '',
     tags: [],
   });
-
+  
   // useEffect(() => {
-  //   if (location.state?.scroll !== undefined) {
-  //     setTimeout(() => window.scrollTo(0, location.state.scroll), 50);
+  //   clearPopStateHandler();
+  //   if (location.state?.fromRecipeList) {
+  //     setFilters(location.state.filters || {});
+  //     setPage(location.state.page || 1);
+  //     setTimeout(() => {
+  //       window.scrollTo(0, location.state.scroll || 0);
+  //     }, 50);
   //   }
   // }, []);
-  
-  useEffect(() => {
-    clearPopStateHandler();
-    if (location.state?.fromRecipeList) {
-      setFilters(location.state.filters || {});
-      setPage(location.state.page || 1);
-      setTimeout(() => {
-        window.scrollTo(0, location.state.scroll || 0);
-      }, 50);
-    }
-  }, []);
 
   useEffect(() => {
     if (location.state?.fastSearch) {
       setFilters((prev) => ({ ...prev, search: location.state.fastSearch }));
       setPage(1);
     }
-  }, [location.state?.nonce]);
+  }, [location.state?.nonce, location.state?.fastSearch]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -87,12 +81,15 @@ const RecipeList = () => {
   };
 
   return (
-    <>
-      <title>
+    <div id='recipe-list'>
+      {!isModal && (
+        <title>
           {(`${process.env.REACT_APP_APP_NAME} - Liste des recettes`)}
-      </title>
+        </title>
+      )}
+      
 
-      <FilterComponent
+      <RecipesFilterComponent
         filters={filters}
         onFilterChange={(newFilters) => {
           setFilters(newFilters);
@@ -106,14 +103,15 @@ const RecipeList = () => {
         {Object.entries(recipes)
           .sort(([, a], [, b]) => a.name.localeCompare(b.name)) // Tri sur la valeur
           .map(([id, recipe]) => (
-            <Link to={`/recipes/${id}-${slugify(recipe.name)}`} key={id} className='recipe-link' state={{fromRecipeList: true, filters, page, scroll: window.scrollY}}>
-              <RecipeComponent
-                name={recipe.name}
-                image={recipe.image}
-                duration={recipe.duration}
-                tags={recipe.tags}
+            // <Link to={`/recipes/${id}-${slugify(recipe.name)}`} key={id} className='recipe-link' state={{fromRecipeList: true, filters, page, scroll: window.scrollY}}>
+              <RecipeCardComponent
+                key={id}
+                recipe={recipe}
+                isModal={isModal}
+                cardWidth={cardWidth}
+                chooseMeal={chooseMeal}
               />
-            </Link>
+            // </Link>
           ))}
       </div>
 
@@ -124,8 +122,14 @@ const RecipeList = () => {
       />
       }
       {error && <div className="error-message">{error}</div>}
-    </>
+    </div>
   );
+};
+
+RecipeList.propTypes = {
+  isModal: PropTypes.bool.isRequired,
+  cardWidth: PropTypes.string,
+  chooseMeal: PropTypes.func,
 };
 
 export default RecipeList;

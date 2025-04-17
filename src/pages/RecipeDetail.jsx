@@ -62,25 +62,25 @@ const RecipeDetail = () => {
 
   
   // useEffect pour ramener sur la page RecipeList en cas de navigation back, mais ce n'est pas tout a fait au point
-  useEffect(() => {
-    window.history.pushState(null, document.title, window.location.href);
+  // useEffect(() => {
+  //   window.history.pushState(null, document.title, window.location.href);
 
-    const handlePopState = () => {
-      // window.history.pushState(null, document.title, window.location.href);
-      const previousState = previousStateRef.current;
-      if (previousState?.fromRecipeList) {
-        navigate('/recipes', {
-          state: {
-            filters: previousState.filters,
-            page: previousState.page,
-            scroll: previousState.scroll,
-          },
-          replace: true, // évite de casser l’historique
-        });
-      }
-    };
-    setPopStateHandler(handlePopState);
-  }, [location]);
+  //   const handlePopState = () => {
+  //     // window.history.pushState(null, document.title, window.location.href);
+  //     const previousState = previousStateRef.current;
+  //     if (previousState?.fromRecipeList) {
+  //       navigate('/recipes', {
+  //         state: {
+  //           filters: previousState.filters,
+  //           page: previousState.page,
+  //           scroll: previousState.scroll,
+  //         },
+  //         replace: true, // évite de casser l’historique
+  //       });
+  //     }
+  //   };
+  //   setPopStateHandler(handlePopState);
+  // }, [location]);
 
 
   useEffect(() => {

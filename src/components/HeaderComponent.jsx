@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 const HeaderComponent = () => {
   return (
-    <header className="header" id="site-header">
+    <header className="header" id="app-header">
       {/* Section recherche */}
       <SearchBar />
 

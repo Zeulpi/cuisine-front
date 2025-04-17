@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const FooterComponent = () => {
     return (
-      <footer id="site-footer">
+      <footer id="app-footer">
         <p>© 2025 - Mon app de recettes</p>
       </footer>
     )
