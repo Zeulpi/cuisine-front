@@ -1,5 +1,5 @@
-const baseUrl = 'http://localhost:8000/api'
+import { baseUrl } from "./routes-constants"
 
 export const getData = (apiRoute) => {
-    return baseUrl + apiRoute
+    return baseUrl + '/api' + apiRoute
 }

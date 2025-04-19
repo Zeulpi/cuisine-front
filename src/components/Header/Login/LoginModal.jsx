@@ -27,10 +27,11 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
     const loginMessage = await getToken(email, password, dispatch);  // Appel de la fonction pour obtenir le token
     
     if (loginMessage === null) {
+      console.log(loginMessage);
       onClose();
       location.pathname.includes("/register") ? navigate("/") : null;
     } else {
-      setErrorMessage(loginMessage);
+      setErrorMessage('erreur : ', loginMessage);
     }
     setLoading(false);
   };

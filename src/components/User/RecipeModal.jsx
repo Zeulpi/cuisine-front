@@ -20,6 +20,27 @@ const RecipeModal = ({ isOpen, onClose, dayChoice = '', chooseDay, cardWidth, ch
   const [loading, setLoading] = useState(false);
   const listRef = useRef();
 
+  useEffect(() => { // Ajustement dynamique de la position verticale de la modale
+    const adjustModalOffset = () => {
+      const header = document.getElementById("app-header");
+      const footer = document.getElementById("app-footer");
+      const modale = document.getElementById("modal-body"); // Sélectionner la modale
+
+      if (header && footer && modale) {
+        modale.style.top = `${header.offsetHeight + 20}px`;
+        modale.style.bottom = `${footer.offsetHeight + 20}px`;
+      }
+    };
+  
+    window.addEventListener("load", adjustModalOffset);
+    window.addEventListener("resize", adjustModalOffset);
+    adjustModalOffset(); // initial call
+  
+    return () => {
+      window.removeEventListener("load", adjustModalOffset);
+      window.removeEventListener("resize", adjustModalOffset);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     // Lorsque la modale est ouverte, désactive le défilement du body
@@ -72,7 +93,7 @@ const RecipeModal = ({ isOpen, onClose, dayChoice = '', chooseDay, cardWidth, ch
 
   return (
     <div className="recipe-modal-overlay" id='modal-frame' style={{ '--card-width': cardWidth }}>
-      <div className='recipe-modal-body'>
+      <div className='recipe-modal-body' id='modal-body'>
         <div className='recipe-modal-title'>
           <h2 className='modal-title'>Choisissez une recette pour {dayChoice}</h2>
           <button className="recipe-close-btn" onClick={() =>{onClose(); chooseDay();}} tabIndex={5}>X</button>

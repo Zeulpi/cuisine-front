@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { setRecipe, removeRecipe, clearRecipes } from '../actions/recipe';
+import { setRecipe, removeRecipe, clearRecipes, setAllRecipes } from '../actions/recipe';
 import { Recipe } from '../interfaces/recipe'; // Importer l'interface Recipe
 
 // Définir l'interface de chaque recette
@@ -42,6 +42,9 @@ const recipeReducer = createReducer<RecipeReducer>(initialState, (builder) => {
     // Action pour la déconnexion
     .addCase(clearRecipes, (state) => {
         state.recipes = [];
+    })
+    .addCase(setAllRecipes, (state, action) => {
+      state.recipes = action.payload; // Remplir le tableau avec toutes les recettes reçues
     })
     ;
 });

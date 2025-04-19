@@ -63,7 +63,7 @@ const authReducer = createReducer<AuthReducer>(initialState, (builder) => {
         }
       })
       .addCase(setPlannerRecipe, (state, action) => {
-        const { keyword, recipeId } = action.payload;
+        const { keyword, recipeId, portions } = action.payload;
       
         // Vérifie si userPlanner et le planner à l'index 0 existent
         if (
@@ -85,9 +85,12 @@ const authReducer = createReducer<AuthReducer>(initialState, (builder) => {
             if (existingRecipe) {
               // On utilise 'as Record<string, number>' pour éviter l'erreur de type
               (existingRecipe as Record<string, number>)[keyword] = recipeId;
+              if (portions && (existingRecipe as Record<string, number>)['portions'] !== portions) {
+                (existingRecipe as Record<string, number>)['portions'] = portions; // Mettre a jour les portions que si elles sont différentes
+              }
             } else {
               // Sinon, on ajoute un nouvel objet avec le mot-clé et l'ID de la recette
-              state.userPlanner[0].recipes.push({ [keyword]: recipeId });
+              state.userPlanner[0].recipes.push({ [keyword]: recipeId, portions: portions || 1 });
             }
           }
         } else {

@@ -42,11 +42,11 @@ const Register = () => {
         });
       }
 
-      if (response.data.alerts) {
-        setFormErrors(response.data.alerts);
-        const first = Object.values(response.data.alerts)[0];
-        setErrorMessage(first);
-      }
+      // if (response.data.alerts) {
+      //   setFormErrors(response.data.alerts);
+      //   const first = Object.values(response.data.alerts)[0];
+      //   setErrorMessage(first);
+      // }
 
     } catch (error) {
       console.error("❌ Erreur API :", error);

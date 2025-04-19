@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:8000'
+import { baseUrl } from "./routes-constants"
 
 export const getResource = (resourceRoute, resourceName) => {
     return baseUrl + resourceRoute + resourceName

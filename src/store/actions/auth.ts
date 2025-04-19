@@ -8,5 +8,5 @@ export const setUserRole = createAction<string>('auth/setUserRole')
 export const setUserImage = createAction<string>('auth/setUserImage')
 export const setUserName = createAction<string>('auth/setUserName')
 export const setUserPlanner = createAction<{ userPlanner: Planner[][] }>('auth/setUserPlanner');
-export const setPlannerRecipe = createAction<{keyword: string; recipeId: number;}>('auth/setPlannerRecipe');
+export const setPlannerRecipe = createAction<{keyword: string; recipeId: number; portions: number}>('auth/setPlannerRecipe');
 export const logout = createAction('auth/logout')

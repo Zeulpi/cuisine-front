@@ -1,3 +1,5 @@
+export const baseUrl = 'http://localhost:8000'
+
 export const ROUTES = {
     HOMEPAGE_ROUTE: '/',
     RECIPE_ROUTE: '/recipes',
@@ -5,6 +7,9 @@ export const ROUTES = {
     LOGIN_ROUTE: '/login',
     USER_UPDATE_ROUTE: '/user-update',
     USER_REFRESH_ROUTE: '/user-refresh',
+    USER_SEND_PLANNER_ROUTE: '/user-planner-addrecipe',
+    USER_DELETE_PLANNER_ROUTE: '/user-planner-deleterecipe',
+    USER_GET_PLANNER_ROUTE: '/user-planner-get',
     REGISTER_ROUTE: '/user-register',
     TAG_ROUTE: '/tags',
   }

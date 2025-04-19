@@ -28,12 +28,13 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
       // console.log(isModal, 'on navigue');
     } else {
       if (chooseMeal && key === null) { // vrai si on ajoute une recette au planner (click depuis le div, modale ouverte avec bouton '+')
-        if (chooseDay && dataName && dataKey) { // vrai si on veut modifier la recette de l'horaire (click depuis le div, modale ouverte depuis la Card)
-          console.log("chooseDay is defined", dataName, dataKey);
-          chooseMeal(recipe, dataKey);  // On retire la recette de l'horaire
-          chooseDay(dataName, dataKey); //on ouvre la modale de selection de la recette
+        if (chooseDay && dataName && dataKey) { // vrai si on clique sur le la Card dans le planner
+          // console.log("chooseDay is defined", dataName, dataKey);
+          navigate(`/recipes/${(recipe.id)}-${slugify(recipe.name)}`);
+          // chooseMeal(recipe, dataKey);  // On retire la recette de l'horaire
+          // chooseDay(dataName, dataKey); //on ouvre la modale de selection de la recette
         } else {
-          chooseMeal(recipe, null); // On Ajoute la recette au planner
+          chooseMeal(recipe, null, recipe.portions); // On Ajoute la recette au planner
         }
       } else if(chooseMeal && key) { // vrai si on retire une recette du planner
         chooseMeal(recipe, key) // On retire la recette du planner
@@ -46,38 +47,49 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
   return (
     <>
     {recipe && (
-      <div className="recipe-card" 
-      style={{
-        '--card-width': cardWidth,
-        cursor: removeKey ? `not-allowed` : 'pointer'
-      }}
-      >
+      <div className="recipe-card" style={{ '--card-width': cardWidth }} >
         <><button className='recipe-remove' style={{display: removeKey ? 'block' : 'none'}} onClick={() => {removeKey ?handleClick(recipe, removeKey):null}}>X</button></>
-        <div className="recipe-content" onClick={() => {handleClick(recipe)}} data-id={recipe.id}>
+        <div className="recipe-content"
+          onClick={() => {(chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
+          data-id={recipe.id}
+          style={{cursor: (chooseDay && dataName && dataKey) ? 'default' : 'pointer'}}
+        >
           <div className="recipe-header">
             {recipe.name}
           </div>
-          <img className={`recipe-background ${isDefaultImage ? 'default-background' : ''}`} src={bgImage} alt="" />
+          <img className={`recipe-background ${isDefaultImage ? 'default-background' : ''}`}
+            src={bgImage} alt=""
+            onClick={() => {(chooseDay && dataName && dataKey) ? handleClick(recipe) : null}}
+            style={{cursor: (chooseDay && dataName && dataKey) ? 'help' : 'var(--card-cursor)'}}
+          />
           <div className="recipe-footer">
-            <div className="recipe-duration">
+            {(chooseDay && dataName && dataKey) ?
+              (
+                <>
+                <div><button>-</button>portions : {recipe.portions}<button>+</button></div>
+                </>
+              ) : (
+                <>
+                <div className="recipe-duration">
                 <FontAwesomeIcon icon={faClock} className="icon-clock" />
                 <span>{recipe.duration?.value} {recipe.duration?.unit}</span>
-            </div>
-
-            <div className="recipe-tags">
-                {recipe.tags?.map((tag, index) => (
-                    <span
-                    key={index}
-                    className="recipe-tag"
-                    style={{
-                        backgroundColor: tag.color,
-                        color: getTextColor(tag.color)
-                    }}
-                    >
-                    {tag.name}
-                    </span>
-                ))}
-            </div>
+                </div>
+                <div className="recipe-tags">
+                    {recipe.tags?.map((tag, index) => (
+                        <span
+                        key={index}
+                        className="recipe-tag"
+                        style={{
+                            backgroundColor: tag.color,
+                            color: getTextColor(tag.color)
+                        }}
+                        >
+                        {tag.name}
+                        </span>
+                    ))}
+                </div>
+                </>
+              )}
           </div>
         </div>
       </div>

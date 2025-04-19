@@ -4,23 +4,25 @@ import { getData } from './../resources/api-constants'
 import { ROUTES } from './../resources/routes-constants'
 import { getUserFromToken } from './getUserFromToken'
 import { setUser } from "../store/actions/auth"
+import { customFetch } from "./customFetch"
 
 export async function getToken (email, password, dispatch) {
   let errorMessage = null;
   try {
-    const response = await axios.post(getData(ROUTES.LOGIN_ROUTE), {
-      email,
-      password,
-    });
-
-    if (response.data.token) {
+    // const response = await customFetch('POST', { email, password }, {}, getData(ROUTES.LOGIN_ROUTE));
+    const response = await axios.post(getData(ROUTES.LOGIN_ROUTE),{ email, password });
+    
+    response ? console.log("Réponse du serveur :", response) : console.log("Aucune réponse du serveur");
+    
+    if (response && response.data.token) {
       const token = response.data.token;
       const user = getUserFromToken(token);
       user ? dispatch(setUser({ token, ...user })) : errorMessage = "Token invalide.";
+    } else {
+      errorMessage = response.message || "Erreur lors de la connexion.";
     }
   } catch (error) {
-    errorMessage = error.response?.data?.error || "Erreur lors de la connexion.";
-    console.log(error);
+    errorMessage = "Erreur lors de la connexion. 500";
   }
   return errorMessage;
 }

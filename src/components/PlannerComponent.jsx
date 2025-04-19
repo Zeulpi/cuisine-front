@@ -1,21 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from "react-router-dom";
 import RecipeModal from "./User/RecipeModal";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
 import { setPlannerRecipe } from "../store/actions/auth";
-import { setRecipe, removeRecipe } from "../store/actions/recipe";
+import { setRecipe, removeRecipe, setAllRecipes } from "../store/actions/recipe";
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
+import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
+import { ROUTES } from "../resources/routes-constants";
+import { getData } from "../resources/api-constants";
+import { getUserFromToken } from "../utility/getUserFromToken";
+import { setUser } from "../store/actions/auth";
+import axios from "axios";
+import { customFetch } from "../utility/customFetch";
 import '../styles/User/PlannerComponent.css'
 
 const PlannerComponent = ({ plannerWidth = '40vw' }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
   const location = useLocation(); // Récupérer l'URL actuelle de la page
   const [showModal, setShowModal] = useState(false);
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [dayChoice, setDayChoice] = useState(null);
   const [dayKey, setDayKey] = useState(null);
   const useDispatch = useAppDispatch();
+  const userToken = useAppSelector((state) => state.auth.token);
   const userPlanner = useAppSelector(state => state.auth.userPlanner[0].recipes);
   const userRecipes = useAppSelector(state => state.recipe.recipes);
   const daysOfWeek = [
@@ -28,10 +39,19 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     { day: "Dimanche", keyM: "sunM", keyE: "sunE" }, // Dimanche midi et soir
   ];
 
-   
-   useEffect(() => { // useEffect pour détecter les changements de userPlanner
-    // Ajustement dynamique de la largeur des colonnes
-    const adjustTableSize = () => {
+  useEffect(() => { // Vérification de la connexion de l'utilisateur
+    if (!isLoggedIn) {
+      navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
+    } else {
+      setLoading(true);
+      getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
+      setLoading(false);
+    }
+  }, [isLoggedIn, navigate]);
+  
+
+  useEffect(() => {
+    const adjustTableSize = () => { // Ajustement dynamique de la largeur des colonnes
       const card = document.querySelector('.recipe-card');
       const dayCells = document.querySelectorAll('.day-cell');
       let maxWidth = 0;
@@ -62,23 +82,6 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     window.addEventListener("load", adjustTableSize);
     window.addEventListener("resize", adjustTableSize);
     adjustTableSize(); // initial call
-  
-
-    // Remplissage automatique du store recipes avec les recettes du planner
-    userPlanner.forEach(entry => {
-      Object.entries(entry).forEach(([key, recipeId]) => {
-        if (recipeId !== null && recipeId !== '') {
-          // console.log(`Recette trouvée pour ${key} : ${recipeId}`);
-          
-          const recipe = userRecipes.find(recipe => recipe.id === recipeId);
-          if (!recipe) {
-            console.log(`Recette introuvable pour ${key} : ${recipeId}`);
-          //   useDispatch(setRecipe({id: recipe.id, name: recipe.name, image: recipe.image, portions: recipe.portions, tags: recipe.tags}));
-          }
-        }
-      });
-    });
-
 
     // Nettoyage des écouteurs d'événements lors du démontage du composant
     return () => {
@@ -87,63 +90,34 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     };
   }, [userPlanner, userRecipes]);
 
-  useEffect(() =>{
-    // console.log(dayChoice);
+  useEffect(() => { // Ouverture de la modale si un jour est choisi (click bouton +)
     dayChoice !== null ? setIsModalOpen(true) : setIsModalOpen(false);
   }, [dayChoice]);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-    // setDayChoice(null);
-    // setDayKey(null);
   }
 
-  const handleAddRecipe = (keyWord, recipe) => { // ajouter un couple jour/recette au planner actif dans le store
+  const handleAddRecipe = (keyWord, recipe, portions) => { // ajouter un couple jour/recette au planner actif dans le store
     if(keyWord && recipe){
-      useDispatch(setPlannerRecipe({ keyword: keyWord, recipeId: recipe.id }));
-      // console.log('Recette ajoutée au planner :', recipe);
-      useDispatch(setRecipe(recipe));
+      const message = sendPlannerToServer(keyWord, recipe, portions, useDispatch, userToken); // Envoi de la recette au serveur
+      setError(message); // Envoi de l'erreur au state
     } else {
       console.log('Erreur : clé du jour ou recette manquante.');
     }
   };
 
-  const handleRemoveRecipe = (recipeId, keyword) => {
-    // 1. Supprimer l'entrée du planner avec keyword et recipeId = null
-    useDispatch(setPlannerRecipe({ keyword, recipeId: null }));
-    
-    // 2. Compter combien de fois recipeId est utilisé dans le planner
-    // si plus de 1 fois c'est que la recette est présente ailleurs
-    // 1 fois et pas 0, c'est parce que react-redux n'a pas encore eu le temps d'effectuer le dispatch pour enlever le repas du planner (cf etape 1 juste au dessus)
-    let occurrences=null;
-    setTimeout(() => {
-      occurrences = userPlanner.reduce((count, entry) => {
-        // Parcourir les valeurs dans chaque entrée de userPlanner
-        Object.values(entry).forEach(id => {
-          if (id === recipeId) {
-            count += 1;
-          }
-        });
-        return count;
-      }, 0); // Initialiser à 0
-    },200);
-    // console.log(keyword);
-    // console.log('planner :', userPlanner);
-    // console.log('Nombre d\'occurrences de cette recette :', occurrences);
-    
-    setTimeout(() => {
-      // 3. Si la recette n'est plus utilisée ailleurs, la supprimer du store des recettes
-      if (occurrences <= 1 || occurrences === null) {
-        // console.log('suppression de : ', recipeId);
-        useDispatch(removeRecipe({ id: recipeId }));
-      } else {
-        // console.log('La recette est utilisée ailleurs dans le planner, elle ne sera pas supprimée.');
-      }
-    },400);
+  const handleRemoveRecipe = (keyWord) => {
+    if(keyWord){
+      const message = removeRecipeFromPlanner(keyWord, useDispatch, userToken); // Envoi de la recette au serveur
+      setError(message); // Envoi de l'erreur au state
+    } else {
+      console.log('Erreur : clé du jour ou recette manquante.');
+    }
   };
 
   const chooseDay = (name=null, key=null) => {
-    console.log(name, key);
+    // console.log(name, key);
     
     if (name && key) {
       setDayChoice(name);
@@ -155,12 +129,12 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     }
   }
 
-  const chooseMeal = (recipe, key=null) => {
+  const chooseMeal = (recipe, key=null, portions=1) => {
     if (dayKey && recipe && key === null) { 
-      handleAddRecipe(dayKey, recipe);
+      handleAddRecipe(dayKey, recipe, portions);
       // console.log(`Recette ajoutée pour ${dayKey} :`, recipe);
     } else if (recipe && key) { // Si une recette est déjà présente, on la remplace
-      handleRemoveRecipe(recipe.id, key); // Supprimer l'ancienne recette
+      handleRemoveRecipe(key); // Supprimer l'ancienne recette
       // console.log(`Recette supprimée pour ${key} :`, recipe);
     }
     setDayKey(null); // Réinitialiser la clé du jour après l'ajout
@@ -209,13 +183,13 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
             <td key={index} className="day-cell midday-cell">
               <div className="button-container">
                 {/* Bouton pour "Midi" */}
-                {userPlanner.some(entry => entry[dayObj.keyM] && entry[dayObj.keyM] !== '' && entry[dayObj.keyM] !== null) ? (
+                {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
                 // Si une recette existe pour ce jour, ne pas afficher le bouton
                 (() => {
                   // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                  const recipeId = userPlanner.find(entry => entry[dayObj.keyM])?.[dayObj.keyM];
+                  const [recipeId, portions] = userPlanner[dayObj.keyM];
                   // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
-                  const recipe = userRecipes.find(recipe => recipe.id === recipeId);
+                  const recipe = userRecipes[recipeId];
                   // Passer la recette en prop à RecipeCardComponent et gérer la suppression
                   if (recipe) {
                     return (
@@ -262,13 +236,13 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
             <td key={index} className="day-cell evening-cell">
               <div className="button-container">
                 {/* Bouton pour "Soir" */}
-                {userPlanner.some(entry => entry[dayObj.keyE] && entry[dayObj.keyE] !== '' && entry[dayObj.keyE] !== null) ? (
+                {(userPlanner[dayObj.keyE] && userPlanner[dayObj.keyE].length > 0) ? (
                 // Si une recette existe pour ce jour, ne pas afficher le bouton
                 (() => {
                   // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                  const recipeId = userPlanner.find(entry => entry[dayObj.keyE])?.[dayObj.keyE];
+                  const [recipeId, portions] = userPlanner[dayObj.keyE];
                   // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
-                  const recipe = userRecipes.find(recipe => recipe.id === recipeId);
+                  const recipe = userRecipes[recipeId];
                   // Passer la recette en prop à RecipeCardComponent et gérer la suppression
                   if (recipe) {
                     return (
