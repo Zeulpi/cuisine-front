@@ -10,6 +10,7 @@ export const ROUTES = {
     USER_SEND_PLANNER_ROUTE: '/user-planner-addrecipe',
     USER_DELETE_PLANNER_ROUTE: '/user-planner-deleterecipe',
     USER_GET_PLANNER_ROUTE: '/user-planner-get',
+    USER_GET_SHOPPING_ROUTE: '/user-shopping-get',
     REGISTER_ROUTE: '/user-register',
     TAG_ROUTE: '/tags',
   }

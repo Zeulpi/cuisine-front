@@ -2,18 +2,88 @@
 
   .planner {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     min-width: var(--table-width);
     margin-top: 20px;
   }
+
+  .planner-update {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-bottom: 20px;
+    padding: 5px;
+    font-size: 20px;
+    color: #00796b;
+    font-weight: bold;
+    text-align: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    border : 1px solid red;
+  }
+  .planner-update button {
+    background-color: #00796b73;
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+  .planner-update button:hover {
+    background-color: #005f56a2;
+  }
+
+  .planner-frame{
+    display: flex;
+  }
+
+  .planner-prev, .planner-next {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 /* Styles généraux du tableau */
-.planner-table {
+  .planner-table {
     min-width: 70%;
     border-collapse: collapse; /* Fusionner les bordures */
   }
   
+  .date-column {
+    color: #00796b;
+  }
+  .date-column:nth-of-type(2) div{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 30px;
+  }
+  .date-column:last-of-type div{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 30px;
+  }
+  .planner-prev-arrow, .planner-next-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #00796b;
+    font-size: 20px;
+    width: 50px; /* Largeur de la flèche */
+    height: 50px; /* Hauteur de la flèche */
+    background-color: #e0f7fa; /* Couleur de fond plus claire et fraîche (bleu pâle) */
+    border-radius: 50%; /* Arrondir les coins pour faire un cercle */
+    cursor: pointer; /* Changer le curseur au survol */
+    margin: 0 10px; /* Espacement entre les flèches et le tableau */
+  }
+  
   /* Supprimer toutes les bordures */
-  .planner-table th:not(:first-child) {
+  .day-column {
     height: 40px;  /* Réduire la hauteur des titres des jours */
     padding: 10px 20px;  /* Ajuster le padding pour ne pas être trop grand */
     background-color: #e0f7fa;      /* Couleur de fond plus claire et fraîche (bleu pâle) */
@@ -23,9 +93,10 @@
   .time-slot {
     border: 1px solid lightgray;
     padding: 0 8px;
+    text-align: center;
   }
   .midday-slot{
-    border-bottom: none;;
+    border-bottom: none;
   }
   .evening-slot{
     border-top: none;

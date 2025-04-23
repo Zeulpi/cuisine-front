@@ -48,22 +48,22 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
     <>
     {recipe && (
       <div className="recipe-card" style={{ '--card-width': cardWidth }} >
-        <><button className='recipe-remove' style={{display: removeKey ? 'block' : 'none'}} onClick={() => {removeKey ?handleClick(recipe, removeKey):null}}>X</button></>
+        <><button className='recipe-remove' style={{display: (isModal && removeKey) ? 'block' : 'none'}} onClick={() => {(isModal && removeKey) ?handleClick(recipe, removeKey):null}}>X</button></>
         <div className="recipe-content"
-          onClick={() => {(chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
+          onClick={() => {(isModal && chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
           data-id={recipe.id}
-          style={{cursor: (chooseDay && dataName && dataKey) ? 'default' : 'pointer'}}
+          style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'default' : 'pointer'}}
         >
           <div className="recipe-header">
             {recipe.name}
           </div>
           <img className={`recipe-background ${isDefaultImage ? 'default-background' : ''}`}
             src={bgImage} alt=""
-            onClick={() => {(chooseDay && dataName && dataKey) ? handleClick(recipe) : null}}
-            style={{cursor: (chooseDay && dataName && dataKey) ? 'help' : 'var(--card-cursor)'}}
+            onClick={() => {(isModal && chooseDay && dataName && dataKey) ? handleClick(recipe) : null}}
+            style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'help' : 'var(--card-cursor)'}}
           />
           <div className="recipe-footer">
-            {(chooseDay && dataName && dataKey) ?
+            {(isModal && chooseDay && dataName && dataKey) ?
               (
                 <>
                 <div><button>-</button>portions : {recipe.portions}<button>+</button></div>

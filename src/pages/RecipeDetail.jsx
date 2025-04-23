@@ -53,8 +53,9 @@ const RecipeDetail = () => {
       setRecipe(response.data);
       setPortions(response.data.portions);
     } catch (error) {
-      console.error('Erreur lors du chargement de la recette :', error);
+      console.error('Erreur lors du chargement de la recette :', error.response?.data.message); // Debugging line
       setError(error);
+      navigate('/recipes'); // Redirection vers une 404 custom
     } finally {
       setLoading(false);
     }
@@ -131,6 +132,8 @@ const RecipeDetail = () => {
 
   return (
     <>
+    {recipe && (
+      <>
       <title>
       {recipe?.name ? `${process.env.REACT_APP_APP_NAME} - ${recipe.name}` : process.env.REACT_APP_APP_NAME}
       </title>
@@ -186,6 +189,8 @@ const RecipeDetail = () => {
 
         {error && <div className="error-message">{error}</div>}
       </div>
+      </>
+    )}
     </>
   );
 };

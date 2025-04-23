@@ -2,32 +2,31 @@ import React, { useState, useEffect, use } from "react";
 import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from "react-router-dom";
 import RecipeModal from "./User/RecipeModal";
+import { BaseModal } from "./BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
-import { setPlannerRecipe } from "../store/actions/auth";
-import { setRecipe, removeRecipe, setAllRecipes } from "../store/actions/recipe";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
+import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
-import { ROUTES } from "../resources/routes-constants";
-import { getData } from "../resources/api-constants";
-import { getUserFromToken } from "../utility/getUserFromToken";
-import { setUser } from "../store/actions/auth";
-import axios from "axios";
-import { customFetch } from "../utility/customFetch";
 import '../styles/User/PlannerComponent.css'
 
 const PlannerComponent = ({ plannerWidth = '40vw' }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isShoppingModalOpen, setIsShoppingModalOpen] = useState(false);
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
   const location = useLocation(); // Récupérer l'URL actuelle de la page
-  const [showModal, setShowModal] = useState(false);
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [dayChoice, setDayChoice] = useState(null);
   const [dayKey, setDayKey] = useState(null);
   const useDispatch = useAppDispatch();
   const userToken = useAppSelector((state) => state.auth.token);
-  const userPlanner = useAppSelector(state => state.auth.userPlanner[0].recipes);
+  const [plannerId, setPlannerId] = useState(0);
+  const planners = useAppSelector(state => state.auth.userPlanner);
+  let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
   const userRecipes = useAppSelector(state => state.recipe.recipes);
   const daysOfWeek = [
     { day: "Lundi", keyM: "monM", keyE: "monE" },   // Lundi midi et soir
@@ -44,7 +43,9 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
       navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
     } else {
       setLoading(true);
-      getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
+      const response = getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
+      response == 'updated' ? setUpdated(true) : null;
+      
       setLoading(false);
     }
   }, [isLoggedIn, navigate]);
@@ -91,11 +92,14 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
   }, [userPlanner, userRecipes]);
 
   useEffect(() => { // Ouverture de la modale si un jour est choisi (click bouton +)
-    dayChoice !== null ? setIsModalOpen(true) : setIsModalOpen(false);
+    dayChoice !== null ? setIsRecipeModalOpen(true) : setIsRecipeModalOpen(false);
   }, [dayChoice]);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const toggleRecipeModal = () => {
+    setIsRecipeModalOpen(!isRecipeModalOpen);
+  }
+  const toggleShoppingModal = () => {
+    setIsShoppingModalOpen(!isShoppingModalOpen);
   }
 
   const handleAddRecipe = (keyWord, recipe, portions) => { // ajouter un couple jour/recette au planner actif dans le store
@@ -126,6 +130,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     else {
       setDayChoice(null);
       setDayKey(null);
+      toggleRecipeModal(); // Fermer la modale recette si aucun jour n'est sélectionné
     }
   }
 
@@ -144,143 +149,201 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
 
   return (
     <div className="planner" style={{ '--table-width': plannerWidth }}>
-      <table className="planner-table">
-        <thead>
-          <tr>
-            {/* Colonne vide avant les jours */}
-            <th className="empty-column">&nbsp;</th>
-            {/* Une cellule pour chaque jour */}
-            {daysOfWeek.map((dayObj, index) => (
-            <th key={index} className="day-column">
-              {dayObj.day}
-            </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {/* Premere ligne *Matin* vide */}
-          <tr>
-            <td className="time-slot-empty">
-              <span className="spacer">&nbsp;</span>
-            </td>
-            {/* Autres cellules pour chaque jour */}
-            {daysOfWeek.map((dayObj, index) => (
-            <td key={index} className="morning-cell">
-              <span className="spacer">&nbsp;</span> {/* Span vide pour aligner correctement */}
-            </td>
-            ))}
-          </tr>
-
-          {/* Deuxieme ligne *Midi* */}
-          <tr>
-            {/* Première cellule avec "Midi" */}
-            <td className="time-slot midday-slot">
-              <span>Midi</span> {/* Midi centré */}
-            </td>
-            {/* Autres cellules pour chaque jour */}
-            {daysOfWeek.map((dayObj, index) => (
-            <td key={index} className="day-cell midday-cell">
-              <div className="button-container">
-                {/* Bouton pour "Midi" */}
-                {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
-                // Si une recette existe pour ce jour, ne pas afficher le bouton
-                (() => {
-                  // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                  const [recipeId, portions] = userPlanner[dayObj.keyM];
-                  // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
-                  const recipe = userRecipes[recipeId];
-                  // Passer la recette en prop à RecipeCardComponent et gérer la suppression
-                  if (recipe) {
-                    return (
-                        <RecipeCardComponent
-                          key={`${recipe.id}${dayObj.keyM}`}
-                          recipe={recipe} // Passer la recette complète en prop
-                          isModal={true}
-                          cardWidth="150px"
-                          chooseMeal={chooseMeal}
-                          chooseDay={chooseDay}
-                          removeKey={dayObj.keyM}
-                          dataName={`${dayObj.day} midi`}
-                          dataKey={dayObj.keyM}
-                        />
-                    );
+      {updated && (
+        <div className="planner-update">Nouvelle semaine : Planner mis a jour &nbsp; <button onClick={()=>{setUpdated(false)}}>X</button></div>
+      )}
+      <div className="planner-frame">
+        <div className="planner-prev">
+          {plannerId<3 && (
+            <span className="planner-prev-arrow" onClick={()=>{plannerId < 3 ? setPlannerId((plannerId+1)) : null}}>&#8678;</span>    
+          )}
+        </div>
+        <div>
+          <table className="planner-table">
+            <thead>
+              <tr>
+                <th className="empty-column">&nbsp;</th>
+                <th className="date-column" colSpan={2}>
+                  <div>
+                    <span className="planner-weekstart">{planners[plannerId].weekStart}</span>
+                  </div>
+                </th>
+                <th className="date-title" colSpan={3}>
+                  <div>
+                  {plannerId === 0
+                    ? "Semaine en cours"
+                    : plannerId > 0 && plannerId <= 3
+                    ? `Il y a ${plannerId} semaine${plannerId > 1 ? "s" : ""}`
+                    : ""
                   }
-                  return null;
-                })()
-                ) : (
-                // Si aucune recette n'est présente, afficher le bouton
-                <button
-                  key={`${dayObj.keyM}`}
-                  className="select-button"
-                  onClick={() => {chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
-                  data-name={`${dayObj.day} midi`}
-                  data-key={dayObj.keyM}
-                >
-                  +
-                </button>
-                )}
-              </div>
-            </td>
-            ))}
-          </tr>
+                  </div>
+                </th>
+                <th className="date-column" colSpan={2}>
+                  <div>
+                    <span className="planner-weekstart">{planners[plannerId].weekEnd}</span>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                {/* Colonne vide avant les jours */}
+                <th className="empty-column">
+                  {plannerId === 0 &&(
+                    <div className="shopping-container">
+                      <button className="shopping-button" onClick={toggleShoppingModal}><FontAwesomeIcon icon={faBars} /></button>
+                    </div>
+                  )}
+                </th>
+                {/* Une cellule pour chaque jour */}
+                {daysOfWeek.map((dayObj, index) => (
+                <th key={index} className="day-column">
+                  {dayObj.day}
+                </th>
+                ))}
+              </tr>
+            </thead>
 
-          {/* Troisieme ligne *Soir* */}
-          <tr>
-            {/* Première cellule avec "Soir" */}
-            <td className="time-slot evening-slot">
-                <span>Soir</span> {/* Soir aligné en bas */}
-            </td>
-            {/* Autres cellules pour chaque jour */}
-            {daysOfWeek.map((dayObj, index) => (
-            <td key={index} className="day-cell evening-cell">
-              <div className="button-container">
-                {/* Bouton pour "Soir" */}
-                {(userPlanner[dayObj.keyE] && userPlanner[dayObj.keyE].length > 0) ? (
-                // Si une recette existe pour ce jour, ne pas afficher le bouton
-                (() => {
-                  // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                  const [recipeId, portions] = userPlanner[dayObj.keyE];
-                  // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
-                  const recipe = userRecipes[recipeId];
-                  // Passer la recette en prop à RecipeCardComponent et gérer la suppression
-                  if (recipe) {
-                    return (
-                        <RecipeCardComponent
-                          key={`${recipe.id}${dayObj.keyE}`}
-                          recipe={recipe} // Passer la recette complète en prop
-                          isModal={true}
-                          cardWidth="150px"
-                          chooseMeal={chooseMeal}
-                          chooseDay={chooseDay}
-                          removeKey={dayObj.keyE}
-                          dataName={`${dayObj.day} midi`}
-                          dataKey={dayObj.keyM}
-                        />
-                    );
-                  }
-                  return null;
-                })()
-                ) : (
-                // Si aucune recette n'est présente, afficher le bouton
-                <button
-                  key={`${dayObj.keyE}`}
-                  className="select-button"
-                  onClick={() => {chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
-                  data-name={`${dayObj.day} soir`}
-                  data-key={dayObj.keyE}
-                >
-                  +
-                </button>
-                )}
-              </div>
-            </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+            <tbody>
+              {/* Premere ligne *Matin* vide */}
+              <tr>
+                <td className="time-slot-empty">
+                  <span className="spacer">&nbsp;</span>
+                </td>
+                {/* Autres cellules pour chaque jour */}
+                {daysOfWeek.map((dayObj, index) => (
+                <td key={index} className="morning-cell">
+                  <span className="spacer">&nbsp;</span> {/* Span vide pour aligner correctement */}
+                </td>
+                ))}
+                <td className="empty-column"></td>
+              </tr>
 
-      <RecipeModal isOpen={isModalOpen} onClose={toggleModal} dayChoice={dayChoice} chooseDay={chooseDay} cardWidth='60%' chooseMeal={chooseMeal} />
+              {/* Deuxieme ligne *Midi* */}
+              <tr>
+                {/* Première cellule avec "Midi" */}
+                <td className="time-slot midday-slot">
+                  <span>Midi</span> {/* Midi centré */}
+                </td>
+                {/* Autres cellules pour chaque jour */}
+                {daysOfWeek.map((dayObj, index) => (
+                <td key={index} className="day-cell midday-cell">
+                  <div className="button-container">
+                    {/* Bouton pour "Midi" */}
+                    {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
+                    // Si une recette existe pour ce jour, ne pas afficher le bouton
+                    (() => {
+                      // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
+                      const [recipeId, portions] = userPlanner[dayObj.keyM];
+                      // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
+                      const recipe = userRecipes[recipeId];
+                      // Passer la recette en prop à RecipeCardComponent et gérer la suppression
+                      if (recipe) {
+                        return (
+                            <RecipeCardComponent
+                              key={`${recipe.id}${dayObj.keyM}`}
+                              recipe={recipe} // Passer la recette complète en prop
+                              isModal={plannerId === 0} // Si on est sur le planner 0, on active les features d'ajout/suppression, sinon la vignette sera normale
+                              cardWidth="150px"
+                              chooseMeal={chooseMeal}
+                              chooseDay={chooseDay}
+                              removeKey={dayObj.keyM}
+                              dataName={`${dayObj.day} midi`}
+                              dataKey={dayObj.keyM}
+                            />
+                        );
+                      }
+                      return null;
+                    })()
+                    ) : (
+                      plannerId === 0 && ( // Si plannerId est 0, on affiche le bouton
+                      // Si aucune recette n'est présente, afficher le bouton
+                      <button
+                        key={`${dayObj.keyM}`}
+                        className="select-button"
+                        onClick={() => {chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
+                        data-name={`${dayObj.day} midi`}
+                        data-key={dayObj.keyM}
+                      >
+                        +
+                      </button>
+                      )
+                    )}
+                  </div>
+                </td>
+                ))}
+              </tr>
+
+              {/* Troisieme ligne *Soir* */}
+              <tr>
+                {/* Première cellule avec "Soir" */}
+                <td className="time-slot evening-slot">
+                    <span>Soir</span> {/* Soir aligné en bas */}
+                </td>
+                {/* Autres cellules pour chaque jour */}
+                {daysOfWeek.map((dayObj, index) => (
+                <td key={index} className="day-cell evening-cell">
+                  <div className="button-container">
+                    {/* Bouton pour "Soir" */}
+                    {(userPlanner[dayObj.keyE] && userPlanner[dayObj.keyE].length > 0) ? (
+                    // Si une recette existe pour ce jour, ne pas afficher le bouton
+                    (() => {
+                      // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
+                      const [recipeId, portions] = userPlanner[dayObj.keyE];
+                      // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
+                      const recipe = userRecipes[recipeId];
+                      // Passer la recette en prop à RecipeCardComponent et gérer la suppression
+                      if (recipe) {
+                        return (
+                            <RecipeCardComponent
+                              key={`${recipe.id}${dayObj.keyE}`}
+                              recipe={recipe} // Passer la recette complète en prop
+                              isModal={plannerId === 0}
+                              cardWidth="150px"
+                              chooseMeal={chooseMeal}
+                              chooseDay={chooseDay}
+                              removeKey={dayObj.keyE}
+                              dataName={`${dayObj.day} midi`}
+                              dataKey={dayObj.keyM}
+                            />
+                        );
+                      }
+                      return null;
+                    })()
+                    ) : (
+                      plannerId === 0 && ( // Si plannerId est 0, on affiche le bouton
+                      // Si aucune recette n'est présente, afficher le bouton
+                      <button
+                        key={`${dayObj.keyE}`}
+                        className="select-button"
+                        onClick={() => {chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
+                        data-name={`${dayObj.day} soir`}
+                        data-key={dayObj.keyE}
+                      >
+                        +
+                      </button>
+                      )
+                    )}
+                  </div>
+                </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="planner-next">
+          {plannerId>0 && (
+            <span className="planner-next-arrow" onClick={()=>{plannerId>0 ? setPlannerId((plannerId-1)) : null}}>&#8680;</span>
+          )}
+        </div>
+      </div>
+      
+
+      <BaseModal isOpen={isRecipeModalOpen} cardWidth='60%' >
+        <RecipeModal dayChoice={dayChoice} chooseDay={chooseDay} cardWidth='60%' chooseMeal={chooseMeal} />
+      </BaseModal>
+
+      <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%'>
+        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%'/>
+      </BaseModal>
     </div>
   );
 };

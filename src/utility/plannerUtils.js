@@ -55,6 +55,7 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
         const newToken = response.data.token;
         const user = getUserFromToken(newToken);
         user ? dispatch(setUser({ token: newToken, ...user })) : errorMessage = "Token invalide.";
+        errorMessage = response.data.updatedExpired ? 'updated' : null;
       } else {
         errorMessage = response.message || "Erreur lors de la connexion.";
       }
