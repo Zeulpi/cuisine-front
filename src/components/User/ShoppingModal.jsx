@@ -9,7 +9,7 @@ import '../../styles/User/ShoppingModal.css'
 export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingIndex }) {
   const userToken = useAppSelector((state) => state.auth.token);
   const planners = useAppSelector(state => state.auth.userPlanner);
-  const userPlanner = planners[shoppingIndex].recipes ;
+  const plannerRecipes = planners[shoppingIndex].recipes ;
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [ingredients, setIngredients] = useState(null);
@@ -19,7 +19,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
     async function fetchShoppingIngredients() {
       setLoading(true);
       try {
-        const result = await getShoppingIngredients(userPlanner, userToken);
+        const result = await getShoppingIngredients(plannerRecipes, userToken);
         setIngredients(result.ingredients);
       } catch (error) {
         setErrorMessage("Erreur lors de la récupération des ingrédients.");

@@ -128,6 +128,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     if (name && key) {
       setDayChoice(name);
       setDayKey(key);
+      console.log(`Recette choisie pour ${name} :`, key);
     }
     else {
       setDayChoice(null);
@@ -137,7 +138,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
   }
 
   const chooseMeal = (recipe, key=null, portions=1) => {
-    if (dayKey && recipe && key === null) { 
+    if (dayKey && recipe && key === null) {
       handleAddRecipe(dayKey, recipe, portions);
       // console.log(`Recette ajoutée pour ${dayKey} :`, recipe);
     } else if (recipe && key) { // Si une recette est déjà présente, on la remplace
@@ -243,7 +244,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                     // Si une recette existe pour ce jour, ne pas afficher le bouton
                     (() => {
                       // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                      const [recipeId, portions] = userPlanner[dayObj.keyM];
+                      const [recipeId, localPortions] = userPlanner[dayObj.keyM];
                       // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
                       const recipe = userRecipes[recipeId];
                       // Passer la recette en prop à RecipeCardComponent et gérer la suppression
@@ -257,8 +258,10 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
                               removeKey={dayObj.keyM}
+                              addRecipe = {handleAddRecipe}
                               dataName={`${dayObj.day} midi`}
                               dataKey={dayObj.keyM}
+                              localPortions={localPortions}
                             />
                         );
                       }
@@ -298,7 +301,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                     // Si une recette existe pour ce jour, ne pas afficher le bouton
                     (() => {
                       // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                      const [recipeId, portions] = userPlanner[dayObj.keyE];
+                      const [recipeId, localPortions] = userPlanner[dayObj.keyE];
                       // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
                       const recipe = userRecipes[recipeId];
                       // Passer la recette en prop à RecipeCardComponent et gérer la suppression
@@ -311,9 +314,11 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
+                              addRecipe = {handleAddRecipe}
                               removeKey={dayObj.keyE}
                               dataName={`${dayObj.day} midi`}
                               dataKey={dayObj.keyM}
+                              localPortions={localPortions} // Passer les portions locales en prop
                             />
                         );
                       }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';  // Validation des props
 import { useParams } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -25,12 +25,14 @@ const RecipeDetail = () => {
   const [newPortions, setNewPortions] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const previousStateRef = useRef(location.state);
+  const { portionsFromCard } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [ratio, setRatio] = useState(1);
   const lastFetchedId = useRef(null);
-  const [nextPath, setNextPath] = useState(null);
   const MAX_PORTIONS = 20;
+  const MIN_PORTIONS = 1;
+  
   
   const fetchRecipeDetail = async () => {
     const currentId = id; // snapshot de l’ID actuel
@@ -51,7 +53,7 @@ const RecipeDetail = () => {
       }
 
       setRecipe(response.data);
-      setPortions(response.data.portions);
+      setPortions( response.data.portions);
     } catch (error) {
       console.error('Erreur lors du chargement de la recette :', error.response?.data.message); // Debugging line
       setError(error);
@@ -60,28 +62,6 @@ const RecipeDetail = () => {
       setLoading(false);
     }
   };
-
-  
-  // useEffect pour ramener sur la page RecipeList en cas de navigation back, mais ce n'est pas tout a fait au point
-  // useEffect(() => {
-  //   window.history.pushState(null, document.title, window.location.href);
-
-  //   const handlePopState = () => {
-  //     // window.history.pushState(null, document.title, window.location.href);
-  //     const previousState = previousStateRef.current;
-  //     if (previousState?.fromRecipeList) {
-  //       navigate('/recipes', {
-  //         state: {
-  //           filters: previousState.filters,
-  //           page: previousState.page,
-  //           scroll: previousState.scroll,
-  //         },
-  //         replace: true, // évite de casser l’historique
-  //       });
-  //     }
-  //   };
-  //   setPopStateHandler(handlePopState);
-  // }, [location]);
 
 
   useEffect(() => {
@@ -106,7 +86,7 @@ const RecipeDetail = () => {
   }, [recipe]);
 
   useEffect(() =>{
-    setNewPortions(portions);
+    isNaN(portionsFromCard) ? setNewPortions(portions) : setNewPortions(portionsFromCard) ;
   },[portions]);
 
   const handlePortions = (e) =>{
@@ -155,14 +135,14 @@ const RecipeDetail = () => {
                       ref={(el) => setupSecureInput(el, presets.number)}
                       onChange={handlePortions} value={newPortions ?? ''}
                       onBlur={() => {
-                        if (newPortions < portions) setNewPortions(portions);
+                        if (newPortions < MIN_PORTIONS) setNewPortions(MIN_PORTIONS);
                         if (newPortions > MAX_PORTIONS) setNewPortions(MAX_PORTIONS);
                       }}
                     >
                     </input>
                     <div className='portion-btns'>
                       <button id='portions-up' onClick={handlePortions} disabled={newPortions == MAX_PORTIONS}>+</button>
-                      <button id='portions-down' onClick={handlePortions} disabled={newPortions == portions}>-</button>
+                      <button id='portions-down' onClick={handlePortions} disabled={newPortions == MIN_PORTIONS}>-</button>
                     </div>
                   </div>
                   <span className='portion-txt'>&nbsp; Personnes</span>
@@ -193,6 +173,10 @@ const RecipeDetail = () => {
     )}
     </>
   );
+};
+
+RecipeDetail.propTypes = {
+  portionsFromCard: PropTypes.number,
 };
 
 export default RecipeDetail;

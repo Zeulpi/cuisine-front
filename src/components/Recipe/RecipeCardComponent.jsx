@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, use } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from 'react-router';
 import { slugify } from '../../utility/slugify.js';
@@ -10,14 +10,45 @@ import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Recipes/RecipeCardComponent.css';
 
 
-export default function RecipeCardComponent({ recipe, isModal = false, cardWidth='100%', chooseMeal=null, chooseDay=null, removeKey= null, dataName=null, dataKey=null }) {
+export default function RecipeCardComponent({ recipe, isModal = false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null }) {
   const navigate = useNavigate();
-
+  const [newPortions, setNewPortions] = useState(localPortions || recipe?.portions || 1); // Si on vient de la card, on prend les portions de la card
+  const [firstRender, setFirstRender] = useState(true);
   const rImage = recipe?.image;
   const isDefaultImage = !rImage;
   const bgImage = isDefaultImage
   ? getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, RESOURCE_ROUTES.DEFAULT_RECIPE_IMAGE)
   : getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, encodeURIComponent(rImage));
+
+  const handleportions = (e) => {
+    // console.log(e.target.id);
+    switch (e.target.id) {
+      case 'portions-up':
+        if (newPortions < 20) {
+          setNewPortions(newPortions + 1);
+        } else {
+          setNewPortions(20);
+        }
+        break;
+      case 'portions-down':
+        if (newPortions > 1) {
+          setNewPortions(newPortions - 1);
+        } else {
+          setNewPortions(1);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() =>{
+    if (!firstRender) {
+      // console.log(dataKey, newPortions);
+      addRecipe(dataKey, recipe, newPortions); // On ajoute la recette au planner
+    }
+    setFirstRender(false);
+  }, [newPortions]);
 
   const handleClick = (recipe, key = null) => {
     // Si on est sur la page RecipeList, on navigue.
@@ -30,9 +61,9 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
       if (chooseMeal && key === null) { // vrai si on ajoute une recette au planner (click depuis le div, modale ouverte avec bouton '+')
         if (chooseDay && dataName && dataKey) { // vrai si on clique sur le la Card dans le planner
           // console.log("chooseDay is defined", dataName, dataKey);
-          navigate(`/recipes/${(recipe.id)}-${slugify(recipe.name)}`);
-          // chooseMeal(recipe, dataKey);  // On retire la recette de l'horaire
-          // chooseDay(dataName, dataKey); //on ouvre la modale de selection de la recette
+          navigate(`/recipes/${recipe.id}-${slugify(recipe.name)}`, {
+            state: { portionsFromCard: newPortions },
+          });
         } else {
           chooseMeal(recipe, null, recipe.portions); // On Ajoute la recette au planner
         }
@@ -66,7 +97,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
             {(isModal && chooseDay && dataName && dataKey) ?
               (
                 <>
-                <div><button>-</button>portions : {recipe.portions}<button>+</button></div>
+                <div><button id='portions-down' onClick={handleportions}>-</button>portions : {newPortions}<button id='portions-up' onClick={handleportions}>+</button></div>
                 </>
               ) : (
                 <>
@@ -104,7 +135,9 @@ RecipeCardComponent.propTypes = {
   cardWidth: PropTypes.string,
   chooseMeal: PropTypes.func,
   chooseDay: PropTypes.func,
+  addRecipe: PropTypes.func,
   removeKey: PropTypes.string,
   dataName: PropTypes.string,
   dataKey: PropTypes.string,
+  localPortions: PropTypes.number,
 };
