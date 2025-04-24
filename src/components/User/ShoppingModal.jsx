@@ -6,10 +6,10 @@ import LoadingComponent from '../Utils/loadingComponent';
 import '../../styles/User/ShoppingModal.css'
 
 
-export default function ShoppingModal({ isOpen, onClose, cardWidth }) {
+export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingIndex }) {
   const userToken = useAppSelector((state) => state.auth.token);
   const planners = useAppSelector(state => state.auth.userPlanner);
-  const userPlanner = planners[0].recipes ;
+  const userPlanner = planners[shoppingIndex].recipes ;
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [ingredients, setIngredients] = useState(null);
@@ -34,7 +34,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth }) {
   useEffect(() => {
     // Re render lors du changement des ingredients
   }
-  , [ingredients]);
+  , [shoppingIndex, ingredients]);
     
 
   return (
@@ -70,4 +70,5 @@ ShoppingModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   cardWidth: PropTypes.string,
+  shoppingIndex: PropTypes.number.isRequired,
 };

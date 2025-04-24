@@ -7,12 +7,14 @@ import { ROUTES } from '../resources/routes-constants'
 import axios from 'axios'
 
 
-export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, userToken) {
+export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, userToken, index) {
 
     let errorMessage = null;
     try {
+      // console.log('Sending planner to server...', index); // Debugging line
       const response = await axios.post(getData(ROUTES.USER_SEND_PLANNER_ROUTE), { 
         token: userToken,
+        index: index,
         day: keyWord,
         recipeId: recipe.id,
         portions: portions
@@ -74,11 +76,12 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
     return errorMessage;
   }
 
-  export async function removeRecipeFromPlanner (keyWord, dispatch, userToken) {
+  export async function removeRecipeFromPlanner (keyWord, dispatch, userToken, index) {
     let errorMessage = null;
     try {
       const response = await axios.post(getData(ROUTES.USER_DELETE_PLANNER_ROUTE), {
         token: userToken,
+        index: index,
         day: keyWord,
       });
       // console.log('Response:', response.data); // Debugging line

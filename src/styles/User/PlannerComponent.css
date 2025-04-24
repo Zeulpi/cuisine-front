@@ -8,6 +8,16 @@
     margin-top: 20px;
   }
 
+  .date-title {
+    padding: 5px;
+    font-size: 20px;
+    color: #00796b;
+    font-weight: bold;
+    text-align: center;
+    background-color: #e1e1e1;
+    border-radius: 15px;
+  }
+
   .planner-update {
     display: flex;
     justify-content: center;

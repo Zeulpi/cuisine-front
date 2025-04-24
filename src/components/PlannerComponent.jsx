@@ -24,7 +24,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
   const [dayKey, setDayKey] = useState(null);
   const useDispatch = useAppDispatch();
   const userToken = useAppSelector((state) => state.auth.token);
-  const [plannerId, setPlannerId] = useState(0);
+  const [plannerId, setPlannerId] = useState(1); // 0 = planner a venir, 1 = planner actif, 2 = planner -1 semaines, 3 = planner -2 semaines
   const planners = useAppSelector(state => state.auth.userPlanner);
   let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
   const userRecipes = useAppSelector(state => state.recipe.recipes);
@@ -95,6 +95,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
     dayChoice !== null ? setIsRecipeModalOpen(true) : setIsRecipeModalOpen(false);
   }, [dayChoice]);
 
+
   const toggleRecipeModal = () => {
     setIsRecipeModalOpen(!isRecipeModalOpen);
   }
@@ -104,7 +105,8 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
 
   const handleAddRecipe = (keyWord, recipe, portions) => { // ajouter un couple jour/recette au planner actif dans le store
     if(keyWord && recipe){
-      const message = sendPlannerToServer(keyWord, recipe, portions, useDispatch, userToken); // Envoi de la recette au serveur
+      // console.log('planner id : ', plannerId);
+      const message = sendPlannerToServer(keyWord, recipe, portions, useDispatch, userToken, plannerId); // Envoi de la recette au serveur
       setError(message); // Envoi de l'erreur au state
     } else {
       console.log('Erreur : clé du jour ou recette manquante.');
@@ -113,7 +115,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
 
   const handleRemoveRecipe = (keyWord) => {
     if(keyWord){
-      const message = removeRecipeFromPlanner(keyWord, useDispatch, userToken); // Envoi de la recette au serveur
+      const message = removeRecipeFromPlanner(keyWord, useDispatch, userToken, plannerId); // Envoi de la recette au serveur
       setError(message); // Envoi de l'erreur au state
     } else {
       console.log('Erreur : clé du jour ou recette manquante.');
@@ -169,14 +171,23 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                   </div>
                 </th>
                 <th className="date-title" colSpan={3}>
-                  <div>
-                  {plannerId === 0
-                    ? "Semaine en cours"
-                    : plannerId > 0 && plannerId <= 3
-                    ? `Il y a ${plannerId} semaine${plannerId > 1 ? "s" : ""}`
-                    : ""
-                  }
-                  </div>
+                <div>
+                  {(() => {
+                    switch (plannerId) {
+                      case 0:
+                        return "Semaine prochaine";
+                      case 1:
+                        return "Semaine actuelle";
+                      case 2:
+                        return "Il y a 1 semaine";
+                      case 3:
+                        return "Il y a 2 semaines";
+                      default:
+                        return "";
+                    }
+                  })()}
+                </div>
+
                 </th>
                 <th className="date-column" colSpan={2}>
                   <div>
@@ -187,7 +198,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
               <tr>
                 {/* Colonne vide avant les jours */}
                 <th className="empty-column">
-                  {plannerId === 0 &&(
+                  {plannerId <= 1 &&(
                     <div className="shopping-container">
                       <button className="shopping-button" onClick={toggleShoppingModal}><FontAwesomeIcon icon={faBars} /></button>
                     </div>
@@ -241,7 +252,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyM}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId === 0} // Si on est sur le planner 0, on active les features d'ajout/suppression, sinon la vignette sera normale
+                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
@@ -254,7 +265,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                       return null;
                     })()
                     ) : (
-                      plannerId === 0 && ( // Si plannerId est 0, on affiche le bouton
+                      plannerId <= 1 && ( // Si plannerId est 0, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
                       <button
                         key={`${dayObj.keyM}`}
@@ -296,7 +307,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyE}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId === 0}
+                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
@@ -309,7 +320,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                       return null;
                     })()
                     ) : (
-                      plannerId === 0 && ( // Si plannerId est 0, on affiche le bouton
+                      plannerId <= 1 && ( // Si plannerId est 0, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
                       <button
                         key={`${dayObj.keyE}`}
@@ -342,7 +353,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
       </BaseModal>
 
       <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%'>
-        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%'/>
+        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' shoppingIndex={plannerId} />
       </BaseModal>
     </div>
   );
