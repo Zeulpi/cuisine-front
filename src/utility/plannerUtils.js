@@ -1,7 +1,8 @@
 // import { useAppDispatch, useAppSelector} from '../store/reducers/store'
 import { setAllRecipes } from '../store/actions/recipe'
 import { getUserFromToken } from '../utility/getUserFromToken'
-import { setUser } from '../store/actions/auth'
+import { setServerTime, setUser } from '../store/actions/auth'
+import { useAppSelector as appSelector } from '../store/reducers/store'
 import { getData } from '../resources/api-constants'
 import { ROUTES } from '../resources/routes-constants'
 import axios from 'axios'
@@ -69,6 +70,10 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
       } else {
         errorMessage = "Aucune recette n'a été renvoyée.";
       }
+      if (response.data.serverTime) {
+        const servTime = response.data.serverTime;
+        dispatch(setServerTime(servTime));
+      }
     } catch (error) {
       console.log('Erreur lors de la connexion :', error.response.data);
       errorMessage = "Erreur lors de la connexion.";
@@ -107,4 +112,19 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
       errorMessage = "Erreur lors de la connexion.";
     }
     return errorMessage;
+  }
+
+  export function getServerTime() {
+    const [day, month, year] = (appSelector(state => state.auth.serverTime)).split('-');
+    const serverTimeDate = new Date(`${year}-${month}-${day}`);
+
+    return serverTimeDate;
+  }
+
+  export function compareDates(serverDate, plannerStart, dayIndex=0) {
+    const [day, month, year] = plannerStart.split('-');
+    const plannerDate = new Date(`${year}-${month}-${day}`);
+    plannerDate.setDate(plannerDate.getDate() + dayIndex);
+
+    return (serverDate <= plannerDate);
   }

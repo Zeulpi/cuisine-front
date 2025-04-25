@@ -1,11 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { Planner } from '../interfaces/planner';
-import { setUser, logout, setToken, setUserEmail, setUserImage, setUserRole, setUserName, setUserPlanner, setPlannerRecipe } from '../actions/auth';
+import { setUser, logout, setToken, setUserEmail, setUserImage, setUserRole, setUserName, setUserPlanner, setPlannerRecipe, setServerTime } from '../actions/auth';
 
 
 
 interface AuthReducer {
   token: string | null;
+  serverTime: string | null;
   userEmail: string | null;
   isLoggedIn: boolean;
   userRole: string[] | null;
@@ -16,6 +17,7 @@ interface AuthReducer {
 
 const initialState: AuthReducer = {
   token: null,
+  serverTime: null,
   userEmail: null,
   isLoggedIn: false,
   userRole: [],
@@ -47,6 +49,9 @@ const authReducer = createReducer<AuthReducer>(initialState, (builder) => {
         state.userPlanner = null;
       })
       // Action pour mettre à jour l'image de l'utilisateur
+      .addCase(setServerTime, (state, action) => {
+        state.serverTime = action.payload;
+      })
       .addCase(setUserImage, (state, action) => {
         state.userImage = action.payload;
       })

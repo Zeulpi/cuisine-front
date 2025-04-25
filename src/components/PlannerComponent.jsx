@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
 import ShoppingModal from "./User/ShoppingModal";
-import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
+import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, compareDates, getServerTime } from "../utility/plannerUtils";
 import '../styles/User/PlannerComponent.css'
 
 const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) => {
@@ -28,6 +28,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
   const planners = useAppSelector(state => state.auth.userPlanner);
   let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
   const userRecipes = useAppSelector(state => state.recipe.recipes);
+  const serverDate = getServerTime();
   const daysOfWeek = [
     { day: "Lundi", keyM: "monM", keyE: "monE" },   // Lundi midi et soir
     { day: "Mardi", keyM: "tueM", keyE: "tueE" },   // Mardi midi et soir
@@ -95,6 +96,10 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
     dayChoice !== null ? setIsRecipeModalOpen(true) : setIsRecipeModalOpen(false);
   }, [dayChoice]);
 
+  useEffect(()=>{
+    plannerId <= 1 ? compareDates(serverDate, (planners[plannerId].weekStart)) : null;
+  }, [plannerId]);
+
 
   const toggleRecipeModal = () => {
     setIsRecipeModalOpen(!isRecipeModalOpen);
@@ -148,7 +153,6 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
     setDayKey(null); // Réinitialiser la clé du jour après l'ajout
     setDayChoice(null); // Réinitialiser le choix du jour après l'ajout
   }
-
 
   return (
     <div className="planner" style={{ '--table-width': plannerWidth }}>
@@ -260,7 +264,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyM}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale
+                              isModal={plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index)} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
@@ -317,7 +321,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyE}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale
+                              isModal={plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index)} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}

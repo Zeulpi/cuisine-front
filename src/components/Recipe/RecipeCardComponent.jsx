@@ -91,7 +91,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
           <img className={`recipe-background ${isDefaultImage ? 'default-background' : ''}`}
             src={bgImage} alt=""
             onClick={() => {(isModal && chooseDay && dataName && dataKey) ? handleClick(recipe) : null}}
-            style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'help' : 'var(--card-cursor)'}}
+            style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'pointer' : 'var(--card-cursor)'}}
           />
           <div className="recipe-footer">
             {(isModal && chooseDay && dataName && dataKey) ?
