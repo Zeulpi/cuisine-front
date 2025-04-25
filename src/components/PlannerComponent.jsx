@@ -11,7 +11,7 @@ import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
 import '../styles/User/PlannerComponent.css'
 
-const PlannerComponent = ({ plannerWidth = '40vw' }) => {
+const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
@@ -152,12 +152,19 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
 
   return (
     <div className="planner" style={{ '--table-width': plannerWidth }}>
+      {isPlannerModal && recipeFromDetail && (
+        <div className='planner-modal-title'>
+          <div className="spacer-div"></div>
+          <h3 className="planner-modal-recipe-name">Choisissez un créneau pour {`"${recipeFromDetail.name}"`}</h3>
+          <button className="planner-close-btn" onClick={plannerModalClose} tabIndex={5}>X</button>
+        </div>
+      )}
       {updated && (
         <div className="planner-update">Nouvelle semaine : Planner mis a jour &nbsp; <button onClick={()=>{setUpdated(false)}}>X</button></div>
       )}
       <div className="planner-frame">
         <div className="planner-prev">
-          {plannerId<3 && (
+          {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
             <span className="planner-prev-arrow" onClick={()=>{plannerId < 3 ? setPlannerId((plannerId+1)) : null}}>&#8678;</span>    
           )}
         </div>
@@ -268,12 +275,12 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                       return null;
                     })()
                     ) : (
-                      plannerId <= 1 && ( // Si plannerId est 0, on affiche le bouton
+                      plannerId <= 1 && ( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
                       <button
                         key={`${dayObj.keyM}`}
                         className="select-button"
-                        onClick={() => {chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
+                        onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyM, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
                         data-name={`${dayObj.day} midi`}
                         data-key={dayObj.keyM}
                       >
@@ -325,12 +332,12 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
                       return null;
                     })()
                     ) : (
-                      plannerId <= 1 && ( // Si plannerId est 0, on affiche le bouton
+                      plannerId <= 1 && ( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
                       <button
                         key={`${dayObj.keyE}`}
                         className="select-button"
-                        onClick={() => {chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
+                        onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyE, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
                         data-name={`${dayObj.day} soir`}
                         data-key={dayObj.keyE}
                       >
@@ -347,7 +354,7 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
         </div>
         <div className="planner-next">
           {plannerId>0 && (
-            <span className="planner-next-arrow" onClick={()=>{plannerId>0 ? setPlannerId((plannerId-1)) : null}}>&#8680;</span>
+            <span className="planner-next-arrow" onClick={()=>{plannerId > 0 ? setPlannerId((plannerId-1)) : null}}>&#8680;</span>
           )}
         </div>
       </div>
@@ -365,7 +372,10 @@ const PlannerComponent = ({ plannerWidth = '40vw' }) => {
 };
 
 PlannerComponent.propTypes = {
-  plannerWidth: PropTypes.string
+  plannerWidth: PropTypes.string,
+  plannerModalClose: PropTypes.func,
+  isPlannerModal: PropTypes.bool,
+  recipeFromDetail: PropTypes.object
 };
 
 export default PlannerComponent;

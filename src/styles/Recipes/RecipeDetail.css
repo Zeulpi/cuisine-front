@@ -2,9 +2,16 @@
   display: flex;
   justify-content: center;
   width: 85%;
+  gap: 10px;
 }
 h1, h2 {
   text-decoration: underline;
+}
+
+.detail-btn-add{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .recipe-ingredients-container, .recipe-steps-container {   

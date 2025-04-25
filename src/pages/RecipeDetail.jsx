@@ -15,6 +15,8 @@ import RecipeStepComponent from '../components/Recipe/RecipeStepComponent.jsx';
 import { setPopStateHandler, clearPopStateHandler } from '../utility/popStateManager.js'
 import StepBlocks from '../components/Recipe/StepBlocks.jsx';
 import '../styles/Recipes/RecipeDetail.css';
+import { BaseModal } from '../components/BaseModale.jsx';
+import PlannerComponent from '../components/PlannerComponent.jsx';
 
 
 const RecipeDetail = () => {
@@ -28,12 +30,15 @@ const RecipeDetail = () => {
   const { portionsFromCard } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [ratio, setRatio] = useState(1);
   const lastFetchedId = useRef(null);
   const MAX_PORTIONS = 20;
   const MIN_PORTIONS = 1;
+  const [isPlannerModalOpen, setIsPlannerModalOpen] = useState(false);
   
-  
+  const togglePlannerModal = () => {
+    setIsPlannerModalOpen(!isPlannerModalOpen);
+  }
+
   const fetchRecipeDetail = async () => {
     const currentId = id; // snapshot de l’ID actuel
     if (lastFetchedId.current === id) return; // Skip si déjà fetché, evite de renvoyer une requete en cas de re-render
@@ -122,7 +127,10 @@ const RecipeDetail = () => {
         {loading && <LoadingComponent loading={loading} loadingText='Chargement de la recette ...'/>}
         {recipe && (
           <>
-            <div className='recipe-title'><h1>{recipe.name}</h1></div>
+            <div className='recipe-title'>
+              <h1>{recipe.name}</h1>
+              <div className='detail-btn-add'><button className="select-button" onClick={togglePlannerModal}>+</button></div>
+            </div>
             <RecipeDetailComponent image={recipe.image} duration={recipe.duration} tags={recipe.tags} />
             <div className='recipe-ingredients-container'>
               <div className='recipe-ingredients-header'>
@@ -169,6 +177,11 @@ const RecipeDetail = () => {
 
         {error && <div className="error-message">{error}</div>}
       </div>
+
+      <BaseModal isOpen={isPlannerModalOpen} cardWidth='60%'>
+        <PlannerComponent plannerWidth='60%' plannerModalClose={togglePlannerModal} isPlannerModal={true} recipeFromDetail={recipe}/>
+      </BaseModal>
+
       </>
     )}
     </>
