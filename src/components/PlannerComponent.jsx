@@ -4,14 +4,18 @@ import { useNavigate, useLocation } from "react-router-dom";
 import RecipeModal from "./User/RecipeModal";
 import { BaseModal } from "./BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
+import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
+import LoadingComponent from "./Utils/loadingComponent";
 import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, compareDates, getServerTime } from "../utility/plannerUtils";
 import '../styles/User/PlannerComponent.css'
 
 const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) => {
+  const useDispatch = useAppDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
@@ -19,15 +23,13 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
   const [isShoppingModalOpen, setIsShoppingModalOpen] = useState(false);
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
   const location = useLocation(); // Récupérer l'URL actuelle de la page
-  const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [dayChoice, setDayChoice] = useState(null);
   const [dayKey, setDayKey] = useState(null);
-  const useDispatch = useAppDispatch();
-  const userToken = useAppSelector((state) => state.auth.token);
+  const userToken = useSelector((state) => state.auth.token);
   const [plannerId, setPlannerId] = useState(1); // 0 = planner a venir, 1 = planner actif, 2 = planner -1 semaines, 3 = planner -2 semaines
-  const planners = useAppSelector(state => state.auth.userPlanner);
+  const planners = useSelector(state => state.auth.userPlanner);
   let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
-  const userRecipes = useAppSelector(state => state.recipe.recipes);
+  const userRecipes = useSelector(state => state.recipe.recipes);
   const serverDate = getServerTime();
   const daysOfWeek = [
     { day: "Lundi", keyM: "monM", keyE: "monE" },   // Lundi midi et soir
@@ -40,12 +42,20 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
   ];
 
   useEffect(() => { // Vérification de la connexion de l'utilisateur
+    async function retrievePlanner() {
+      setLoading(true);
+      const response = await getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
+      setLoading(false);
+      return response;
+    }
+
     if (!isLoggedIn) {
       navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
     } else {
       setLoading(true);
-      const response = getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
-      response == 'updated' ? setUpdated(true) : null;
+      
+      let data = retrievePlanner();
+      data == 'updated' ? setUpdated(true) : null;
       
       setLoading(false);
     }
@@ -108,24 +118,28 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
     setIsShoppingModalOpen(!isShoppingModalOpen);
   }
 
-  const handleAddRecipe = (keyWord, recipe, portions) => { // ajouter un couple jour/recette au planner actif dans le store
+  async function handleAddRecipe (keyWord, recipe, portions) { // ajouter un couple jour/recette au planner actif dans le store
+    setLoading(true);
     if(keyWord && recipe){
       // console.log('planner id : ', plannerId);
-      const message = sendPlannerToServer(keyWord, recipe, portions, useDispatch, userToken, plannerId); // Envoi de la recette au serveur
+      const message = await sendPlannerToServer(keyWord, recipe, portions, useDispatch, userToken, plannerId); // Envoi de la recette au serveur
       setError(message); // Envoi de l'erreur au state
     } else {
       console.log('Erreur : clé du jour ou recette manquante.');
     }
-  };
+    setLoading(false);
+  }
 
-  const handleRemoveRecipe = (keyWord) => {
+  async function handleRemoveRecipe (keyWord) {
+    setLoading(true);
     if(keyWord){
-      const message = removeRecipeFromPlanner(keyWord, useDispatch, userToken, plannerId); // Envoi de la recette au serveur
+      const message = await removeRecipeFromPlanner(keyWord, useDispatch, userToken, plannerId); // Envoi de la recette au serveur
       setError(message); // Envoi de l'erreur au state
     } else {
       console.log('Erreur : clé du jour ou recette manquante.');
     }
-  };
+    setLoading(false);
+  }
 
   const chooseDay = (name=null, key=null) => {
     // console.log(name, key);
@@ -133,7 +147,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
     if (name && key) {
       setDayChoice(name);
       setDayKey(key);
-      console.log(`Recette choisie pour ${name} :`, key);
+      // console.log(`Recette choisie pour ${name} :`, key);
     }
     else {
       setDayChoice(null);
@@ -166,6 +180,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
       {updated && (
         <div className="planner-update">Nouvelle semaine : Planner mis a jour &nbsp; <button onClick={()=>{setUpdated(false)}}>X</button></div>
       )}
+      <LoadingComponent loading={loading} />
       <div className="planner-frame">
         <div className="planner-prev">
           {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
@@ -279,7 +294,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                       return null;
                     })()
                     ) : (
-                      plannerId <= 1 && ( // Si planner active ou future, on affiche le bouton
+                      plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
                       <button
                         key={`${dayObj.keyM}`}
@@ -287,6 +302,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                         onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyM, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
                         data-name={`${dayObj.day} midi`}
                         data-key={dayObj.keyM}
+                        disabled={loading}
                       >
                         +
                       </button>
@@ -336,7 +352,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                       return null;
                     })()
                     ) : (
-                      plannerId <= 1 && ( // Si planner active ou future, on affiche le bouton
+                      plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
                       <button
                         key={`${dayObj.keyE}`}
@@ -344,6 +360,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                         onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyE, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
                         data-name={`${dayObj.day} soir`}
                         data-key={dayObj.keyE}
+                        disabled={loading}
                       >
                         +
                       </button>

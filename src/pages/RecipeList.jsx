@@ -24,17 +24,6 @@ const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
     search: location.state?.fastSearch || '',
     tags: [],
   });
-  
-  // useEffect(() => {
-  //   clearPopStateHandler();
-  //   if (location.state?.fromRecipeList) {
-  //     setFilters(location.state.filters || {});
-  //     setPage(location.state.page || 1);
-  //     setTimeout(() => {
-  //       window.scrollTo(0, location.state.scroll || 0);
-  //     }, 50);
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (location.state?.fastSearch) {

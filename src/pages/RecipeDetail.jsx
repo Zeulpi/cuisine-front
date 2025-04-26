@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types';  // Validation des props
 import { useParams } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAppSelector } from '../store/reducers/store';
 import axios from 'axios';
 import { extractIdAndSlug } from '../utility/slugify.js';
 import { slugify } from '../utility/slugify.js';
@@ -11,8 +12,6 @@ import { setupSecureInput, presets } from '../utility/inputSanitizer.js';
 import LoadingComponent from '../components/Utils/loadingComponent.jsx';
 import RecipeDetailComponent from '../components/Recipe/RecipeDetailComponent.jsx';
 import RecipeIngredientComponent from '../components/Recipe/RecipeIngredientComponent.jsx';
-import RecipeStepComponent from '../components/Recipe/RecipeStepComponent.jsx';
-import { setPopStateHandler, clearPopStateHandler } from '../utility/popStateManager.js'
 import StepBlocks from '../components/Recipe/StepBlocks.jsx';
 import '../styles/Recipes/RecipeDetail.css';
 import { BaseModal } from '../components/BaseModale.jsx';
@@ -23,6 +22,7 @@ const RecipeDetail = () => {
   const { sluggedId } = useParams();
   const { id, slug } = extractIdAndSlug(sluggedId);
   const [recipe, setRecipe] = useState(null);
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [portions, setPortions] = useState(null);
   const [newPortions, setNewPortions] = useState(null);
   const navigate = useNavigate();
@@ -35,6 +35,28 @@ const RecipeDetail = () => {
   const MIN_PORTIONS = 1;
   const [isPlannerModalOpen, setIsPlannerModalOpen] = useState(false);
   
+  useEffect(() => { // Ajustement dynamique du bouton 'add to planner'
+    const adjustAddButton = () => {
+      const header = document.getElementById("app-header");
+      const footer = document.getElementById("app-footer");
+      const addButton = document.getElementById("detail-btn-add");
+
+      if (header && footer && addButton) {
+        addButton.style.top = `${header.offsetHeight + 20}px`;
+        addButton.style.right = '20px';
+      }
+    };
+  
+    window.addEventListener("load", adjustAddButton);
+    window.addEventListener("resize", adjustAddButton);
+    adjustAddButton(); // initial call
+  
+    return () => {
+      window.removeEventListener("load", adjustAddButton);
+      window.removeEventListener("resize", adjustAddButton);
+    };
+  }, [isLoggedIn, recipe]);
+
   const togglePlannerModal = () => {
     setIsPlannerModalOpen(!isPlannerModalOpen);
   }
@@ -123,14 +145,18 @@ const RecipeDetail = () => {
       {recipe?.name ? `${process.env.REACT_APP_APP_NAME} - ${recipe.name}` : process.env.REACT_APP_APP_NAME}
       </title>
       
+      {isLoggedIn && (
+        <div className='detail-btn-add' id='detail-btn-add' title='Ajouter la recette au planner'><button className="select-button" onClick={togglePlannerModal}>+</button></div>
+      )}
+      
       <div className='recipe-detail-page'>
         {loading && <LoadingComponent loading={loading} loadingText='Chargement de la recette ...'/>}
         {recipe && (
           <>
             <div className='recipe-title'>
               <h1>{recipe.name}</h1>
-              <div className='detail-btn-add'><button className="select-button" onClick={togglePlannerModal}>+</button></div>
             </div>
+          
             <RecipeDetailComponent image={recipe.image} duration={recipe.duration} tags={recipe.tags} />
             <div className='recipe-ingredients-container'>
               <div className='recipe-ingredients-header'>
