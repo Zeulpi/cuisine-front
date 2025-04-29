@@ -10,7 +10,7 @@ export async function getToken (email, password, dispatch) {
   try {
     const response = await axios.post(getData(ROUTES.LOGIN_ROUTE),{ email, password });
     
-    response ? console.log("Réponse du serveur :", response) : console.log("Aucune réponse du serveur");
+    // response ? console.log("Réponse du serveur :", response) : console.log("Aucune réponse du serveur");
     
     if (response && response.data.token) {
       const token = response.data.token;
@@ -24,7 +24,7 @@ export async function getToken (email, password, dispatch) {
       dispatch(setServerTime(servTime));
     }
   } catch (error) {
-    errorMessage = "Erreur lors de la connexion. 500";
+    errorMessage = error.response?.data.error;
   }
   return errorMessage;
 }

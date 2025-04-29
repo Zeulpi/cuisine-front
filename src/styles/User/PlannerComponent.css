@@ -100,7 +100,7 @@
     align-items: center;
     gap: 30px;
   }
-  .planner-prev-arrow, .planner-next-arrow {
+  #planner-prev-arrow, #planner-next-arrow {
     display: flex;
     justify-content: center;
     align-items: center;

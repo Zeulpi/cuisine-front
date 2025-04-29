@@ -52,7 +52,8 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
             token: userToken
         },
       });
-      
+      // console.log(response);
+
       // Vérification de la réponse et mise à jour du store utilisateur
       if (response.data.token) {
         const newToken = response.data.token;

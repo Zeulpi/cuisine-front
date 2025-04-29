@@ -52,12 +52,12 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
     if (!isLoggedIn) {
       navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
     } else {
-      setLoading(true);
+      // setLoading(true);
       
       let data = retrievePlanner();
       data == 'updated' ? setUpdated(true) : null;
       
-      setLoading(false);
+      // setLoading(false);
     }
   }, [isLoggedIn, navigate]);
   
@@ -108,6 +108,9 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
 
   useEffect(()=>{
     plannerId <= 1 ? compareDates(serverDate, (planners[plannerId].weekStart)) : null;
+    // daysOfWeek.map((dayObj, index) => {
+    //   console.log(index, !compareDates(serverDate, planners[plannerId].weekStart, index));
+    // });
   }, [plannerId]);
 
 
@@ -139,6 +142,22 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
       console.log('Erreur : clé du jour ou recette manquante.');
     }
     setLoading(false);
+  }
+
+  const handlePlannerChange = (event) => {
+    switch (event.target.id) {
+      case 'planner-next-arrow':
+        // console.log('next');
+        plannerId > 0 ? setPlannerId((plannerId-1)) : null;
+        break;
+      case 'planner-prev-arrow':
+        // console.log('prev');
+        plannerId < 3 ? setPlannerId((plannerId+1)) : null;
+        break;
+    
+      default:
+        break;
+    }
   }
 
   const chooseDay = (name=null, key=null) => {
@@ -183,8 +202,8 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
       <LoadingComponent loading={loading} />
       <div className="planner-frame">
         <div className="planner-prev">
-          {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
-            <span className="planner-prev-arrow" onClick={()=>{plannerId < 3 ? setPlannerId((plannerId+1)) : null}}>&#8678;</span>    
+          {((plannerId < 3 && isPlannerModal == false) || (plannerId <= 1 && isPlannerModal == true) ) && (
+            <span id="planner-prev-arrow" onClick={handlePlannerChange}>&#8678;</span>    
           )}
         </div>
         <div>
@@ -275,11 +294,13 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                       const recipe = userRecipes[recipeId];
                       // Passer la recette en prop à RecipeCardComponent et gérer la suppression
                       if (recipe) {
+                        // console.log(dayObj.keyM, compareDates(serverDate, planners[plannerId].weekStart, index));
                         return (
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyM}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index)} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
@@ -337,7 +358,8 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyE}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index)} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
                               cardWidth="150px"
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
@@ -374,8 +396,8 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
           </table>
         </div>
         <div className="planner-next">
-          {plannerId>0 && (
-            <span className="planner-next-arrow" onClick={()=>{plannerId > 0 ? setPlannerId((plannerId-1)) : null}}>&#8680;</span>
+          {plannerId > 0 && (
+            <span id="planner-next-arrow" onClick={handlePlannerChange}>&#8680;</span>
           )}
         </div>
       </div>

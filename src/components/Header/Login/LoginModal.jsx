@@ -25,15 +25,19 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
     setLoading(true);
 
     const loginMessage = await getToken(email, password, dispatch);  // Appel de la fonction pour obtenir le token
-    
+    // console.log(loginMessage);
+    setErrorMessage(loginMessage);
+
     if (loginMessage === null) {
-      console.log(loginMessage);
+      // console.log(loginMessage);
       onClose();
       location.pathname.includes("/register") ? navigate("/") : null;
-    } else {
-      setErrorMessage('erreur : ', loginMessage);
     }
+    // else {
+    //   setErrorMessage('erreur : ', loginMessage);
+    // }
     setLoading(false);
+    // return loginMessage;
   };
 
   if (!isOpen) return null;  // Ne rien afficher si la modale n'est pas ouverte
@@ -65,6 +69,7 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
               />
             </div>
           </div>
+          {console.log(errorMessage)}
           {errorMessage && <p>{errorMessage}</p>}
           <LoadingComponent loading={loading} loadingText="Connecting ..." />
           <div className="form-btns">

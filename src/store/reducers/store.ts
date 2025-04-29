@@ -15,8 +15,7 @@ const persistedReducer = persistReducer(
     {
         key: 'root',
         storage,
-        whitelist: ['data', 'auth', 'recipe'],
-        debug: true,
+        whitelist: ['auth', 'recipe'],
     },
     rootReducer
 )

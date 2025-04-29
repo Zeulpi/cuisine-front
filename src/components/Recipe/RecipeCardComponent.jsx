@@ -10,7 +10,7 @@ import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Recipes/RecipeCardComponent.css';
 
 
-export default function RecipeCardComponent({ recipe, isModal = false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null }) {
+export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null }) {
   const navigate = useNavigate();
   const [newPortions, setNewPortions] = useState(localPortions || recipe?.portions || 1); // Si on vient de la card, on prend les portions de la card
   const [firstRender, setFirstRender] = useState(true);
@@ -42,7 +42,11 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
     }
   };
 
-  useEffect(() =>{
+  useEffect(()=>{
+    // console.log(removeKey, isExpired);
+  }, [isExpired])
+
+  useEffect(() => { // Quand les portions changent (avec les boutons - et +), on appelle addRecipe pour modifier la recette dans le planner (sauf au 1er render)
     if (!firstRender) {
       // console.log(dataKey, newPortions);
       addRecipe(dataKey, recipe, newPortions); // On ajoute la recette au planner
@@ -51,16 +55,15 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
   }, [newPortions]);
 
   const handleClick = (recipe, key = null) => {
-    // Si on est sur la page RecipeList, on navigue.
-    // console.log(recipe, key);
-    
     if (!isModal) { // vrai si on est sur la page RecipeList
       navigate(`/recipes/${(recipe.id)}-${slugify(recipe.name)}`);
-      // console.log(isModal, 'on navigue');
+      // console.log(recipe.id, slugify(recipe.name));
+      
     } else {
       if (chooseMeal && key === null) { // vrai si on ajoute une recette au planner (click depuis le div, modale ouverte avec bouton '+')
-        if (chooseDay && dataName && dataKey) { // vrai si on clique sur le la Card dans le planner
+        if (chooseDay && dataName && dataKey) { // vrai si on clique sur la Card dans le planner
           // console.log("chooseDay is defined", dataName, dataKey);
+          // console.log(recipe.id, slugify(recipe.name));
           navigate(`/recipes/${recipe.id}-${slugify(recipe.name)}`, {
             state: { portionsFromCard: newPortions },
           });
@@ -79,7 +82,11 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
     <>
     {recipe && (
       <div className="recipe-card" style={{ '--card-width': cardWidth }} >
-        <><button className='recipe-remove' style={{display: (isModal && removeKey) ? 'block' : 'none'}} onClick={() => {(isModal && removeKey) ?handleClick(recipe, removeKey):null}}>X</button></>
+        <>
+          {!isExpired && isModal && (
+            <button className='recipe-remove' style={{display: (isModal && removeKey) ? 'block' : 'none'}} onClick={() => {(isModal && removeKey) ?handleClick(recipe, removeKey):null}}>X</button>
+          )}
+        </>
         <div className="recipe-content"
           onClick={() => {(isModal && chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
           data-id={recipe.id}
@@ -132,6 +139,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, cardWidth
 RecipeCardComponent.propTypes = {
   recipe: PropTypes.object,
   isModal: PropTypes.bool,
+  isExpired: PropTypes.bool,
   cardWidth: PropTypes.string,
   chooseMeal: PropTypes.func,
   chooseDay: PropTypes.func,
