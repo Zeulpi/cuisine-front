@@ -28,8 +28,8 @@ const RootComponent: React.FC = () => {
           <Route path="recipes" element={<RecipeList />} />
           <Route path="recipes/:sluggedId" element={<RecipeDetail />} />
           <Route path="register" element={<Register />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   )

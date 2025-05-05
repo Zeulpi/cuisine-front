@@ -4,15 +4,16 @@ import { useAppSelector, useAppDispatch } from "../../store/reducers/store";
 import { logout } from "../../store/actions/auth";
 import { clearRecipes } from "../../store/actions/recipe";
 import LoginModal from "./Login/LoginModal";
-import { RESOURCE_ROUTES } from './../../resources/routes-constants';
+import { RESOURCE_ROUTES, baseUrl } from './../../resources/routes-constants';
 import { getResource } from './../../resources/back-constants';
+import { getRolesFromToken } from "../../utility/getUserFromToken";
 import './../../styles/login.css';
 import './../../styles/Header/login/user.css'
 import { Link } from "react-router-dom"; // Importer Link pour la navigation
 import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginComponent = ({ openLoginModal, prefillEmail }) => {
-    const { userEmail, userImage, isLoggedIn } = useAppSelector((state) => state.auth);
+    const { token, userEmail, userImage, isLoggedIn } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();  // Récupérer dispatch pour envoyer des actions
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
@@ -35,13 +36,17 @@ const LoginComponent = ({ openLoginModal, prefillEmail }) => {
     const toggleModal = () => setIsModalOpen(!isModalOpen);
 
     // Fonction pour se déconnecter
-      const handleLogout = () => {
+    const handleLogout = () => {
         dispatch(logout());  // Déconnecter l'utilisateur en envoyant l'action logout au store Redux
         dispatch(clearRecipes());  // Vider les recettes du storage
         if (location.pathname.includes("/user")) {
             navigate("/");  // Rediriger vers la page d'accueil si l'utilisateur est sur une page réservée
         }
-      };
+    };
+
+    const handleAdmin = () => {
+        window.open(baseUrl+"/admin", "_blank")
+    };
 
     return (
         <>
@@ -57,7 +62,13 @@ const LoginComponent = ({ openLoginModal, prefillEmail }) => {
                         />
                     </div>
                     </Link>
-                <button onClick={handleLogout} className="logout-btn">Logout</button> {/* Bouton Logout */}
+                    <div className="log-btns">
+                        <button onClick={handleLogout} className="logout-btn">Logout</button> {/* Bouton Logout */}
+                        { getRolesFromToken(token) && (
+                            <button onClick={handleAdmin} className="admin-btn">Admin</button>
+                        )
+                        }
+                    </div>
                 </div>
             ) : (
                 // Sinon, afficher le bouton Login

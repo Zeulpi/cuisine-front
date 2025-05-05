@@ -187,6 +187,24 @@
     padding: 0;
   }
   
+  .button-card {
+    --card-cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 1rem;
+    border: 1px solid lightgray;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  
+    width: var(--card-width);
+    max-width: 450px;
+    aspect-ratio: 3 / 2; /* plus compact que 4/3 */
+    min-height: 200px;
+  }
+
   /* Les boutons centrés dans chaque cellule de jour */
   .select-button {
     width: 30px;

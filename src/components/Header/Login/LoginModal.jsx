@@ -55,6 +55,7 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onPaste={(e) => setEmail(e.target.value)}
                 tabIndex={1}  // Pour l'accessibilité
                 autoFocus
               />
@@ -65,11 +66,12 @@ const LoginModal = ({ isOpen, onClose, prefillEmail = null }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onPaste={(e) => setPassword(e.target.value)}
                 tabIndex={2}  // Pour l'accessibilité
               />
             </div>
           </div>
-          {console.log(errorMessage)}
+          {/* {errorMessage && console.log(errorMessage)} */}
           {errorMessage && <p>{errorMessage}</p>}
           <LoadingComponent loading={loading} loadingText="Connecting ..." />
           <div className="form-btns">

@@ -14,6 +14,7 @@ import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, co
 import '../styles/User/PlannerComponent.css'
 
 const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) => {
+  const cardWidth = "150px";
   const useDispatch = useAppDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [loading, setLoading] = useState(true);
@@ -196,13 +197,13 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
           <button className="planner-close-btn" onClick={plannerModalClose} tabIndex={5}>X</button>
         </div>
       )}
-      {updated && (
+      {updated == true && (
         <div className="planner-update">Nouvelle semaine : Planner mis a jour &nbsp; <button onClick={()=>{setUpdated(false)}}>X</button></div>
       )}
       <LoadingComponent loading={loading} />
       <div className="planner-frame">
         <div className="planner-prev">
-          {((plannerId < 3 && isPlannerModal == false) || (plannerId <= 1 && isPlannerModal == true) ) && (
+          {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
             <span id="planner-prev-arrow" onClick={handlePlannerChange}>&#8678;</span>    
           )}
         </div>
@@ -301,7 +302,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                               recipe={recipe} // Passer la recette complète en prop
                               isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
                               isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
-                              cardWidth="150px"
+                              cardWidth={cardWidth}
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
                               removeKey={dayObj.keyM}
@@ -317,16 +318,18 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                     ) : (
                       plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
-                      <button
-                        key={`${dayObj.keyM}`}
-                        className="select-button"
-                        onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyM, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
-                        data-name={`${dayObj.day} midi`}
-                        data-key={dayObj.keyM}
-                        disabled={loading}
-                      >
-                        +
-                      </button>
+                      <div className="button-card" style={{ '--card-width': cardWidth }} >
+                        <button
+                          key={`${dayObj.keyM}`}
+                          className="select-button"
+                          onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyM, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
+                          data-name={`${dayObj.day} midi`}
+                          data-key={dayObj.keyM}
+                          disabled={loading}
+                        >
+                          +
+                        </button>
+                      </div>
                       )
                     )}
                   </div>
@@ -360,7 +363,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                               recipe={recipe} // Passer la recette complète en prop
                               isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
                               isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
-                              cardWidth="150px"
+                              cardWidth={cardWidth}
                               chooseMeal={chooseMeal}
                               chooseDay={chooseDay}
                               addRecipe = {handleAddRecipe}
@@ -376,16 +379,18 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                     ) : (
                       plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
-                      <button
-                        key={`${dayObj.keyE}`}
-                        className="select-button"
-                        onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyE, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
-                        data-name={`${dayObj.day} soir`}
-                        data-key={dayObj.keyE}
-                        disabled={loading}
-                      >
-                        +
-                      </button>
+                      <div className="button-card" style={{ '--card-width': cardWidth }} >
+                        <button
+                          key={`${dayObj.keyE}`}
+                          className="select-button"
+                          onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyE, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
+                          data-name={`${dayObj.day} soir`}
+                          data-key={dayObj.keyE}
+                          disabled={loading}
+                        >
+                          +
+                        </button>
+                      </div>
                       )
                     )}
                   </div>
