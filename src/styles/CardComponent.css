@@ -1,0 +1,138 @@
+.basic-card {
+    --basic-card-width: 100%;
+    --basic-card-height: 200px;
+    --basic-card-cursor: help;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    border-radius: 1rem;
+    border: 1px solid lightgray;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 50px;
+    width: var(--basic-card-width);
+    max-width: 450px;
+    aspect-ratio: 3 / 2; /* plus compact que 4/3 */
+    min-height: var(--basic-card-height);
+  }
+
+  .basic-card:hover {
+    transform: scale(1.01);
+  }
+  
+  .card-remove {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: red;
+    border-radius: 50%;
+    padding: 0.2rem;
+    cursor: var(--basic-card-cursor);
+    z-index: 2;
+    transition: background-color 0.3s ease;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .card-content {
+    /* position: relative; */
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    cursor: var(--basic-card-cursor);
+  }
+
+  .card-header {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+}
+
+.card-body {
+  position: relative;
+  top: 0;
+}
+
+.card-bg-container{
+  display: flex;
+  max-width: 100%;
+  justify-content: center;
+  max-height: 100%;
+}
+
+.card-background {
+  /* position: relative;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  z-index: 0; */
+  object-position: center;
+  object-fit: cover;
+  max-width: 100%;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.default-card-background {
+  opacity: 0.25;
+  filter: grayscale(10%);
+}
+
+.card-description{
+  position: absolute;
+  display: none;
+  background-color: black;
+  color: white;
+  opacity: 60%;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  padding: 5%;
+}
+.card-footer {
+  background-color: rgba(255, 255, 255, 0.92);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0.5rem 1rem;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+  
+  .card-duration {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #4b5563;
+  }
+  
+  .icon-clock {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  
+  .card-tag {
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  
