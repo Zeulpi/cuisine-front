@@ -2,8 +2,6 @@ import { createReducer } from '@reduxjs/toolkit';
 import { setRecipe, removeRecipe, clearRecipes, setAllRecipes } from '../actions/recipe';
 import { Recipe } from '../interfaces/recipe'; // Importer l'interface Recipe
 
-// Définir l'interface de chaque recette
-
 
 // Définir l'interface globale du state du reducer
 interface RecipeReducer {

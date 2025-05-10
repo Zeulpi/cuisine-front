@@ -9,6 +9,7 @@ const NavRight = () => {
     const location = useLocation();
     
     const isPlanner = ((location.pathname).includes('/user/planner')) ? true : false;
+    const isFridge = ((location.pathname).includes('/user/inventory')) ? true : false;
     const locationColor = 'MediumSlateBlue';
     const locationNotColor = 'black';
 
@@ -16,7 +17,7 @@ const NavRight = () => {
         <div className="right-nav">
             {isLoggedIn && (
                 <ul>
-                    <li><Link to="user/inventory">Frigo</Link></li>
+                    <li><Link to="user/inventory" style={{color: (isFridge) ? locationColor : locationNotColor}}>Frigo</Link></li>
                     <li><Link to="user/planner" style={{color: (isPlanner) ? locationColor : locationNotColor}}>Planner</Link></li>
                 </ul>
             )}

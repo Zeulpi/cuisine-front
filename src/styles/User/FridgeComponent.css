@@ -1,0 +1,159 @@
+/* PlannerComponent.css */
+
+  .fridge {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: var(--table-width);
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .date-title {
+    padding: 5px;
+    font-size: 20px;
+    color: #00796b;
+    font-weight: bold;
+    text-align: center;
+    background-color: #e1e1e1;
+    border-radius: 15px;
+  }
+
+  .fridge-update {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-bottom: 20px;
+    padding: 5px;
+    font-size: 20px;
+    color: #00796b;
+    font-weight: bold;
+    text-align: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    border : 1px solid red;
+  }
+
+  .fridge-modal-title{
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+  }
+  .fridge-modal-recipe-name{
+    font-size: 1.2rem;
+  }
+  .fridge-close-btn{
+    margin-right: 10px;
+    cursor: pointer;
+    border: none;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .fridge-update button {
+    background-color: #00796b73;
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+  .fridge-update button:hover {
+    background-color: #005f56a2;
+  }
+
+  .fridge-frame{
+    display: flex;
+  }
+
+/* Styles généraux du tableau */
+  .fridge-table {
+    min-width: 70%;
+    border-collapse: collapse; /* Fusionner les bordures */
+  }
+
+  .fridge-prev, .fridge-next {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #fridge-prev-arrow, #fridge-next-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #00796b;
+    font-size: 20px;
+    width: 50px; /* Largeur de la flèche */
+    height: 50px; /* Hauteur de la flèche */
+    background-color: #d0f7fa; /* Couleur de fond plus claire et fraîche (bleu pâle) */
+    border: 1px solid #a0f7fa;
+    border-radius: 50%; /* Arrondir les coins pour faire un cercle */
+    cursor: pointer; /* Changer le curseur au survol */
+    margin: 0 10px; /* Espacement entre les flèches et le tableau */
+  }
+
+  .fridge-prev-arrow:hover, .fridge-next-arrow:hover {
+    background-color: #b0f7fa;
+  }
+  
+  /* Conteneur des boutons alignés horizontalement */
+  .fridge-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+  }
+  
+  .fridge-button-card {
+    --card-cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 1rem;
+    border: 1px solid lightgray;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  
+    width: var(--card-width);
+    max-width: 450px;
+    aspect-ratio: 3 / 2; /* plus compact que 4/3 */
+    min-height: 200px;
+  }
+
+  /* Les boutons centrés dans chaque cellule de jour */
+  .fridge-select-button {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Hover des boutons */
+  .fridge-select-button:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+  
+  .fridge-select-button:disabled,.select-button:disabled:hover {
+    background-color: #d3d3d3;
+    border-color: #b3b3b3;
+    cursor: default;
+  }

@@ -11,15 +11,19 @@ export const ROUTES = {
     USER_DELETE_PLANNER_ROUTE: '/user-planner-deleterecipe',
     USER_GET_PLANNER_ROUTE: '/user-planner-get',
     USER_GET_SHOPPING_ROUTE: '/user-shopping-get',
+    USER_ADD_FRIDGE_ROUTE: '/user-fridge-addingredient',
+    USER_GET_FRIDGE_ROUTE: '/user-fridge-getingredients',
     REGISTER_ROUTE: '/user-register',
     TAG_ROUTE: '/tags',
   }
 
 export const RESOURCE_ROUTES = {
+    GLOBAL_IMAGE_ROUTE: '/images/',
     AVATAR_ROUTE: '/images/avatar/',
     RECIPE_IMAGE_ROUTE: '/images/recipes/',
     INGREDIENT_IMAGE_ROUTE: '/images/ingredients/',
     DEFAULT_AVATAR: 'defaut-user.webp',
     DEFAULT_RECIPE_IMAGE: 'defaut-recipe.png',
     DEFAULT_INGREDIENT_IMAGE: 'defaut-ingredient.png',
+    DEFAULT_FEATURE_IMAGE: 'default-feature.png',
   }

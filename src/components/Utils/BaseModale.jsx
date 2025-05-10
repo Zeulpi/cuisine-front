@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';  // Validation des props
-import '../styles/BaseModal.css'
+import '../../styles/BaseModal.css'
 
 export const BaseModal = ({ isOpen, onClose, children, cardWidth }) => {
   useEffect(() => { // Ajustement dynamique de la position verticale de la modale

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import CardComponent from '../Utils/CardComponent.jsx';
 import { useNavigate, useLocation } from 'react-router';
 import { slugify } from '../../utility/slugify.js';
 import { getTextColor } from '../../utility/getTextColor.js';
@@ -16,9 +17,10 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
   const [firstRender, setFirstRender] = useState(true);
   const rImage = recipe?.image;
   const isDefaultImage = !rImage;
-  const bgImage = isDefaultImage
-  ? getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, RESOURCE_ROUTES.DEFAULT_RECIPE_IMAGE)
-  : getResource(RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE, encodeURIComponent(rImage));
+  const bgImage = getResource(
+      RESOURCE_ROUTES.RECIPE_IMAGE_ROUTE,
+      isDefaultImage ? RESOURCE_ROUTES.DEFAULT_RECIPE_IMAGE : encodeURIComponent(rImage)
+    );
 
   const handleportions = (e) => {
     // console.log(e.target.id);
@@ -81,12 +83,12 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
   return (
     <>
     {recipe && (
-      <div className="recipe-card" style={{ '--card-width': cardWidth }} >
-        <>
-          {!isExpired && isModal && (
-            <button className='recipe-remove' style={{display: (isModal && removeKey) ? 'block' : 'none'}} onClick={() => {(isModal && removeKey) ?handleClick(recipe, removeKey):null}}>X</button>
-          )}
-        </>
+      <CardComponent cardWidth={cardWidth}>
+      <>
+        {!isExpired && isModal && (
+          <button className='recipe-remove' style={{display: (isModal && removeKey) ? 'block' : 'none'}} onClick={() => {(isModal && removeKey) ?handleClick(recipe, removeKey):null}}>X</button>
+        )}
+        
         <div className="recipe-content"
           onClick={() => {(isModal && chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
           data-id={recipe.id}
@@ -101,7 +103,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
             style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'pointer' : 'var(--card-cursor)'}}
           />
           <div className="recipe-footer">
-            {(isModal && chooseDay && dataName && dataKey) ?
+            {(isModal && chooseDay && dataName && dataKey && !isExpired) ?
               (
                 <>
                 <div><button id='portions-down' onClick={handleportions}>-</button>portions : {newPortions}<button id='portions-up' onClick={handleportions}>+</button></div>
@@ -130,7 +132,8 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
               )}
           </div>
         </div>
-      </div>
+      </>
+      </CardComponent>
     )}
     </>
   );

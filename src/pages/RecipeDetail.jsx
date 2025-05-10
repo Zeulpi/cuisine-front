@@ -14,7 +14,7 @@ import RecipeDetailComponent from '../components/Recipe/RecipeDetailComponent.js
 import RecipeIngredientComponent from '../components/Recipe/RecipeIngredientComponent.jsx';
 import StepBlocks from '../components/Recipe/StepBlocks.jsx';
 import '../styles/Recipes/RecipeDetail.css';
-import { BaseModal } from '../components/BaseModale.jsx';
+import { BaseModal } from '../components/Utils/BaseModale.jsx';
 import PlannerComponent from '../components/PlannerComponent.jsx';
 
 

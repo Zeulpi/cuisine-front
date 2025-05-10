@@ -3,19 +3,21 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from 'redux-persist/lib/storage' // defaults to localStorage
 import auth from './auth'
 import recipe from './recipe'
+import fridge from './fridge'
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 const rootReducer = combineReducers({
     auth,
     recipe,
+    fridge,
 })
 
 const persistedReducer = persistReducer(
     {
         key: 'root',
         storage,
-        whitelist: ['auth', 'recipe'],
+        whitelist: ['auth', 'recipe', 'fridge'],
     },
     rootReducer
 )

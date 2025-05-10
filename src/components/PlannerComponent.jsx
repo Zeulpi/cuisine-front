@@ -1,8 +1,8 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from "react-router-dom";
 import RecipeModal from "./User/RecipeModal";
-import { BaseModal } from "./BaseModale";
+import { BaseModal } from "./Utils/BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,7 +10,8 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
 import LoadingComponent from "./Utils/loadingComponent";
 import ShoppingModal from "./User/ShoppingModal";
-import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, compareDates, getServerTime } from "../utility/plannerUtils";
+import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
+import {getServerTime, compareDates} from "../utility/dateUtils";
 import '../styles/User/PlannerComponent.css'
 
 const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) => {
@@ -22,12 +23,13 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
   const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
   const [isShoppingModalOpen, setIsShoppingModalOpen] = useState(false);
+  const [data, setData] = useState(null);
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
   const location = useLocation(); // Récupérer l'URL actuelle de la page
   const [dayChoice, setDayChoice] = useState(null);
   const [dayKey, setDayKey] = useState(null);
   const userToken = useSelector((state) => state.auth.token);
-  const [plannerId, setPlannerId] = useState(1); // 0 = planner a venir, 1 = planner actif, 2 = planner -1 semaines, 3 = planner -2 semaines
+  const [plannerId, setPlannerId] = useState(1); // 0 = planner a venir, 1 = planner actif, 2 = planner -1 semaine, 3 = planner -2 semaines
   const planners = useSelector(state => state.auth.userPlanner);
   let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
   const userRecipes = useSelector(state => state.recipe.recipes);
@@ -42,26 +44,27 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
     { day: "Dimanche", keyM: "sunM", keyE: "sunE" }, // Dimanche midi et soir
   ];
 
-  useEffect(() => { // Vérification de la connexion de l'utilisateur
-    async function retrievePlanner() {
+  async function retrievePlanner() {
+    if (!isLoggedIn) {
+      navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
+    } else {
       setLoading(true);
       const response = await getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
       setLoading(false);
       return response;
     }
+  }
 
-    if (!isLoggedIn) {
-      navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
-    } else {
-      // setLoading(true);
-      
-      let data = retrievePlanner();
+  useEffect(() => { // Vérification de la connexion de l'utilisateur
+    // lors du changement d'état isLoggedIn, fetch le planner
+      setData(retrievePlanner());
       data == 'updated' ? setUpdated(true) : null;
-      
-      // setLoading(false);
-    }
   }, [isLoggedIn, navigate]);
   
+  // quand les données du planner changent => re-render
+  useEffect(()=>{
+    // console.log(data);
+  }, [data]);
 
   useEffect(() => {
     const adjustTableSize = () => { // Ajustement dynamique de la largeur des colonnes
@@ -109,17 +112,35 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
 
   useEffect(()=>{
     plannerId <= 1 ? compareDates(serverDate, (planners[plannerId].weekStart)) : null;
-    // daysOfWeek.map((dayObj, index) => {
-    //   console.log(index, !compareDates(serverDate, planners[plannerId].weekStart, index));
-    // });
   }, [plannerId]);
-
 
   const toggleRecipeModal = () => {
     setIsRecipeModalOpen(!isRecipeModalOpen);
   }
   const toggleShoppingModal = () => {
     setIsShoppingModalOpen(!isShoppingModalOpen);
+  }
+
+  // Fonction pour vérifier la date lors de l'appui bouton '+'
+  // Nécessaire Quand l'heure passe minuit => vérifier et mettre a jour l'état visuel du planner (désactiver le jour qui vient de se terminer)
+  const handleAddButton = (btnDay, dayObjKey, dayObjDay) => {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    // Vérifier la validité de la date client par rapport a la date server
+    (currentDate < serverDate) ? setData(retrievePlanner()) : null;
+
+    const isButtonValid = compareDates(currentDate, planners[plannerId].weekStart, btnDay);
+
+    if (!isButtonValid) {
+      setData(retrievePlanner());
+      return false;
+    }
+    else { // Comportement différent si on est sur la page planner ou sur la modale Planner depuis la page RecipeDetail
+      isPlannerModal ?
+      handleAddRecipe(dayObjKey, recipeFromDetail, recipeFromDetail.portions)
+      : chooseDay(`${dayObjDay} midi`, dayObjKey);
+    }
   }
 
   async function handleAddRecipe (keyWord, recipe, portions) { // ajouter un couple jour/recette au planner actif dans le store
@@ -300,7 +321,8 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyM}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isModal={plannerId <= 1} 
                               isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
                               cardWidth={cardWidth}
                               chooseMeal={chooseMeal}
@@ -322,7 +344,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                         <button
                           key={`${dayObj.keyM}`}
                           className="select-button"
-                          onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyM, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} midi`, dayObj.keyM)}}
+                          onClick={() => {handleAddButton(index, dayObj.keyM, dayObj.day)}}
                           data-name={`${dayObj.day} midi`}
                           data-key={dayObj.keyM}
                           disabled={loading}
@@ -361,7 +383,8 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                             <RecipeCardComponent
                               key={`${recipe.id}${dayObj.keyE}`}
                               recipe={recipe} // Passer la recette complète en prop
-                              isModal={plannerId <= 1} // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isModal={plannerId <= 1}
                               isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
                               cardWidth={cardWidth}
                               chooseMeal={chooseMeal}
@@ -383,7 +406,7 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                         <button
                           key={`${dayObj.keyE}`}
                           className="select-button"
-                          onClick={() => {isPlannerModal ? handleAddRecipe(dayObj.keyE, recipeFromDetail, recipeFromDetail.portions) : chooseDay(`${dayObj.day} soir`, dayObj.keyE)}}
+                          onClick={() => {handleAddButton(index, dayObj.keyE, dayObj.day)}}
                           data-name={`${dayObj.day} soir`}
                           data-key={dayObj.keyE}
                           disabled={loading}

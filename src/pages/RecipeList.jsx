@@ -93,13 +93,13 @@ const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
           .sort(([, a], [, b]) => a.name.localeCompare(b.name)) // Tri sur la valeur
           .map(([id, recipe]) => (
             // <Link to={`/recipes/${id}-${slugify(recipe.name)}`} key={id} className='recipe-link' state={{fromRecipeList: true, filters, page, scroll: window.scrollY}}>
-              <RecipeCardComponent
-                key={id}
-                recipe={recipe}
-                isModal={isModal}
-                cardWidth={cardWidth}
-                chooseMeal={chooseMeal}
-              />
+                <RecipeCardComponent
+                  key={id}
+                  recipe={recipe}
+                  isModal={isModal}
+                  cardWidth={cardWidth}
+                  chooseMeal={chooseMeal}
+                />
             // </Link>
           ))}
       </div>

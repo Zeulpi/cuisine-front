@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../store/reducers/store';
+import FridgeComponent from '../../components/FridgeComponent';
 
 const UserFridge = () => {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userFridge, setUserFridge] = useState(useAppSelector(state => state.fridge.inventory));
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
   return (
     <>
       <title>
@@ -9,8 +22,9 @@ const UserFridge = () => {
 
       <div className="user-fridge">
         <h1>User Fridge</h1>
-        <p>Inventory</p>
       </div>
+
+      <FridgeComponent />
     </>
   );
 }
