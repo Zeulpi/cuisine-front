@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles/Recipes/FilterComponent.css';
 import { getData } from '../../resources/api-constants';
 import { ROUTES } from '../../resources/routes-constants';
+import { getTextColor } from '../../utility/getTextColor';
 
-const RecipesFilterComponent = ({ filters, onFilterChange }) => {
+export function RecipesFilterComponent({ filters, onFilterChange, loading }) {
   const [search, setSearch] = useState(filters?.search || '');
   const [selectedTags, setSelectedTags] = useState(filters?.tags || []);
   const [availableTags, setAvailableTags] = useState([]);
@@ -62,7 +63,7 @@ const RecipesFilterComponent = ({ filters, onFilterChange }) => {
                     onChange={(e) => setSearch(e.target.value)}
                     className="filter-input"
                 />
-                <button type="submit" className="filter-button">Rechercher</button>
+                <button type="submit" className="filter-button" disabled={loading}>Rechercher</button>
             </div>
 
             <div className="filter-tags">
@@ -100,7 +101,7 @@ const RecipesFilterComponent = ({ filters, onFilterChange }) => {
 
       </div>
   );
-};
+}
 
 RecipesFilterComponent.propTypes = {
   filters: PropTypes.shape({
@@ -108,15 +109,7 @@ RecipesFilterComponent.propTypes = {
     tags: PropTypes.arrayOf(PropTypes.string),
   }),
   onFilterChange: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
 };
 
 export default RecipesFilterComponent;
-
-function getTextColor(bgColor) {
-  const hex = bgColor.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-  return luminance > 160 ? '#000' : '#fff';
-}

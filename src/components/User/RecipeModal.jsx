@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';  // Validation des props
 import LoadingComponent from '../Utils/loadingComponent';
-import RecipeList from '../../pages/RecipeList';
+import {RecipeList} from '../../pages/RecipeList';
 import '../../styles/User/RecipeModal.css'
 
-const RecipeModal = ({ isOpen, onClose, dayChoice = '', chooseDay, cardWidth, chooseMeal }) => {
+export function RecipeModal({ isOpen, onClose, dayChoice = '', chooseDay, cardWidth, chooseMeal }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const listRef = useRef();
@@ -22,7 +22,7 @@ const RecipeModal = ({ isOpen, onClose, dayChoice = '', chooseDay, cardWidth, ch
       </div>
     </>
   );
-};
+}
 
 // Validation des props
 RecipeModal.propTypes = {
@@ -33,5 +33,3 @@ RecipeModal.propTypes = {
   cardWidth: PropTypes.string,
   chooseMeal: PropTypes.func,
 };
-
-export default RecipeModal;

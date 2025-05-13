@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/reducers/store';
-import PlannerComponent from "../../components/PlannerComponent";
+import {PlannerComponent} from "../../components/PlannerComponent";
 import '../../styles/User/UserPlanner.css'
 
-const UserPlanner = () => {
+export function UserPlanner() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,5 +40,3 @@ const UserPlanner = () => {
     </>
   );
 }
-
-export default UserPlanner;

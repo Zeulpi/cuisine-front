@@ -19,11 +19,13 @@ export async function addIngredientToInventory (dispatch, userToken, ingredientI
       ingredientUnit,
     });
     
+    // console.log('back response add : ', response.data);
+
     // Vérification de la réponse et mise à jour du store utilisateur
     if (response.data.token) {
       const newToken = response.data.token;
       const user = getUserFromToken(newToken);
-      user ? dispatch(setUser({ token: newToken, ...user })) : errorMessage = "Token invalide.";
+      user ? (dispatch(setUser({ token: newToken, ...user })), errorMessage=response.updated) : errorMessage = "Token invalide.";
     } else {
       errorMessage = response.message || "Erreur lors de la connexion.";
     }
@@ -50,13 +52,14 @@ export async function getFridgeFromServer (userToken, dispatch) {
           token: userToken
       },
     });
-    // console.log(response);
+    // console.log('back response get : ', response);
 
     // Vérification de la réponse et mise à jour du store utilisateur
     if (response.data.token) {
       const newToken = response.data.token;
       const user = getUserFromToken(newToken);
       user ? dispatch(setUser({ token: newToken, ...user })) : errorMessage = "Token invalide.";
+      errorMessage = response.data.updated ? 'updated' : null;
     } else {
       errorMessage = response.message || "Erreur lors de la connexion.";
     }
@@ -71,6 +74,30 @@ export async function getFridgeFromServer (userToken, dispatch) {
   } catch (error) {
     console.log('Erreur lors de la connexion :', error.response.data);
     errorMessage = "Erreur lors de la connexion.";
+  }
+  return errorMessage;
+}
+
+export async function getIngredients(page, limit, filters) {
+  let errorMessage = null;
+  try {
+    const response = await axios.get(getData(ROUTES.USER_GET_INGREDIENTS_ROUTE), {
+      params: {
+        page,
+        limit,
+        search : filters.search
+      },
+    });
+
+    if (response.data.ingredients) {
+      return response.data;
+    } else {
+      errorMessage = "Liste d'ingrédients non recupérée.";
+    }
+    
+  } catch (error) {
+    errorMessage = error;
+    console.error('Erreur lors du chargement des ingredients :', error);
   }
   return errorMessage;
 }

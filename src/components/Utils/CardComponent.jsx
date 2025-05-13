@@ -10,16 +10,20 @@ import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Utils/CardComponent.css';
 
 
-export default function CardComponent({ isModal = false, cardWidth='100%', cardName=null, cardImg=null, cardCursor="help", cardDescription = null, cardFooter=null, children = null, handleRemove=null, handleClickContent=null, handleClickImg=null, handleMouseOver=null, handleMouseOut=null, handleFuncOne=null, handleFuncTwo=null }) {
+export function CardComponent({ isModal = false, cardWidth='100%', cardName=null, cardImg=null, cardCursor="help", cardDescription = null, cardFooter=null, children = null, childrenFooter=null, childrenTarget=null, handleRemove=null, handleClickContent=null, handleClickImg=null, handleMouseOver=null, handleMouseOut=null, handleFuncOne=null, handleFuncTwo=null }) {
   const navigate = useNavigate();
   const [firstRender, setFirstRender] = useState(true);
   const bgImage = cardImg || '';
 
+  useEffect(()=>{
+    // console.log(children);
+  }, [children]);
+
   return (
     <>
       <div className="basic-card" style={{ '--basic-card-width': cardWidth }} >
-        {children ? 
-          children :
+        {children && !childrenTarget ?
+          (children) :
           (
             <>
               {handleRemove && (
@@ -38,24 +42,29 @@ export default function CardComponent({ isModal = false, cardWidth='100%', cardN
                   )
                 }
                 <div className='card-body' onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-                  <img className='card-background'
-                    src={bgImage} alt=""
-                    onClick={handleClickImg}
-                    style={{cursor: (isModal) ? 'pointer' : 'var(--card-cursor)'}}
-                  />
-                  <div className='card-description'>{cardDescription}</div>
+                  <div className={(children) ? 'children-body' : 'card-description'}>
+                    {children && childrenTarget.includes('body') ?
+                      children :
+                      cardDescription
+                    }
+                  </div>
+
+                  {cardImg && (
+                    <img className='card-background'
+                      src={bgImage} alt=""
+                      onClick={handleClickImg}
+                      style={{cursor: (isModal) ? 'pointer' : 'var(--card-cursor)'}}
+                    />
+                  )}
                 </div>
                 
-                <div className="card-footer">
-                  {cardFooter &&
-                    (
-                      <>
-                      <div className="card-footer">
-                        <span>{cardFooter}</span>
-                      </div>
-                      </>
-                    )
-                  }
+                <div className="card-footer" style={{padding: childrenFooter ? '5px' : '8px'}}>
+                  <div className={'footer-content'}>
+                    {childrenFooter ?
+                      childrenFooter :
+                      cardFooter
+                    }
+                  </div>
                 </div>
               </div>
             </>
@@ -75,6 +84,8 @@ CardComponent.propTypes = {
   cardDescription: PropTypes.string,
   cardFooter:PropTypes.string,
   children: PropTypes.node,
+  childrenFooter: PropTypes.node,
+  childrenTarget: PropTypes.string,
   handleRemove:PropTypes.func,
   handleClickContent:PropTypes.func,
   handleClickImg:PropTypes.func,

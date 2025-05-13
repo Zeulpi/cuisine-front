@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from "react-router-dom";
-import RecipeModal from "./User/RecipeModal";
+import {RecipeModal} from "./User/RecipeModal";
 import { BaseModal } from "./Utils/BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
 import { useSelector } from "react-redux";
@@ -13,8 +13,9 @@ import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
 import {getServerTime, compareDates} from "../utility/dateUtils";
 import '../styles/User/PlannerComponent.css'
+import {CardComponent} from "./Utils/CardComponent";
 
-const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) => {
+export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) {
   const cardWidth = "150px";
   const useDispatch = useAppDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -318,21 +319,21 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                       if (recipe) {
                         // console.log(dayObj.keyM, compareDates(serverDate, planners[plannerId].weekStart, index));
                         return (
-                            <RecipeCardComponent
-                              key={`${recipe.id}${dayObj.keyM}`}
-                              recipe={recipe} // Passer la recette complète en prop
-                              // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
-                              isModal={plannerId <= 1} 
-                              isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
-                              cardWidth={cardWidth}
-                              chooseMeal={chooseMeal}
-                              chooseDay={chooseDay}
-                              removeKey={dayObj.keyM}
-                              addRecipe = {handleAddRecipe}
-                              dataName={`${dayObj.day} midi`}
-                              dataKey={dayObj.keyM}
-                              localPortions={localPortions}
-                            />
+                          <RecipeCardComponent
+                            key={`${recipe.id}${dayObj.keyM}`}
+                            recipe={recipe} // Passer la recette complète en prop
+                            // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                            isModal={plannerId <= 1} 
+                            isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
+                            cardWidth={cardWidth}
+                            chooseMeal={chooseMeal}
+                            chooseDay={chooseDay}
+                            removeKey={dayObj.keyM}
+                            addRecipe = {handleAddRecipe}
+                            dataName={`${dayObj.day} midi`}
+                            dataKey={dayObj.keyM}
+                            localPortions={localPortions}
+                          />
                         );
                       }
                       return null;
@@ -340,18 +341,19 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                     ) : (
                       plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
-                      <div className="button-card" style={{ '--card-width': cardWidth }} >
-                        <button
-                          key={`${dayObj.keyM}`}
-                          className="select-button"
-                          onClick={() => {handleAddButton(index, dayObj.keyM, dayObj.day)}}
-                          data-name={`${dayObj.day} midi`}
-                          data-key={dayObj.keyM}
-                          disabled={loading}
-                        >
-                          +
-                        </button>
-                      </div>
+                        <CardComponent cardWidth={cardWidth}>
+                          <button
+                            key={`${dayObj.keyM}`}
+                            className="select-button"
+                            style={{margin:'auto'}}
+                            onClick={() => {handleAddButton(index, dayObj.keyM, dayObj.day)}}
+                            data-name={`${dayObj.day} midi`}
+                            data-key={dayObj.keyM}
+                            disabled={loading}
+                          >
+                            +
+                          </button>
+                        </CardComponent>
                       )
                     )}
                   </div>
@@ -380,21 +382,21 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                       // Passer la recette en prop à RecipeCardComponent et gérer la suppression
                       if (recipe) {
                         return (
-                            <RecipeCardComponent
-                              key={`${recipe.id}${dayObj.keyE}`}
-                              recipe={recipe} // Passer la recette complète en prop
-                              // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
-                              isModal={plannerId <= 1}
-                              isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
-                              cardWidth={cardWidth}
-                              chooseMeal={chooseMeal}
-                              chooseDay={chooseDay}
-                              addRecipe = {handleAddRecipe}
-                              removeKey={dayObj.keyE}
-                              dataName={`${dayObj.day} midi`}
-                              dataKey={dayObj.keyM}
-                              localPortions={localPortions} // Passer les portions locales en prop
-                            />
+                          <RecipeCardComponent
+                            key={`${recipe.id}${dayObj.keyE}`}
+                            recipe={recipe} // Passer la recette complète en prop
+                            // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                            isModal={plannerId <= 1}
+                            isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
+                            cardWidth={cardWidth}
+                            chooseMeal={chooseMeal}
+                            chooseDay={chooseDay}
+                            addRecipe = {handleAddRecipe}
+                            removeKey={dayObj.keyE}
+                            dataName={`${dayObj.day} midi`}
+                            dataKey={dayObj.keyM}
+                            localPortions={localPortions} // Passer les portions locales en prop
+                          />
                         );
                       }
                       return null;
@@ -402,18 +404,19 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
                     ) : (
                       plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
                       // Si aucune recette n'est présente, afficher le bouton
-                      <div className="button-card" style={{ '--card-width': cardWidth }} >
-                        <button
-                          key={`${dayObj.keyE}`}
-                          className="select-button"
-                          onClick={() => {handleAddButton(index, dayObj.keyE, dayObj.day)}}
-                          data-name={`${dayObj.day} soir`}
-                          data-key={dayObj.keyE}
-                          disabled={loading}
-                        >
-                          +
-                        </button>
-                      </div>
+                        <CardComponent cardWidth={cardWidth}>
+                          <button
+                            key={`${dayObj.keyE}`}
+                            className="select-button"
+                            style={{margin:'auto'}}
+                            onClick={() => {handleAddButton(index, dayObj.keyE, dayObj.day)}}
+                            data-name={`${dayObj.day} soir`}
+                            data-key={dayObj.keyE}
+                            disabled={loading}
+                          >
+                            +
+                          </button>
+                        </CardComponent>
                       )
                     )}
                   </div>
@@ -440,13 +443,11 @@ const PlannerComponent = ({ plannerWidth = '40vw', plannerModalClose=null, isPla
       </BaseModal>
     </div>
   );
-};
+}
 
 PlannerComponent.propTypes = {
   plannerWidth: PropTypes.string,
   plannerModalClose: PropTypes.func,
   isPlannerModal: PropTypes.bool,
   recipeFromDetail: PropTypes.object
-};
-
-export default PlannerComponent;
+}

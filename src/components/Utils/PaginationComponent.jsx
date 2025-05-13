@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import '../../styles/Recipes/PaginationComponent.css';
 
-const PaginationComponent = ({
+export function PaginationComponent({
   currentPage,
   totalPages,
   onPageChange,
   surroundingRange = 2,
   nearInterval = 5,
   nearWindow = 15,
-}) => {
+}) {
   if (totalPages <= 1) return null;
 
   const handleClick = (page) => {
@@ -98,7 +98,7 @@ const PaginationComponent = ({
   }
 
   return <div className="pagination-container">{rendered}</div>;
-};
+}
 
 PaginationComponent.propTypes = {
   currentPage: PropTypes.number.isRequired,
@@ -108,5 +108,3 @@ PaginationComponent.propTypes = {
   nearInterval: PropTypes.number,
   nearWindow: PropTypes.number,
 };
-
-export default PaginationComponent;

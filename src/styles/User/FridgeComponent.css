@@ -1,9 +1,7 @@
-/* PlannerComponent.css */
-
-  .fridge {
+.fridge {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    width: 85%;
     min-width: var(--table-width);
     margin-top: 20px;
     background-color: #ffffff;
@@ -11,15 +9,19 @@
     padding: 10px;
   }
 
-  .date-title {
-    padding: 5px;
-    font-size: 20px;
-    color: #00796b;
-    font-weight: bold;
-    text-align: center;
-    background-color: #e1e1e1;
-    border-radius: 15px;
-  }
+.ingredient-main-container {
+  display: flex;
+  gap: 10vw;
+}
+
+.ingredient-add-container {
+  display: flex;
+  align-items: start;
+}
+.ingredient-list-container {
+  display: flex;
+  gap: 5vw;
+}
 
   .fridge-update {
     display: flex;

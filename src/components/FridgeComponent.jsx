@@ -1,29 +1,26 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
+import React, { useState, useEffect, Fragment } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BaseModal } from "./Utils/BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
 import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
-import CardComponent from "./Utils/CardComponent";
+import {CardComponent} from "./Utils/CardComponent";
+import IngredientModal from "./User/IngredientModal";
 import LoadingComponent from "./Utils/loadingComponent";
-import ShoppingModal from "./User/ShoppingModal";
 import { addIngredientToInventory, getFridgeFromServer } from "../utility/FridgeUtils";
+import { baseUrl, RESOURCE_ROUTES } from '../resources/routes-constants';
 import '../styles/User/FridgeComponent.css'
 
-const FridgeComponent = () => {
+export function FridgeComponent() {
   const cardWidth = "150px";
+  const ingCardWidth = "200px";
   const useDispatch = useAppDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
-  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
-  const [isShoppingModalOpen, setIsShoppingModalOpen] = useState(false);
+  const [isIngredientModalOpen, setIsIngredientModalOpen] = useState(false);
   const [data, setData] = useState(null);
-  const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
-  const location = useLocation(); // Récupérer l'URL actuelle de la page
+  const [updated, setUpdated] = useState(false);
+  const navigate = useNavigate();
   const userToken = useSelector((state) => state.auth.token);
   const userFridge = useSelector(state => state.fridge.inventory);
 
@@ -39,14 +36,10 @@ const FridgeComponent = () => {
   }
 
   useEffect(() => { // Vérification de la connexion de l'utilisateur
-    // lors du changement d'état isLoggedIn, fetch le planner
+    // lors du changement d'état isLoggedIn, fetch l'inventaire
       setData(retrieveFridge());
   }, [isLoggedIn, navigate]);
-  
-  // quand les données du planner changent => re-render
-  useEffect(()=>{
-    // console.log(data);
-  }, [data]);
+
 
   useEffect(() => {
     const adjustTableSize = () => { // Ajustement dynamique de la largeur des colonnes
@@ -81,6 +74,8 @@ const FridgeComponent = () => {
     window.addEventListener("resize", adjustTableSize);
     adjustTableSize(); // initial call
 
+    console.log('fridge : ', userFridge);
+    
     // Nettoyage des écouteurs d'événements lors du démontage du composant
     return () => {
       window.removeEventListener("load", adjustTableSize);
@@ -88,25 +83,175 @@ const FridgeComponent = () => {
     };
   }, [userFridge]);
 
-  async function handleAddIngredient (ingredientId, ingredientQty, ingredientUnit) {
+  const changeInputValue = (id, newValue, ingredientUnit) => {
+    // Sélectionner tous les formulaires avec ce data-id
+    const forms = document.querySelectorAll(`form[data-id="${id}"]`);
+    forms.forEach(form => {
+      // Trouver le select à l'intérieur du formulaire qui contient le data-unit correspondant
+      const select = form.querySelector('select[name="unit"]');
+      if (select && select.dataset.unit === ingredientUnit) {  // Vérifier si l'attribut data-unit correspond à l'unité de l'ingrédient
+        // Trouver l'input quantity à l'intérieur du formulaire
+        const input = form.querySelector('input[name="quantity"]');
+        if (input) {
+          // Extraire la valeur actuelle de l'input et la convertir en nombre
+          const currentValue = parseFloat(input.value) || 0; // Si la valeur est vide, on la met à 0
+          // Ajouter la nouvelle valeur à la quantité existante
+          const updatedValue = currentValue + parseFloat(newValue);
+          // Mettre à jour la valeur de l'input
+          input.value = updatedValue;
+        }
+      }
+    });
+  };
+
+
+  async function handleAddIngredient (ingredientId, ingredientQty, ingredientUnit, changeInputs=true) {
     setLoading(true);
-    if(ingredientId && ingredientQty && ingredientUnit){
+    let callChangeValue = false;
+    const forms = document.querySelectorAll(`form[data-id="${ingredientId}"]`);
+    forms.forEach(form => {
+      // Trouver le select à l'intérieur du formulaire qui contient le data-unit correspondant
+      const select = form.querySelector('select[name="unit"]');
+      if (select && select.dataset.unit === ingredientUnit) {
+        callChangeValue = true;
+      }
+    });
+    if(ingredientId && ingredientQty){
+      // console.log('ajout : ', ingredientId, ingredientQty, ingredientUnit);
       const message = await addIngredientToInventory(useDispatch, userToken, ingredientId, ingredientQty, ingredientUnit);
       setError(message); // Envoi de l'erreur au state
     } else {
       console.log('Erreur : parametre manquant');
     }
+    changeInputs && callChangeValue && changeInputValue(ingredientId, ingredientQty, ingredientUnit);
     setLoading(false);
   }
 
+
+  const handleAddButton = () => {
+    toggleIngredientModal();
+  }
+
+  const toggleIngredientModal = () => {
+    setIsIngredientModalOpen(!isIngredientModalOpen);
+  }
+
+  async function handleSubmit (e) {
+    e.preventDefault();
+    // Récupérer les valeurs des champs du formulaire
+    const ingredientId = parseInt(e.target.dataset.id);
+    const ingredientIndex = e.target.dataset.index;
+    const formData = new FormData(e.target);
+    const quantity = parseFloat(formData.get('quantity'));
+    const unit = formData.get('unit');
+    let newUnit;
+    let newQty;
+    const entry = userFridge[ingredientId][ingredientIndex];
+
+    // Verif des 4 cas possibles
+    // 1 - l'unit ne change pas et la quantité ne change pas => rien a mettre a jour on ne fait rien
+    // 2 - l'unit ne change pas et la quantité est modifiée => on calcule la différence avec l'ancienne qty et on envoie au back
+    // 3&4 - l'unit change et/non-et la qty => on supprime l'ancienne entrée pour cette unit, et on ajoute la qty a l'entrée avec la nouvelle unit
+    if(entry.unit == unit) { // cas 1 & 2
+      newUnit = entry.unit;
+      newQty = quantity;
+      if(entry.quantity == quantity){ // 1 - unit et qty ne changent pas, on ne fait rien
+        // console.log('cas 1');
+        return true;
+      } else { // 2 - unit ne change pas, seule la qty
+        // console.log('cas 2');
+        newQty = quantity - entry.quantity; // Calcul de la nouvelle qty (la différence avec l'ancienne qty)
+        await handleAddIngredient (ingredientId, newQty, newUnit, false); // Requete mise a jour au back
+      }
+    } else { // cas 3 & 4
+      newUnit = unit;
+      newQty = quantity; // Calcul de la nouvelle qty (la différence avec l'ancienne qty)
+      // console.log('cas 3&4');
+      try{
+        await handleAddIngredient (ingredientId, (0-entry.quantity), entry.unit, false); // Requete suppression de l'ancienne entrée unit
+        // console.log(ingredientId, newQty, newUnit);
+        await handleAddIngredient (ingredientId, quantity, newUnit); // Requete ajout qty a l'entrée unit
+      } catch (error) {
+        console.log('Erreur lors de la mise à jour de l\'ingrédient :', error);
+      }
+    }
+  }
+
   return (
-    <>
-      <span>On est dans le FridgeComponent</span>
-    </>
+    <div className="fridge">
+
+    <LoadingComponent loading={loading} />
+
+    <div className="ingredient-main-container">
+      <div className="ingredient-add-container">
+        <CardComponent
+          cardWidth={cardWidth}
+          childrenTarget='body'
+          cardName='Ajouter un ingredient'
+          cardCursor="default"
+        >
+          <div style={{display:'flex', flexDirection:'column', height:'100%'}}>
+            <button
+              className="select-button"
+              style={{margin:'auto'}}
+              onClick={handleAddButton}
+              disabled={loading}
+            > + </button>
+          </div>
+        </CardComponent>
+      </div>
+
+      <div className="ingredient-list-container">
+        {
+          Object.keys(userFridge).map((id) => {
+            const ingredientList = userFridge[id];
+            // console.log(ingredientList);
+
+            return ingredientList.map((ingredient, index) => {
+              return(
+                <CardComponent
+                  key={`${id}-${index}`}
+                  cardWidth={ingCardWidth}
+                  cardName={ingredient.name}
+                  cardImg={baseUrl + RESOURCE_ROUTES.INGREDIENT_IMAGE_ROUTE + (ingredient.image)}
+                  cardCursor="pointer"
+                  childrenFooter={!loading &&
+                    <>
+                    <form data-id={id} data-index={index} className='ingredient-qtys' onSubmit={handleSubmit}>
+                      <input name="quantity" className='ingQty' type='number' style={{maxWidth:'30%', height:'25px', padding:0, borderWidth:1}} min={0} defaultValue={ingredient.quantity} />
+                      <select name="unit" data-unit={ingredient.unit} className='ingUnit' style={{width:'auto'}} defaultValue={ingredient.unit}>
+                        {[
+                          // Ajouter l'option vide en premier si elle existe dans la liste
+                          ...(ingredient.allowedUnits.includes("") || ingredient.allowedUnits.includes(" ") 
+                            ? [""] : []),  // Si la liste contient une valeur vide, l'ajouter en premier
+                            ...ingredient.allowedUnits.filter(unit => unit !== "" && unit !== " ") // Le reste des unités
+                            ].map((ingUnit, index) => (
+                            <option key={index} value={ingUnit}>{ingUnit}</option>
+                        ))}
+                      </select>
+                      <button style={{borderRadius:'50%', borderWidth:'1px'}}>OK</button>
+                    </form>
+                    </>
+                  }
+                />
+              )
+            });
+          })
+        }
+      </div>
+    </div>
+
+    <BaseModal isOpen={isIngredientModalOpen} cardWidth='60%' >
+      <IngredientModal
+        onClose={toggleIngredientModal}
+        cardWidth={ingCardWidth}
+        chooseIngredient={handleAddIngredient}
+        modalTitle='Ajoutez un ingrédient a votre inventaire'
+      />
+    </BaseModal>
+    </div>
   );
-};
+}
 
 FridgeComponent.propTypes = {
 };
-
-export default FridgeComponent;

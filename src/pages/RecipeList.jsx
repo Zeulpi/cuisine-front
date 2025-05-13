@@ -3,16 +3,15 @@ import PropTypes from 'prop-types';  // Validation des props
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import RecipeCardComponent from '../components/Recipe/RecipeCardComponent';
-import PaginationComponent from '../components/Recipe/PaginationComponent';
+import {PaginationComponent} from '../components/Utils/PaginationComponent';
 import RecipesFilterComponent from '../components/Recipe/RecipesFilterComponent';
 import LoadingComponent from '../components/Utils/loadingComponent';
-import { clearPopStateHandler } from '../utility/popStateManager.js'
 import { ROUTES } from '../resources/routes-constants';
 import { getData } from '../resources/api-constants';
 import '../styles/Recipes/RecipeList.css';
 import '../styles/Recipes/FilterComponent.css'
 
-const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
+export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }) {
   const location = useLocation();
   const [recipes, setRecipes] = useState({});
   const [pagination, setPagination] = useState(null);
@@ -32,34 +31,28 @@ const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
     }
   }, [location.state?.nonce, location.state?.fastSearch]);
 
+  const fetchRecipes = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(getData(ROUTES.RECIPE_ROUTE), {
+        params: {
+          page,
+          limit,
+          tags: filters.tags?.join(',') || '', // Passer les tags sélectionnés
+          search: filters.search || '',
+        },
+      });
+      setRecipes(response.data.recipes);
+      setPagination(response.data.pagination);
+    } catch (error) {
+      console.error('Erreur lors du chargement des recettes :', error);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchRecipes = async () => {
-      setLoading(true);
-      // console.log(filters.tags?.join(',')); // Debugging line
-      
-      try {
-        const response = await axios.get(getData(ROUTES.RECIPE_ROUTE), {
-          params: {
-            page,
-            limit,
-            tags: filters.tags?.join(',') || '', // Passer les tags sélectionnés
-            search: filters.search || '',
-          },
-        });
-  
-        // console.log('Response:', response.data); // Debugging line
-        setRecipes(response.data.recipes);
-        setPagination(response.data.pagination);
-        // console.log('recipes:', response.data.recipes); // Debugging line
-        
-      } catch (error) {
-        console.error('Erreur lors du chargement des recettes :', error);
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     fetchRecipes();
   }, [page, filters, limit]);
   
@@ -84,6 +77,7 @@ const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
           setFilters(newFilters);
           setPage(1);
         }}
+        loading={loading}
       />
 
       <LoadingComponent loading={loading} />
@@ -113,12 +107,10 @@ const RecipeList = ({isModal = false, cardWidth='100%', chooseMeal=null }) => {
       {error && <div className="error-message">{error}</div>}
     </div>
   );
-};
+}
 
 RecipeList.propTypes = {
   isModal: PropTypes.bool.isRequired,
   cardWidth: PropTypes.string,
   chooseMeal: PropTypes.func,
-};
-
-export default RecipeList;
+}

@@ -11,8 +11,9 @@ export const ROUTES = {
     USER_DELETE_PLANNER_ROUTE: '/user-planner-deleterecipe',
     USER_GET_PLANNER_ROUTE: '/user-planner-get',
     USER_GET_SHOPPING_ROUTE: '/user-shopping-get',
-    USER_ADD_FRIDGE_ROUTE: '/user-fridge-addingredient',
-    USER_GET_FRIDGE_ROUTE: '/user-fridge-getingredients',
+    USER_ADD_FRIDGE_ROUTE: '/user-fridge-addtofridge',
+    USER_GET_FRIDGE_ROUTE: '/user-fridge-getfridge',
+    USER_GET_INGREDIENTS_ROUTE: '/user-fridge-getingredients',
     REGISTER_ROUTE: '/user-register',
     TAG_ROUTE: '/tags',
   }

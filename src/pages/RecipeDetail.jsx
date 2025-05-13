@@ -15,10 +15,10 @@ import RecipeIngredientComponent from '../components/Recipe/RecipeIngredientComp
 import StepBlocks from '../components/Recipe/StepBlocks.jsx';
 import '../styles/Recipes/RecipeDetail.css';
 import { BaseModal } from '../components/Utils/BaseModale.jsx';
-import PlannerComponent from '../components/PlannerComponent.jsx';
+import {PlannerComponent} from '../components/PlannerComponent.jsx';
 
 
-const RecipeDetail = () => {
+export function RecipeDetail() {
   const { sluggedId } = useParams();
   const { id, slug } = extractIdAndSlug(sluggedId);
   const [recipe, setRecipe] = useState(null);
@@ -212,10 +212,8 @@ const RecipeDetail = () => {
     )}
     </>
   );
-};
+}
 
 RecipeDetail.propTypes = {
   portionsFromCard: PropTypes.number,
 };
-
-export default RecipeDetail;

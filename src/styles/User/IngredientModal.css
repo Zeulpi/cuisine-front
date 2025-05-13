@@ -1,0 +1,72 @@
+/* Général pour tous les éléments */
+* {
+    box-sizing: border-box;
+  }
+  .ingredient-modal-title{
+    position: relative;
+    background-color: white;
+    border-bottom: 1px solid lightgray;
+    border-radius: 5px 5px 0 0 ;
+    width: 100%;
+    max-width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .ingredient-modal-content {
+    --card-width : '60%';
+    background-color: white;
+    padding: 30px;
+    border-radius: 0 0 5px 5px;
+    height: 100%;
+    width: 100%;
+    max-width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: scroll;
+  }
+  
+  .modal-title{
+    text-decoration: none;
+    text-align: center;
+  }
+
+  /* Section des boutons */
+  .ingredient-close-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .ingredient-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #333;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .ingredient-list {
+    padding: 0 5%;
+    display: flex;
+    max-width: 100%;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    column-gap: 10%;
+  }
+
+  .ingredient-qtys{
+    display: flex;
+    max-width: 100%;
+    height: 100%;
+    justify-content:space-evenly;
+    gap: 10%;
+  }

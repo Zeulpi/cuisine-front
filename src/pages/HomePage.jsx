@@ -1,10 +1,10 @@
 import React from 'react'
 import DateDisplay from '../components/Utils/DateDisplay'
-import CardComponent from '../components/Utils/CardComponent'
+import {CardComponent} from '../components/Utils/CardComponent'
 import FeatureComponent from '../components/Home/FeatureComponent'
 import '../styles/home.css'
 
-const HomePage = () => {
+export function HomePage() {
     const cardWidth = "20vw";
 
 
@@ -56,5 +56,3 @@ const HomePage = () => {
         </>
     )
 }
-
-export default HomePage

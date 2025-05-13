@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router'
 import { ROUTES } from '../resources/routes-constants'
 
-const NotFoundPage = () => {
+export const NotFoundPage = () => {
     const navigate = useNavigate()
 
     /**
@@ -27,5 +27,3 @@ const NotFoundPage = () => {
         </>
     )
 }
-
-export default NotFoundPage

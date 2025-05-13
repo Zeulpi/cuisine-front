@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/reducers/store';
-import FridgeComponent from '../../components/FridgeComponent';
+import {FridgeComponent} from '../../components/FridgeComponent';
+import '../../styles/User/UserFridge.css'
 
-const UserFridge = () => {
+export function UserFridge() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,12 +22,12 @@ const UserFridge = () => {
       </title>
 
       <div className="user-fridge">
-        <h1>User Fridge</h1>
+        <div className='fridge-title'><h1>Mon Inventaire</h1></div>
+        <div className="fridge-container">
+          <FridgeComponent />
+        </div>
       </div>
 
-      <FridgeComponent />
     </>
   );
 }
-
-export default UserFridge;

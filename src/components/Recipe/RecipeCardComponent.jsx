@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import CardComponent from '../Utils/CardComponent.jsx';
+import {CardComponent} from '../Utils/CardComponent.jsx';
 import { useNavigate, useLocation } from 'react-router';
 import { slugify } from '../../utility/slugify.js';
 import { getTextColor } from '../../utility/getTextColor.js';

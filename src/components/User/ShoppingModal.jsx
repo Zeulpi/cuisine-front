@@ -32,6 +32,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
   }, []);
 
   useEffect(() => {
+    console.log(ingredients);
     // Re render lors du changement des ingredients
   }
   , [shoppingIndex, ingredients]);
@@ -47,18 +48,27 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
         <LoadingComponent loading={loading} loadingText="Connecting ..." />
         <div>
           <ul>
-            {ingredients && Object.entries(ingredients).map(([ingredientName, ingredientData]) => (
-              <li key={ingredientName}>
-                <strong>{ingredientName}</strong>: 
-                <ul>
-                  {ingredientData.quantities.map((quantityObj, index) => (
-                    <li key={index}>
-                      {quantityObj.quantity} {quantityObj.unit}
+            {
+              ingredients && Object.keys(ingredients).map((id) => {
+                const ingredientList = ingredients[id];
+                console.log(ingredientList);
+    
+                return ingredientList.map((ingredient, index) => {
+                  return(
+                    <>
+                    <li key={ingredient.name}>
+                      <strong>{ingredient.name}</strong>: 
+                      <ul>
+                          <li key={index}>
+                            {ingredient.quantity} {ingredient.unit}
+                          </li>
+                      </ul>
                     </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
+                    </>
+                  )
+                });
+              })
+            }
           </ul>
         </div>
       </div>
