@@ -7,6 +7,7 @@ import {CardComponent} from "./Utils/CardComponent";
 import IngredientModal from "./User/IngredientModal";
 import LoadingComponent from "./Utils/loadingComponent";
 import { addIngredientToInventory, getFridgeFromServer } from "../utility/FridgeUtils";
+import { normalizeAllowedUnits } from "../utility/domUtils";
 import { baseUrl, RESOURCE_ROUTES } from '../resources/routes-constants';
 import '../styles/User/FridgeComponent.css'
 
@@ -42,45 +43,7 @@ export function FridgeComponent() {
 
 
   useEffect(() => {
-    const adjustTableSize = () => { // Ajustement dynamique de la largeur des colonnes
-      const card = document.querySelector('.recipe-card');
-      const dayCells = document.querySelectorAll('.day-cell');
-      let maxWidth = 0;
-      
-      const adjustAllColumns = () => {
-        dayCells.forEach(cell => { // Trouver la colonne la plus large
-          maxWidth = Math.max(maxWidth, cell.offsetWidth);
-        });
-      };
-      
-      if (card){  // Si une carte est presente dans le tableau, toutes les colonnes prennent la largeur de la carte
-        dayCells.forEach(cell => {
-          cell.style.width = `${card.offsetWidth}px`;
-        });
-        // console.log('card presente');
-      } else { // Si pas de carte, reset toutes les colonnes au mini, puis ajustement en fonction de la plus large
-        maxWidth = 0; // Réinitialiser maxWidth
-        dayCells.forEach(cell => { // reset de toutes les largeurs de colonnes
-          cell.style.width = 'auto';
-        });
-        adjustAllColumns(); // Trouver la colonne la plus large
-        dayCells.forEach(cell => {
-          cell.style.width = `${maxWidth}px`; 
-        });
-        // console.log('card absente');
-      }
-    };
-    window.addEventListener("load", adjustTableSize);
-    window.addEventListener("resize", adjustTableSize);
-    adjustTableSize(); // initial call
-
-    console.log('fridge : ', userFridge);
-    
-    // Nettoyage des écouteurs d'événements lors du démontage du composant
-    return () => {
-      window.removeEventListener("load", adjustTableSize);
-      window.removeEventListener("resize", adjustTableSize);
-    };
+    // console.log(userFridge);
   }, [userFridge]);
 
   const changeInputValue = (id, newValue, ingredientUnit) => {
@@ -168,12 +131,25 @@ export function FridgeComponent() {
       newQty = quantity; // Calcul de la nouvelle qty (la différence avec l'ancienne qty)
       // console.log('cas 3&4');
       try{
-        await handleAddIngredient (ingredientId, (0-entry.quantity), entry.unit, false); // Requete suppression de l'ancienne entrée unit
+        await handleAddIngredient (ingredientId, -entry.quantity, entry.unit, false); // Requete suppression de l'ancienne entrée unit
         // console.log(ingredientId, newQty, newUnit);
         await handleAddIngredient (ingredientId, quantity, newUnit); // Requete ajout qty a l'entrée unit
       } catch (error) {
         console.log('Erreur lors de la mise à jour de l\'ingrédient :', error);
       }
+    }
+  }
+
+  async function handleIngredientRemove(e){
+    // console.log(e.target);
+    const card = (e.target).closest(".basic-card"); // selectionner la bonne card
+    const cardForm = card.querySelector(".ingredient-qtys"); // selectionner le form qui contient les inputs
+    const ingredientId = parseInt(cardForm.dataset.id); // recuperer l'id d'ingredient
+    const cardQty = parseFloat(cardForm.querySelector(".ingQty").value); // recuperer la qté d'ingredient
+    const cardUnit = cardForm.querySelector(".ingUnit").value; // recuperer l'unité d'ingredient
+
+    if (ingredientId && cardQty){
+      await handleAddIngredient (ingredientId, (-cardQty), cardUnit); // enlever la quantité a l'entrée d'ingrédient de cette unité dans l'inventaire User
     }
   }
 
@@ -208,13 +184,16 @@ export function FridgeComponent() {
             // console.log(ingredientList);
 
             return ingredientList.map((ingredient, index) => {
+              const allowedUnits = normalizeAllowedUnits(ingredient.allowedUnits);
               return(
                 <CardComponent
                   key={`${id}-${index}`}
                   cardWidth={ingCardWidth}
                   cardName={ingredient.name}
                   cardImg={baseUrl + RESOURCE_ROUTES.INGREDIENT_IMAGE_ROUTE + (ingredient.image)}
-                  cardCursor="pointer"
+                  cardCursor="default"
+                  isModal={true}
+                  handleRemove={handleIngredientRemove}
                   childrenFooter={!loading &&
                     <>
                     <form data-id={id} data-index={index} className='ingredient-qtys' onSubmit={handleSubmit}>
@@ -222,9 +201,9 @@ export function FridgeComponent() {
                       <select name="unit" data-unit={ingredient.unit} className='ingUnit' style={{width:'auto'}} defaultValue={ingredient.unit}>
                         {[
                           // Ajouter l'option vide en premier si elle existe dans la liste
-                          ...(ingredient.allowedUnits.includes("") || ingredient.allowedUnits.includes(" ") 
+                          ...(allowedUnits.includes("") || allowedUnits.includes(" ") 
                             ? [""] : []),  // Si la liste contient une valeur vide, l'ajouter en premier
-                            ...ingredient.allowedUnits.filter(unit => unit !== "" && unit !== " ") // Le reste des unités
+                            ...allowedUnits.filter(unit => unit !== "" && unit !== " ") // Le reste des unités
                             ].map((ingUnit, index) => (
                             <option key={index} value={ingUnit}>{ingUnit}</option>
                         ))}

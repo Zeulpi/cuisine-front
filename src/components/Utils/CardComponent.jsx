@@ -19,6 +19,10 @@ export function CardComponent({ isModal = false, cardWidth='100%', cardName=null
     // console.log(children);
   }, [children]);
 
+  const handleRemoveClick = (e) => {
+    handleRemove(e);
+  }
+
   return (
     <>
       <div className="basic-card" style={{ '--basic-card-width': cardWidth }} >
@@ -27,7 +31,7 @@ export function CardComponent({ isModal = false, cardWidth='100%', cardName=null
           (
             <>
               {handleRemove && (
-                <button className='card-remove' style={{display: (isModal) ? 'block' : 'none'}} onClick={handleRemove}>X</button>
+                <button className='card-remove' style={{display: (isModal) ? 'block' : 'none'}} onClick={(e)=>{handleRemoveClick(e)}}>X</button>
               )}
 
               <div className="card-content"

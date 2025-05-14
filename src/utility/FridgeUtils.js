@@ -44,6 +44,39 @@ export async function addIngredientToInventory (dispatch, userToken, ingredientI
   return errorMessage;
 }
 
+export async function addListToInventory (dispatch, userToken, ingredientList) {
+  let errorMessage = null;
+  console.log(ingredientList);
+  try {
+    // console.log('Adding ingredient to inventory...'); // Debugging line
+    const response = await axios.post(getData(ROUTES.USER_ADD_FRIDGE_LIST_ROUTE), { 
+      token: userToken,
+      ingredientList,
+    });
+
+    // Vérification de la réponse et mise à jour du store utilisateur
+    if (response.data.token) {
+      const newToken = response.data.token;
+      const user = getUserFromToken(newToken);
+      user ? (dispatch(setUser({ token: newToken, ...user })), errorMessage=response.updated) : errorMessage = "Token invalide.";
+    } else {
+      errorMessage = response.message || "Erreur lors de la connexion.";
+    }
+
+    // Recupération de l'inventaire et mise a jour
+    if (response.data.inventory) {
+      // Dispatch pour mettre à jour le store du Fridge
+      dispatch(setFridge(response.data.inventory));
+    } else {
+      errorMessage = "L'inventaire n'a pas été renvoyé.";
+    }
+  } catch (error) {
+    console.log('Erreur lors de la connexion :', error.response.data);
+    errorMessage = "Erreur lors de la connexion.";
+  }
+  return errorMessage;
+}
+
 export async function getFridgeFromServer (userToken, dispatch) {
   let errorMessage = null;
   try {

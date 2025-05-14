@@ -38,7 +38,7 @@ export async function getShoppingIngredients (recipes, userToken) {
             if (response.data?.ingredients) {
                 // recuperer liste ingredients + qty
                 ingredients = response.data.ingredients;
-                console.log('shopping ings : ', ingredients);
+                // console.log('shopping ings : ', ingredients);
             } else {
                 errorMessage = response.message || "Erreur lors de la connexion.";
             }
