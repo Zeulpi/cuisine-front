@@ -9,11 +9,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
 import LoadingComponent from "./Utils/loadingComponent";
+import { destockIngredients } from "../utility/plannerUtils";
 import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
 import {getServerTime, compareDates} from "../utility/dateUtils";
-import '../styles/User/PlannerComponent.css'
 import {CardComponent} from "./Utils/CardComponent";
+import '../styles/User/PlannerComponent.css'
 
 export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) {
   const cardWidth = "150px";
@@ -210,6 +211,14 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
     setDayChoice(null); // Réinitialiser le choix du jour après l'ajout
   }
 
+  async function handleDestock(mealKey, destock=false) {
+    setLoading(true);
+    const destockRecipes = {};
+    destockRecipes[mealKey] = (planners[plannerId].recipes)[mealKey] ;
+    const ings = await destockIngredients (destockRecipes, mealKey, plannerId, userToken, useDispatch, destock);
+    setLoading(false);
+  }
+
   return (
     <div className="planner" style={{ '--table-width': plannerWidth }}>
       {isPlannerModal && recipeFromDetail && (
@@ -333,6 +342,8 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                             dataName={`${dayObj.day} midi`}
                             dataKey={dayObj.keyM}
                             localPortions={localPortions}
+                            isMarked={(userPlanner[dayObj.keyM])[2]}
+                            handleDestock={handleDestock}
                           />
                         );
                       }
@@ -396,6 +407,8 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                             dataName={`${dayObj.day} midi`}
                             dataKey={dayObj.keyM}
                             localPortions={localPortions} // Passer les portions locales en prop
+                            isMarked={(userPlanner[dayObj.keyE])[2]}
+                            handleDestock={handleDestock}
                           />
                         );
                       }

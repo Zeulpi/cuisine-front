@@ -119,3 +119,14 @@
     white-space: nowrap;
   }
   
+  .recipe-destock{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+  }
+  .destock-btns{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }

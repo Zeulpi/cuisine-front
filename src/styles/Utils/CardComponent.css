@@ -4,6 +4,7 @@
     --basic-card-cursor: help;
     --basic-card-remove-cursor: pointer;
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;

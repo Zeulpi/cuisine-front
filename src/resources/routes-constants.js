@@ -10,6 +10,7 @@ export const ROUTES = {
     USER_SEND_PLANNER_ROUTE: '/user-planner-addrecipe',
     USER_DELETE_PLANNER_ROUTE: '/user-planner-deleterecipe',
     USER_GET_PLANNER_ROUTE: '/user-planner-get',
+    USER_MARK_PLANNER_ROUTE: '/user-planner-setmark',
     USER_GET_SHOPPING_ROUTE: '/user-shopping-get',
     USER_ADD_FRIDGE_ROUTE: '/user-fridge-addtofridge',
     USER_ADD_FRIDGE_LIST_ROUTE: '/user-fridge-addlisttofridge',

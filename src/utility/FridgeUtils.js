@@ -71,7 +71,7 @@ export async function addListToInventory (dispatch, userToken, ingredientList) {
       errorMessage = "L'inventaire n'a pas été renvoyé.";
     }
   } catch (error) {
-    console.log('Erreur lors de la connexion :', error.response.data);
+    console.log('Erreur lors de la connexion :', error);
     errorMessage = "Erreur lors de la connexion.";
   }
   return errorMessage;

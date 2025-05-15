@@ -112,12 +112,11 @@
     background-color: #d0f7fa; /* Couleur de fond plus claire et fraîche (bleu pâle) */
     border: 1px solid #a0f7fa;
     border-radius: 50%; /* Arrondir les coins pour faire un cercle */
-    cursor: pointer; /* Changer le curseur au survol */
     margin: 0 10px; /* Espacement entre les flèches et le tableau */
   }
 
-  .planner-prev-arrow:hover, .planner-next-arrow:hover {
-    background-color: #b0f7fa;
+  #planner-prev-arrow:hover, #planner-next-arrow:hover {
+    background-color: #a0e7fa;
   }
   
   /* Supprimer toutes les bordures */

@@ -24,6 +24,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
       setLoading(true);
       try {
         const result = await getShoppingIngredients(plannerRecipes, userToken);
+        console.log(plannerRecipes);
         setIngredients(result.ingredients);
       } catch (error) {
         setErrorMessage("Erreur lors de la récupération des ingrédients.");

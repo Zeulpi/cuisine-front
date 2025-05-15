@@ -3,6 +3,8 @@ import { setAllRecipes } from '../store/actions/recipe'
 import { getUserFromToken } from '../utility/getUserFromToken'
 import { setServerTime, setUser } from '../store/actions/auth'
 import { useAppSelector as appSelector } from '../store/reducers/store'
+import { addListToInventory } from './FridgeUtils'
+import { getShoppingIngredients } from './shoppingUtils'
 import { getData } from '../resources/api-constants'
 import { ROUTES } from '../resources/routes-constants'
 import axios from 'axios'
@@ -36,6 +38,66 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
     } else {
       errorMessage = "Aucune recette n'a été renvoyée.";
     }
+  } catch (error) {
+    console.log('Erreur lors de la connexion :', error.response.data);
+    errorMessage = "Erreur lors de la connexion.";
+  }
+  return errorMessage;
+}
+
+export async function destockIngredients (recipes, keyWord, plannerIndex, userToken, dispatch, destock = false) {
+  let ingredientList;
+  const result = await getShoppingIngredients (recipes, userToken);
+  if(result.ingredients){
+    ingredientList = result.ingredients;
+    console.log(ingredientList);
+    Object.keys(ingredientList).map((id) => {
+      const ingredient = (result.ingredients)[id];
+      // console.log(ingredient);
+      ingredient.map((ing, index) => {
+        ing.quantity = -(ing.quantity);
+        // console.log(ing.quantity);
+      });
+    });
+
+    if (destock) {
+      console.log('liste : ', ingredientList);
+      try {
+        const result = await addListToInventory (dispatch, userToken, ingredientList);
+      } catch (error) {
+        console.log("Erreur lors du traitement de la liste", error);
+      }
+    }
+  }
+
+  // Ensuite marquer le repas comme marqué dans le planner
+  try{
+    const isMarked = await setMealMarked(dispatch, userToken, keyWord, plannerIndex);
+    console.log(isMarked);
+  } catch (error) {
+    console.log("Erreur, repas non marqué", error);
+  }
+  return ingredientList;
+}
+
+export async function setMealMarked(dispatch, userToken, keyWord, plannerIndex) {
+  let errorMessage = null;
+  try {
+    const response = await axios.post(getData(ROUTES.USER_MARK_PLANNER_ROUTE), { 
+      token: userToken,
+      index: plannerIndex,
+      day: keyWord,
+    });
+    
+    // Vérification de la réponse et mise à jour du store utilisateur
+    if (response.data.token) {
+      const newToken = response.data.token;
+      const user = getUserFromToken(newToken);
+      user ? (dispatch(setUser({ token: newToken, ...user })), errorMessage="marked") : errorMessage = "Token invalide.";
+    } else {
+      errorMessage = response.message || "Erreur lors de la connexion.";
+    }
+
   } catch (error) {
     console.log('Erreur lors de la connexion :', error.response.data);
     errorMessage = "Erreur lors de la connexion.";
