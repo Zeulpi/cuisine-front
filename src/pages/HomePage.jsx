@@ -30,10 +30,10 @@ export function HomePage() {
                     </CardComponent>
                     <CardComponent cardWidth={cardWidth}>
                         <FeatureComponent
-                            cardName="Votre compte & Menu hebdo"
+                            cardName="Votre compte"
                             cardImg={null}
                             cardWidth={cardWidth}
-                            cardDescription="Accédez a vos informations personnelles, et vous pouvez les modifier. Vous pouvez aussi accéder a votre menu hebdomadaire : Customiser le menu de la semaine en cours ou de la semaine suivante, et consulter les menus des semaines passées. Pour la semaine en cours et la prochaine, vous pouvez aussi obtenbir la liste des ingrédients nécessaires pour la semaine"
+                            cardDescription="Accédez a vos informations personnelles et modifiez les. Vous pouvez changer votre nom d'utilisateur, email, votre avatar, et bien sur modifier votre mot de passe"
                         />
                     </CardComponent>
                     <CardComponent cardWidth={cardWidth}>
@@ -49,6 +49,22 @@ export function HomePage() {
                             cardImg={null}
                             cardWidth={cardWidth}
                             cardDescription="Accéder aux détails des recettes et suivez les pas à pas"
+                        />
+                    </CardComponent>
+                    <CardComponent cardWidth={cardWidth}>
+                        <FeatureComponent
+                            cardName="Gestionnaire d'inventaire"
+                            cardImg={null}
+                            cardWidth={cardWidth}
+                            cardDescription="Visualisez et modifiez la liste des ingrédients que vous avez en stock : Ajoutez, modifiez, ou supprimer le contenu de votre inventaire. Vous pouvez stocker des ingrédients avec des unités différentes"
+                        />
+                    </CardComponent>
+                    <CardComponent cardWidth={cardWidth}>
+                        <FeatureComponent
+                            cardName="Gestionnaire de repas hebdomadaire"
+                            cardImg={null}
+                            cardWidth={cardWidth}
+                            cardDescription="Plannifiez votre menu pour la semaine en cours ou la semaine suivante. Vous pouvez également consulter les menus des semaines passées. Vous pouvez aussi générer la liste de courses pour la semaine que vous consultez, et ajouter cette liste à votre inventaire."
                         />
                     </CardComponent>
                 </div>

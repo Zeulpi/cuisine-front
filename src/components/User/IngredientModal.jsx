@@ -7,7 +7,7 @@ import {PaginationComponent} from '../Utils/PaginationComponent';
 import {CardComponent} from '../Utils/CardComponent';
 import { baseUrl, RESOURCE_ROUTES } from '../../resources/routes-constants';
 import { IngredientsFilterComponent } from './IngredientsFilterComponent';
-import {findElementWithClass} from '../../utility/domUtils'
+import {findElementWithClass, normalizeAllowedUnits} from '../../utility/domUtils'
 import '../../styles/User/IngredientModal.css'
 
 
@@ -20,6 +20,7 @@ export default function IngredientModal({ isOpen, onClose, cardWidth, chooseIngr
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12); // Nombre d'ingredients par page
   const [filters, setFilters] = useState({search: ''});
+  const [addMessage, setAddMessage] = useState(null);
   
   async function fetchIngredients() {
     setLoading(true);
@@ -63,19 +64,45 @@ export default function IngredientModal({ isOpen, onClose, cardWidth, chooseIngr
     const ingUnit = findElementWithClass(ingredient, '.basic-card', '.ingUnit');
 
     if (ingName.textContent && ingQty.value) {
-      await chooseIngredient(id, ingQty.value, ingUnit.value);
+      try{
+        await chooseIngredient(id, ingQty.value, ingUnit.value);
+        handleAddMessage();
+      } catch (error) {
+        // console.log(error);
+      }
     }
     setLoading(false);
   }
+
+  const handleAddMessage = () => {
+    const messageDiv = document.querySelector(".ingredient-add-message");
+    setAddMessage("Ingrédient ajouté à l'inventaire");
+    // Affiche le message immédiatement
+    messageDiv.style.display = "flex";
+    messageDiv.classList.remove("fade-out");
+    // Après 5s → démarre la transition (fade out)
+    setTimeout(() => {
+      messageDiv.classList.add("fade-out");
+    }, 5000);
+    // Après 5s + 2s (temps de la transition) → cache complètement
+    setTimeout(() => {
+      messageDiv.style.display = "none";
+      messageDiv.classList.remove("fade-out"); // prêt pour le prochain affichage
+    }, 7000);
+  };
     
 
   return (
     <>
-      <div className='ingredient-modal-title'>
-        <h2 className='modal-title'>{(modalTitle && (modalTitle)) || (<span>&nbsp;</span>)}</h2>
+      <div className='ingredient-modal-title-container'>
+        <div className='ingredient-modal-title'>
+          <h2 className='modal-title'>{(modalTitle && (modalTitle)) || (<span>&nbsp;</span>)}</h2>
+        </div>
         <LoadingComponent loading={loading} loadingText="Connecting ..." />
+        <div className='ingredient-add-message'>{addMessage && (<span className='ingredient-message'>{addMessage}</span>)}</div>
         <button className="ingredient-close-btn" onClick={onClose} tabIndex={5}>X</button>
       </div>
+
       <div className="ingredient-modal-content" onClick={(e) => e.stopPropagation()} id='recipe-modal' style={{ '--card-width': cardWidth }}>
 
         <IngredientsFilterComponent
@@ -88,9 +115,12 @@ export default function IngredientModal({ isOpen, onClose, cardWidth, chooseIngr
         />
 
         <div className='ingredient-list'>
-          {ingredients && Object.entries(ingredients)
+          {
+          ingredients && Object.entries(ingredients)
           .sort(([, a], [, b]) => a.name.localeCompare(b.name)) // Tri sur la valeur
-          .map(([id, ingredient]) => (
+          .map(([id, ingredient]) => {
+            const ingredientUnits = normalizeAllowedUnits(ingredient.units);
+            return (
             <CardComponent
               key={id}
               cardWidth={cardWidth}
@@ -102,11 +132,9 @@ export default function IngredientModal({ isOpen, onClose, cardWidth, chooseIngr
                 <>
                 <div className='ingredient-qtys'>
                   <input className='ingQty' type='number' style={{maxWidth:'30%', height:'25px', padding:0, borderWidth:1}} min={0} onChange={handleQty} />
-                  <select className='ingUnit' style={{width:'auto'}} onChange={handleUnit}>
-                    {[...ingredient.units.includes("") || ingredient.units.includes(" ") ? [""] : [],
-                      ...ingredient.units.filter(unit => unit !== "" && unit !== " ")]
-                      .map((ingUnit, index)=>(
-                        <option key={index} value={ingUnit}>{ingUnit}</option>
+                  <select className='ingUnit' style={{width:'auto'}} onChange={handleUnit} defaultValue={(ingredientUnits.includes("") ? "":null, ingredientUnits.includes(" ") ? " " : null)}>
+                    {ingredientUnits.map((ingUnit, index)=>(
+                      <option key={index} value={ingUnit}>{ingUnit}</option>
                     ))}
                   </select>
                 </div>
@@ -118,7 +146,8 @@ export default function IngredientModal({ isOpen, onClose, cardWidth, chooseIngr
                 </div>
               </>
             </CardComponent>
-          ))}
+          )
+          })}
         </div>
 
         { !loading && <PaginationComponent

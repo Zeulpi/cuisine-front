@@ -2,14 +2,41 @@
 * {
     box-sizing: border-box;
   }
-  .ingredient-modal-title{
+  .ingredient-modal-title-container{
+    display: flex;
     position: relative;
+    flex-direction: column;
+    justify-content: center;
     background-color: white;
     border-bottom: 1px solid lightgray;
     border-radius: 5px 5px 0 0 ;
-    width: 100%;
-    max-width: 80%;
+    width: 80%;
+    max-width: 100%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .ingredient-modal-title{
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+  }
+  .ingredient-add-message {
+    display: none;
+    justify-content: center;
+    max-width: 100%;
+    opacity: 1;
+    transition: opacity 2s ease;
+  }
+
+  .ingredient-add-message.fade-out {
+    opacity: 0;
+  }
+
+  .ingredient-message{
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background-color: antiquewhite;
+    border-radius: 5px;
   }
 
   .ingredient-modal-content {

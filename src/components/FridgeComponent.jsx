@@ -201,8 +201,8 @@ export function FridgeComponent() {
                       <select name="unit" data-unit={ingredient.unit} className='ingUnit' style={{width:'auto'}} defaultValue={ingredient.unit}>
                         {[
                           // Ajouter l'option vide en premier si elle existe dans la liste
-                          ...(allowedUnits.includes("") || allowedUnits.includes(" ") 
-                            ? [""] : []),  // Si la liste contient une valeur vide, l'ajouter en premier
+                          ...(allowedUnits.includes("") ?[""]:[], allowedUnits.includes(" ") 
+                            ? [" "] : []),  // Si la liste contient une valeur vide, l'ajouter en premier
                             ...allowedUnits.filter(unit => unit !== "" && unit !== " ") // Le reste des unités
                             ].map((ingUnit, index) => (
                             <option key={index} value={ingUnit}>{ingUnit}</option>

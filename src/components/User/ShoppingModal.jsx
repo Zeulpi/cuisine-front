@@ -24,7 +24,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
       setLoading(true);
       try {
         const result = await getShoppingIngredients(plannerRecipes, userToken);
-        console.log(plannerRecipes);
+        // console.log(plannerRecipes);
         setIngredients(result.ingredients);
       } catch (error) {
         setErrorMessage("Erreur lors de la récupération des ingrédients.");
@@ -93,7 +93,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
           >+</button>
         </div>
         <div className='shopping-add-message'>{addMessage && (<span className='shopping-message'>{addMessage}</span>)}</div>
-        <button className="recipe-close-btn" onClick={onClose} tabIndex={5}>X</button>
+        <button className="shopping-close-btn" onClick={onClose} tabIndex={5}>X</button>
       </div>
       <div className="shopping-modal-content" onClick={(e) => e.stopPropagation()} id='recipe-modal' style={{ '--card-width': cardWidth }}>
         <LoadingComponent loading={loading} loadingText="Connecting ..." />
