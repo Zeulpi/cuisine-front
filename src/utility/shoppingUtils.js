@@ -50,3 +50,37 @@ export async function getShoppingIngredients (recipes, userToken) {
     
     return {errorMessage, ingredients: ingredients};
 }
+
+export function compareCourseWithInventory(courseList, inventoryList) {
+  const result = {};
+
+  for (const ingredientId in courseList) {
+    const courseItems = courseList[ingredientId];
+    const inventoryItems = inventoryList[ingredientId] || [];
+    
+    result[ingredientId] = courseItems.map(courseItem => {
+      const matchingInventory = inventoryItems.find(inv =>
+        inv.unit === courseItem.unit
+      );
+
+      return {
+        ...courseItem,
+        inventory: matchingInventory ? matchingInventory.quantity : ""
+      };
+    });
+  }
+
+  return result;
+}
+
+export function cleanPastPlannerEntries(plannerData, dayMetaList, dayIndex) {
+  const updatedPlanner = { ...plannerData };
+
+  for (let i = 0; i < dayIndex; i++) {
+    const { keyM, keyE } = dayMetaList[i];
+    delete updatedPlanner[keyM];
+    delete updatedPlanner[keyE];
+  }
+
+  return updatedPlanner;
+}

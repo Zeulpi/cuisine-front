@@ -12,7 +12,7 @@ import LoadingComponent from "./Utils/loadingComponent";
 import { destockIngredients } from "../utility/plannerUtils";
 import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
-import {getServerTime, compareDates} from "../utility/dateUtils";
+import {getServerTime, compareDates, daysOfWeek} from "../utility/dateUtils";
 import {CardComponent} from "./Utils/CardComponent";
 import '../styles/User/PlannerComponent.css'
 
@@ -36,15 +36,6 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
   const userRecipes = useSelector(state => state.recipe.recipes);
   const serverDate = getServerTime();
-  const daysOfWeek = [
-    { day: "Lundi", keyM: "monM", keyE: "monE" },   // Lundi midi et soir
-    { day: "Mardi", keyM: "tueM", keyE: "tueE" },   // Mardi midi et soir
-    { day: "Mercredi", keyM: "wedM", keyE: "wedE" }, // Mercredi midi et soir
-    { day: "Jeudi", keyM: "thuM", keyE: "thuE" },   // Jeudi midi et soir
-    { day: "Vendredi", keyM: "friM", keyE: "friE" }, // Vendredi midi et soir
-    { day: "Samedi", keyM: "satM", keyE: "satE" },   // Samedi midi et soir
-    { day: "Dimanche", keyM: "sunM", keyE: "sunE" }, // Dimanche midi et soir
-  ];
 
   async function retrievePlanner() {
     if (!isLoggedIn) {
@@ -326,7 +317,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                       const recipe = userRecipes[recipeId];
                       // Passer la recette en prop à RecipeCardComponent et gérer la suppression
                       if (recipe) {
-                        // console.log(dayObj.keyM, compareDates(serverDate, planners[plannerId].weekStart, index));
+                        // console.log(dayObj.keyM, compareDates(serverDate, planners[plannerId].weekStart, index), index);
                         return (
                           <RecipeCardComponent
                             key={`${recipe.id}${dayObj.keyM}`}

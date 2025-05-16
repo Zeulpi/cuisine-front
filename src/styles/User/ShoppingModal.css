@@ -2,6 +2,12 @@
 * {
     box-sizing: border-box;
   }
+
+  .shopping-modal{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
   
   .shopping-modal-title-container{
     display: flex;
@@ -53,6 +59,27 @@
     overflow-y: scroll;
   }
   
+  .shopping-list-container{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .shopping-list-container > ul{
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  .shopping-infos{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    width: 100%;
+    padding: 20px;
+  }
   .modal-title{
     text-decoration: none;
     text-align: center;

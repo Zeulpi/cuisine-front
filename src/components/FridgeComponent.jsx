@@ -178,6 +178,7 @@ export function FridgeComponent() {
       </div>
 
       <div className="ingredient-list-container">
+        {/* {console.log('fridge : ', userFridge)} */}
         {
           Object.keys(userFridge).map((id) => {
             const ingredientList = userFridge[id];

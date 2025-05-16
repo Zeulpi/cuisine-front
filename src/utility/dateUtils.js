@@ -14,3 +14,13 @@ export function compareDates(currentDate, plannerStart, dayIndex=0) {
 
   return (currentDate <= plannerDate);
 }
+
+export const daysOfWeek = [
+  { day: "Lundi", keyM: "monM", keyE: "monE" },   // Lundi midi et soir
+  { day: "Mardi", keyM: "tueM", keyE: "tueE" },   // Mardi midi et soir
+  { day: "Mercredi", keyM: "wedM", keyE: "wedE" }, // Mercredi midi et soir
+  { day: "Jeudi", keyM: "thuM", keyE: "thuE" },   // Jeudi midi et soir
+  { day: "Vendredi", keyM: "friM", keyE: "friE" }, // Vendredi midi et soir
+  { day: "Samedi", keyM: "satM", keyE: "satE" },   // Samedi midi et soir
+  { day: "Dimanche", keyM: "sunM", keyE: "sunE" }, // Dimanche midi et soir
+]

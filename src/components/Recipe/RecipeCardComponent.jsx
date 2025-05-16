@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, use } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {CardComponent} from '../Utils/CardComponent.jsx';
 import { useNavigate, useLocation } from 'react-router';
@@ -8,10 +8,8 @@ import { getTextColor } from '../../utility/getTextColor.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { getResource } from '../../resources/back-constants.js';
-import { destockIngredients } from '../../utility/plannerUtils.js';
 import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Recipes/RecipeCardComponent.css';
-import { addListToInventory } from '../../utility/FridgeUtils.js';
 
 
 export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null, isMarked=1, handleDestock=null }) {
