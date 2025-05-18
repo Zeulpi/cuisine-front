@@ -11,6 +11,11 @@
     padding: 10px;
   }
 
+  .planner-week{
+    display: flex;
+    justify-content:space-between ;
+    padding: 0 10px;
+  }
   .date-title {
     padding: 5px;
     font-size: 20px;
@@ -19,6 +24,9 @@
     text-align: center;
     background-color: #e1e1e1;
     border-radius: 15px;
+  }
+  .shopping-container{
+    display: flex;
   }
 
   .planner-update {

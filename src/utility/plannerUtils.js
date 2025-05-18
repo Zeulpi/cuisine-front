@@ -175,3 +175,32 @@ export async function removeRecipeFromPlanner (keyWord, dispatch, userToken, ind
   }
   return errorMessage;
 }
+
+export const adjustTableSize = () => { // Ajustement dynamique de la largeur des colonnes
+  const card = document.querySelector('.recipe-card');
+  const dayCells = document.querySelectorAll('.day-cell');
+  let maxWidth = 0;
+  
+  const adjustAllColumns = () => {
+    dayCells.forEach(cell => { // Trouver la colonne la plus large
+      maxWidth = Math.max(maxWidth, cell.offsetWidth);
+    });
+  };
+  
+  if (card){  // Si une carte est presente dans le tableau, toutes les colonnes prennent la largeur de la carte
+    dayCells.forEach(cell => {
+      cell.style.width = `${card.offsetWidth}px`;
+    });
+    // console.log('card presente');
+  } else { // Si pas de carte, reset toutes les colonnes au mini, puis ajustement en fonction de la plus large
+    maxWidth = 0; // Réinitialiser maxWidth
+    dayCells.forEach(cell => { // reset de toutes les largeurs de colonnes
+      cell.style.width = 'auto';
+    });
+    adjustAllColumns(); // Trouver la colonne la plus large
+    dayCells.forEach(cell => {
+      cell.style.width = `${maxWidth}px`; 
+    });
+    // console.log('card absente');
+  }
+};

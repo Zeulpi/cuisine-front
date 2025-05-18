@@ -12,6 +12,7 @@ export const ROUTES = {
     USER_GET_PLANNER_ROUTE: '/user-planner-get',
     USER_MARK_PLANNER_ROUTE: '/user-planner-setmark',
     USER_GET_SHOPPING_ROUTE: '/user-shopping-get',
+    USER_GET_ALL_SHOPPING_ROUTE: '/user-shopping-getall',
     USER_ADD_FRIDGE_ROUTE: '/user-fridge-addtofridge',
     USER_ADD_FRIDGE_LIST_ROUTE: '/user-fridge-addlisttofridge',
     USER_GET_FRIDGE_ROUTE: '/user-fridge-getfridge',

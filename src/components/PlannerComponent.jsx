@@ -4,14 +4,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {RecipeModal} from "./User/RecipeModal";
 import { BaseModal } from "./Utils/BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
-import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import RecipeCardComponent from "./Recipe/RecipeCardComponent";
 import LoadingComponent from "./Utils/loadingComponent";
 import { destockIngredients } from "../utility/plannerUtils";
+import { getShoppingIngredients } from "../utility/shoppingUtils";
 import ShoppingModal from "./User/ShoppingModal";
-import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner } from "../utility/plannerUtils";
+import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, adjustTableSize } from "../utility/plannerUtils";
 import {getServerTime, compareDates, daysOfWeek} from "../utility/dateUtils";
 import {CardComponent} from "./Utils/CardComponent";
 import '../styles/User/PlannerComponent.css'
@@ -19,22 +19,24 @@ import '../styles/User/PlannerComponent.css'
 export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) {
   const cardWidth = "150px";
   const useDispatch = useAppDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
   const [isShoppingModalOpen, setIsShoppingModalOpen] = useState(false);
+  const [isShoppingAllModalOpen, setIsShoppingAllModalOpen] = useState(false);
   const [data, setData] = useState(null);
   const navigate = useNavigate();  // Récupérer l'objet navigate pour la navigation
-  const location = useLocation(); // Récupérer l'URL actuelle de la page
   const [dayChoice, setDayChoice] = useState(null);
   const [dayKey, setDayKey] = useState(null);
-  const userToken = useSelector((state) => state.auth.token);
+  const userToken = useAppSelector((state) => state.auth.token);
   const [plannerId, setPlannerId] = useState(1); // 0 = planner a venir, 1 = planner actif, 2 = planner -1 semaine, 3 = planner -2 semaines
-  const planners = useSelector(state => state.auth.userPlanner);
+  const planners = useAppSelector(state => state.auth.userPlanner);
   let userPlanner = planners[plannerId].recipes ; // Récupérer le planner actif de l'utilisateur
-  const userRecipes = useSelector(state => state.recipe.recipes);
+  const userRecipes = useAppSelector(state => state.recipe.recipes);
+  const [ingredients, setIngredients] = useState(null);
+  const [allIngredients, setAllIngredients] = useState(null);
   const serverDate = getServerTime();
 
   async function retrievePlanner() {
@@ -48,46 +50,33 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
     }
   }
 
+  async function fetchShoppingIngredients(list=null, plannerIndex=-1) {
+    setLoading(true);
+    // console.log('fetchShoppingIngredients : ', list);
+    try {
+      const result = await getShoppingIngredients(list, userToken, plannerIndex); // Récupérer la liste des ingrédients
+      plannerIndex>=0 ? setIngredients(result.ingredients) : setAllIngredients(result.ingredients); // Mettre à jour la liste des ingrédients dans le state
+      // console.log('ingredients : ', result.ingredients);
+    } catch (error) {
+      // setErrorMessage("Erreur lors de la récupération des ingrédients.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+   // Au chargement du composant, on va chercher les données du planner
+  useEffect(()=>{
+    setData(retrievePlanner());
+    data == 'updated' ? setUpdated(true) : null;
+  }, []);
+
   useEffect(() => { // Vérification de la connexion de l'utilisateur
     // lors du changement d'état isLoggedIn, fetch le planner
       setData(retrievePlanner());
       data == 'updated' ? setUpdated(true) : null;
   }, [isLoggedIn, navigate]);
-  
-  // quand les données du planner changent => re-render
-  useEffect(()=>{
-    // console.log(data);
-  }, [data]);
 
   useEffect(() => {
-    const adjustTableSize = () => { // Ajustement dynamique de la largeur des colonnes
-      const card = document.querySelector('.recipe-card');
-      const dayCells = document.querySelectorAll('.day-cell');
-      let maxWidth = 0;
-      
-      const adjustAllColumns = () => {
-        dayCells.forEach(cell => { // Trouver la colonne la plus large
-          maxWidth = Math.max(maxWidth, cell.offsetWidth);
-        });
-      };
-      
-      if (card){  // Si une carte est presente dans le tableau, toutes les colonnes prennent la largeur de la carte
-        dayCells.forEach(cell => {
-          cell.style.width = `${card.offsetWidth}px`;
-        });
-        // console.log('card presente');
-      } else { // Si pas de carte, reset toutes les colonnes au mini, puis ajustement en fonction de la plus large
-        maxWidth = 0; // Réinitialiser maxWidth
-        dayCells.forEach(cell => { // reset de toutes les largeurs de colonnes
-          cell.style.width = 'auto';
-        });
-        adjustAllColumns(); // Trouver la colonne la plus large
-        dayCells.forEach(cell => {
-          cell.style.width = `${maxWidth}px`; 
-        });
-        // console.log('card absente');
-      }
-    };
     window.addEventListener("load", adjustTableSize);
     window.addEventListener("resize", adjustTableSize);
     adjustTableSize(); // initial call
@@ -97,21 +86,26 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
       window.removeEventListener("load", adjustTableSize);
       window.removeEventListener("resize", adjustTableSize);
     };
-  }, [userPlanner, userRecipes]);
+  }, []);
 
   useEffect(() => { // Ouverture de la modale si un jour est choisi (click bouton +)
     dayChoice !== null ? setIsRecipeModalOpen(true) : setIsRecipeModalOpen(false);
   }, [dayChoice]);
 
-  useEffect(()=>{
-    plannerId <= 1 ? compareDates(serverDate, (planners[plannerId].weekStart)) : null;
-  }, [plannerId]);
-
   const toggleRecipeModal = () => {
     setIsRecipeModalOpen(!isRecipeModalOpen);
   }
-  const toggleShoppingModal = () => {
+  async function toggleShoppingModal() {
+    !isShoppingModalOpen ?
+      await fetchShoppingIngredients(userPlanner, plannerId)
+      : null;
     setIsShoppingModalOpen(!isShoppingModalOpen);
+  }
+  async function toggleShoppingAllModal() {
+    !isShoppingAllModalOpen ?
+      await fetchShoppingIngredients(planners)
+      : null;
+    setIsShoppingAllModalOpen(!isShoppingAllModalOpen);
   }
 
   // Fonction pour vérifier la date lors de l'appui bouton '+'
@@ -240,23 +234,30 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                   </div>
                 </th>
                 <th className="date-title" colSpan={3}>
-                <div>
-                  {(() => {
-                    switch (plannerId) {
-                      case 0:
-                        return "Semaine prochaine";
-                      case 1:
-                        return "Semaine actuelle";
-                      case 2:
-                        return "Il y a 1 semaine";
-                      case 3:
-                        return "Il y a 2 semaines";
-                      default:
-                        return "";
-                    }
-                  })()}
-                </div>
-
+                  <div className="planner-week">
+                    <div></div>
+                    <div>
+                      {(() => {
+                        switch (plannerId) {
+                          case 0:
+                            return "Semaine prochaine";
+                          case 1:
+                            return "Semaine actuelle";
+                          case 2:
+                            return "Il y a 1 semaine";
+                          case 3:
+                            return "Il y a 2 semaines";
+                          default:
+                            return "";
+                        }
+                      })()}
+                    </div>
+                    <div className="shopping-container">
+                      {plannerId <= 1 &&(
+                        <button className="shopping-button" onClick={toggleShoppingModal} title="Liste de courses pour cette semaine"><FontAwesomeIcon icon={faBars}/></button>
+                      )}
+                    </div>
+                  </div>
                 </th>
                 <th className="date-column" colSpan={2}>
                   <div>
@@ -267,11 +268,9 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
               <tr>
                 {/* Colonne vide avant les jours */}
                 <th className="empty-column">
-                  {plannerId <= 1 &&(
-                    <div className="shopping-container">
-                      <button className="shopping-button" onClick={toggleShoppingModal}><FontAwesomeIcon icon={faBars} /></button>
-                    </div>
-                  )}
+                  <div className="shopping-container">
+                    <button className="shopping-button" onClick={toggleShoppingAllModal} title="Liste de courses pour cette semaine et la suivante"><FontAwesomeIcon icon={faBars}/></button>
+                  </div>
                 </th>
                 {/* Une cellule pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
@@ -443,7 +442,11 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
       </BaseModal>
 
       <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%'>
-        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' shoppingIndex={plannerId} />
+        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' ingredientList={ingredients}/>
+      </BaseModal>
+
+      <BaseModal isOpen={isShoppingAllModalOpen} cardWidth='60%'>
+        <ShoppingModal onClose={toggleShoppingAllModal} cardWidth='60%' ingredientList={allIngredients}/>
       </BaseModal>
     </div>
   );

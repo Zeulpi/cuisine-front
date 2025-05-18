@@ -5,16 +5,15 @@ import { getShoppingIngredients, compareCourseWithInventory, cleanPastPlannerEnt
 import { addListToInventory } from '../../utility/FridgeUtils';
 import LoadingComponent from '../Utils/loadingComponent';
 import { ProgressBar } from '../Utils/ProgressBar';
-import { getServerTime, compareDates, daysOfWeek } from '../../utility/dateUtils';
 import '../../styles/User/ShoppingModal.css'
 
 
-export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingIndex }) {
+export default function ShoppingModal({ isOpen, onClose, cardWidth, ingredientList }) {
   const COLOR1 = 'lightgreen';
   const COLOR2 = 'LightCoral';
   const userToken = useAppSelector((state) => state.auth.token);
   const planners = useAppSelector(state => state.auth.userPlanner);
-  const plannerRecipes = planners[shoppingIndex].recipes ;
+  // const plannerRecipes = planners[shoppingIndex].recipes ;
   const [errorMessage, setErrorMessage] = useState('');
   const [data, setData] = useState(null);
   const [addMessage, setAddMessage] = useState(null);
@@ -25,41 +24,29 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, shoppingInde
   const [updatedList, setUpdatedList] = useState(null);
   
 
-  useEffect(() => {
-    
-    async function fetchShoppingIngredients() {
-      setLoading(true);
-      let cleanRecipes;
-      try {
-        if (shoppingIndex == 1) { // Si le planner est celui de la semaine actuelle
-          const currentDate = new Date();
-          currentDate.setHours(0, 0, 0, 0);
-          let dayIndex = currentDate.getDay() - 1;
-          if (dayIndex == -1) {dayIndex = 6;} // trouver l'index du jour, avec lundi = 0 et dimanche = 6
-          cleanRecipes = cleanPastPlannerEntries(plannerRecipes, daysOfWeek, dayIndex); // Réduire la liste des recettes aux jours restants de la semaine
-        } else if (shoppingIndex == 0) { // Si le planner est celui de la semaine prochaine
-          cleanRecipes = plannerRecipes; //On conserve la liste entiere des recettes de la semaine prochaine
-        }
-        if(Object.keys(cleanRecipes).length > 0) {  // Si la liste des recettes n'est pas vide
-          const result = await getShoppingIngredients(cleanRecipes, userToken); // Récupérer la liste des ingrédients
-          setIngredients(result.ingredients); // Mettre à jour la liste des ingrédients dans le state
-        }
-      } catch (error) {
-        setErrorMessage("Erreur lors de la récupération des ingrédients.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchShoppingIngredients();
+  // async function fetchShoppingIngredients() {
+  //   setLoading(true);
+  //   try {
+  //     const result = await getShoppingIngredients(recipeList, userToken, shoppingIndex); // Récupérer la liste des ingrédients
+  //     setIngredients(result.ingredients); // Mettre à jour la liste des ingrédients dans le state
+  //   } catch (error) {
+  //     setErrorMessage("Erreur lors de la récupération des ingrédients.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
+
+  useEffect(() => { // des le chargement de la page, recuperer la liste des ingredients
+    setIngredients(ingredientList);
   }, []);
 
   useEffect(() => {
+    // Mettre a jour la liste d'ingrediuents avec les quantités de l'inventaire et les quantités nécessaires
     const newList = compareCourseWithInventory(ingredients, userFridge);
-    // console.log('newList : ', newList);
     setUpdatedList(newList);
   }
-  , [shoppingIndex, ingredients, userFridge]);
+  , [ingredientList, ingredients, userFridge]);
 
   useEffect(()=> {
     // console.log(data);
@@ -166,4 +153,6 @@ ShoppingModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   cardWidth: PropTypes.string,
   shoppingIndex: PropTypes.number.isRequired,
+  recipeList: PropTypes.Object,
+  ingredientList: PropTypes.Object,
 };
