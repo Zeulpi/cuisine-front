@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from "react-router-dom";
 import {RecipeModal} from "./User/RecipeModal";
+import { RecipeDetail } from "../pages/RecipeDetail";
 import { BaseModal } from "./Utils/BaseModale";
 import { useAppDispatch, useAppSelector } from "../store/reducers/store";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +11,7 @@ import RecipeCardComponent from "./Recipe/RecipeCardComponent";
 import LoadingComponent from "./Utils/loadingComponent";
 import { destockIngredients } from "../utility/plannerUtils";
 import { getShoppingIngredients } from "../utility/shoppingUtils";
+import { slugify } from "../utility/slugify";
 import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, adjustTableSize } from "../utility/plannerUtils";
 import {getServerTime, compareDates, daysOfWeek} from "../utility/dateUtils";
@@ -24,6 +26,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   const [error, setError] = useState(null);
   const [updated, setUpdated] = useState(false); // true si planner expiré et qu'un nouveau planner a été crée en active
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isShoppingModalOpen, setIsShoppingModalOpen] = useState(false);
   const [isShoppingAllModalOpen, setIsShoppingAllModalOpen] = useState(false);
   const [data, setData] = useState(null);
@@ -38,14 +41,23 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   const [ingredients, setIngredients] = useState(null);
   const [allIngredients, setAllIngredients] = useState(null);
   const serverDate = getServerTime();
+  const initialState = {id: null, name: null}
+  const [choosenRecipe, setChoosenRecipe] = useState(initialState);
+  const [recipeSlug, setRecipeSlug] = useState(null);
 
   async function retrievePlanner() {
     if (!isLoggedIn) {
       navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
     } else {
+      let response;
       setLoading(true);
-      const response = await getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
-      setLoading(false);
+      try {
+        response = await getPlannersFromServer(userToken, useDispatch); // si connecté, on va chercher les planners sur le serveur
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
       return response;
     }
   }
@@ -59,6 +71,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
       // console.log('ingredients : ', result.ingredients);
     } catch (error) {
       // setErrorMessage("Erreur lors de la récupération des ingrédients.");
+      setError(error);
     } finally {
       setLoading(false);
     }
@@ -91,10 +104,39 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   useEffect(() => { // Ouverture de la modale si un jour est choisi (click bouton +)
     dayChoice !== null ? setIsRecipeModalOpen(true) : setIsRecipeModalOpen(false);
   }, [dayChoice]);
+  
+  useEffect(()=>{
+    // console.log(choosenRecipe);
+    // choosenRecipe.id ? toggleRecipeModal() : null;
+    // toggleRecipeModal();
+    if (choosenRecipe.id) {
+      setRecipeSlug(`${choosenRecipe.id}-${slugify(choosenRecipe.name)}`);
+      // setIsRecipeModalOpen(true);
+    }
+  }, [choosenRecipe]);
+
+  useEffect(()=>{
+    // console.log('slug : ',recipeSlug);
+    if (recipeSlug) {
+      // console.log('recipeSlug', recipeSlug);
+      toggleDetailModal();
+    }
+  }, [recipeSlug]);
+
+  const chooseRecipe = (recipe) => {
+    setChoosenRecipe(recipe);
+  }
+
+  async function toggleDetailModal() {
+    isDetailModalOpen ? (setIsDetailModalOpen(!isDetailModalOpen), setRecipeSlug(null), setChoosenRecipe(initialState)) : setIsDetailModalOpen(!isDetailModalOpen);
+    choosenRecipe.id ? setIsDetailModalOpen(!isDetailModalOpen) : null;
+    // console.log('toggleDetailModal', recipeSlug);
+  }
 
   const toggleRecipeModal = () => {
     setIsRecipeModalOpen(!isRecipeModalOpen);
   }
+
   async function toggleShoppingModal() {
     !isShoppingModalOpen ?
       await fetchShoppingIngredients(userPlanner, plannerId)
@@ -205,6 +247,9 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   }
 
   return (
+    <>
+    {!error && isLoggedIn &&(
+    <>
     <div className="planner" style={{ '--table-width': plannerWidth }}>
       {isPlannerModal && recipeFromDetail && (
         <div className='planner-modal-title'>
@@ -334,6 +379,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                             localPortions={localPortions}
                             isMarked={(userPlanner[dayObj.keyM])[2]}
                             handleDestock={handleDestock}
+                            chooseRecipe={chooseRecipe}
                           />
                         );
                       }
@@ -399,6 +445,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                             localPortions={localPortions} // Passer les portions locales en prop
                             isMarked={(userPlanner[dayObj.keyE])[2]}
                             handleDestock={handleDestock}
+                            chooseRecipe={chooseRecipe}
                           />
                         );
                       }
@@ -441,6 +488,10 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
         <RecipeModal dayChoice={dayChoice} chooseDay={chooseDay} cardWidth='60%' chooseMeal={chooseMeal} />
       </BaseModal>
 
+      <BaseModal isOpen={isDetailModalOpen} cardWidth='100%'  bodyWidth={'100%'}>
+        <RecipeDetail recipeSlug={recipeSlug} onClose={toggleDetailModal} fromPlanner={true}/>
+      </BaseModal>
+
       <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%'>
         <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' ingredientList={ingredients}/>
       </BaseModal>
@@ -449,6 +500,9 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
         <ShoppingModal onClose={toggleShoppingAllModal} cardWidth='60%' ingredientList={allIngredients}/>
       </BaseModal>
     </div>
+    </>
+    )}
+    </>
   );
 }
 

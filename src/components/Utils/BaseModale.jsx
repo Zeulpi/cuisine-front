@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';  // Validation des props
 import '../../styles/BaseModal.css'
 
-export const BaseModal = ({ isOpen, onClose, children, cardWidth }) => {
+export const BaseModal = ({ isOpen, onClose, children, cardWidth, bodyWidth=null }) => {
   useEffect(() => { // Ajustement dynamique de la position verticale de la modale
     const adjustModalOffset = () => {
       const header = document.getElementById("app-header");
@@ -26,6 +26,7 @@ export const BaseModal = ({ isOpen, onClose, children, cardWidth }) => {
   }, [isOpen]);
 
   useEffect(() => {
+    // console.log('isOpen', isOpen);
     // Lorsque la modale est ouverte, désactive le défilement du body
     if (isOpen) {
       document.body.style.overflow = 'hidden'; // Désactive le défilement du body
@@ -43,7 +44,7 @@ export const BaseModal = ({ isOpen, onClose, children, cardWidth }) => {
 
   return (
     <div className="base-modal-overlay" id='modal-frame' >
-      <div className='base-modal-body' id='modal-body' style={{ '--card-width': '50vw' }}>
+      <div className='base-modal-body' id='modal-body' style={{ '--card-width': `${bodyWidth ? bodyWidth: '50vw'}` }}>
         {children}
       </div>
     </div>
@@ -56,4 +57,5 @@ BaseModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   cardWidth: PropTypes.string,
+  bodyWidth: PropTypes.string,
 };

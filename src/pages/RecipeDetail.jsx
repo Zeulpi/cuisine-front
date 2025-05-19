@@ -16,11 +16,12 @@ import StepBlocks from '../components/Recipe/StepBlocks.jsx';
 import '../styles/Recipes/RecipeDetail.css';
 import { BaseModal } from '../components/Utils/BaseModale.jsx';
 import {PlannerComponent} from '../components/PlannerComponent.jsx';
+import { on } from 'events';
 
 
-export function RecipeDetail() {
-  const { sluggedId } = useParams();
-  const { id, slug } = extractIdAndSlug(sluggedId);
+export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', fromPlanner=false}) {
+  const { sluggedId } = useParams() || recipeSlug;
+  const { id, slug } = recipeSlug ? extractIdAndSlug(recipeSlug) : extractIdAndSlug(sluggedId);
   const [recipe, setRecipe] = useState(null);
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [portions, setPortions] = useState(null);
@@ -68,6 +69,7 @@ export function RecipeDetail() {
 
     setLoading(true);
     try {
+      console.log('Fetching recipe with ID:', id); // Debugging line
       const response = await axios.get(getData(ROUTES.RECIPE_DETAIL(id)));
       // console.log('Response:', response.data); // Debugging line
 
@@ -84,7 +86,8 @@ export function RecipeDetail() {
     } catch (error) {
       console.error('Erreur lors du chargement de la recette :', error.response?.data.message); // Debugging line
       setError(error);
-      navigate('/recipes'); // Redirection vers une 404 custom
+      onClose && onClose(); // Ferme la modale si l'erreur se produit
+      // navigate('/recipes'); // Redirection vers une 404 custom
     } finally {
       setLoading(false);
     }
@@ -95,7 +98,7 @@ export function RecipeDetail() {
     if (isNaN(id) || id <= 0 || id > 999999999) { // Vérification de la validité de l'ID
       if (window.history.length > 1) {  // Vérification de l'historique du navigateur
         // Si l'historique a plus d'une entrée, cela signifie que l'utilisateur est arrivé ici par un lien direct
-        navigate(-1); // Retour à la page précédente
+        // navigate(-1); // Retour à la page précédente
       } else {
         navigate('*'); // Redirection vers une 404 custom
       }
@@ -105,6 +108,10 @@ export function RecipeDetail() {
     // Appel à ton endpoint API pour récupérer la recette complète
     fetchRecipeDetail();
   }, [id]);
+
+  useEffect(()=>{
+    // console.log(slug);
+  }, [slug]);
 
   useEffect(() => {
     if (recipe && slug !== slugify(recipe.name)) {
@@ -141,73 +148,65 @@ export function RecipeDetail() {
     <>
     {recipe && (
       <>
-      <title>
-      {recipe?.name ? `${process.env.REACT_APP_APP_NAME} - ${recipe.name}` : process.env.REACT_APP_APP_NAME}
-      </title>
-      
-      {isLoggedIn && (
-        <div className='detail-btn-add' id='detail-btn-add' title='Ajouter la recette au planner'><button className="select-button" onClick={togglePlannerModal}>+</button></div>
-      )}
-      
-      <div className='recipe-detail-page'>
-        {loading && <LoadingComponent loading={loading} loadingText='Chargement de la recette ...'/>}
-        {recipe && (
-          <>
-            <div className='recipe-title'>
-              <h1>{recipe.name}</h1>
-            </div>
-          
-            <RecipeDetailComponent image={recipe.image} duration={recipe.duration} tags={recipe.tags} />
-            <div className='recipe-ingredients-container'>
-              <div className='recipe-ingredients-header'>
-                <h2 className='recipe-ingredients-title'>Ingrédients</h2>
-                <div className='portion-container'>
-                  <span className='portion-txt'>Pour &nbsp;</span>
-                  <div className='portion-inputs'>
-                    <input type='text'
-                      id='portion-count' 
-                      ref={(el) => setupSecureInput(el, presets.number)}
-                      onChange={handlePortions} value={newPortions ?? ''}
-                      onBlur={() => {
-                        if (newPortions < MIN_PORTIONS) setNewPortions(MIN_PORTIONS);
-                        if (newPortions > MAX_PORTIONS) setNewPortions(MAX_PORTIONS);
-                      }}
-                    >
-                    </input>
-                    <div className='portion-btns'>
-                      <button id='portions-up' onClick={handlePortions} disabled={newPortions == MAX_PORTIONS}>+</button>
-                      <button id='portions-down' onClick={handlePortions} disabled={newPortions == MIN_PORTIONS}>-</button>
-                    </div>
-                  </div>
-                  <span className='portion-txt'>&nbsp; Personnes</span>
-                </div>
-              </div>
-              <div className='recipe-ingredients-list'>
-                {Object.entries(recipe.ingredients).map(([id, ingredient]) => (
-                  id > 0 && (
-                    <RecipeIngredientComponent key={id} name={ingredient.name} image={ingredient.image} quantity={ingredient.quantity} unit={ingredient.unit} ratio={Number((newPortions / portions).toFixed(2))} />
-                  )
-                ))}
-              </div>
-            </div>
-            <div className='recipe-steps-container'>
-              <div className='recipe-steps-header'>
-                <h2 className='recipe-steps-title'>Etapes</h2>
-              </div>
-              <div className='recipe-steps-list'>
-                <StepBlocks steps={recipe.steps} ingredients={recipe.ingredients} />
-              </div>
-            </div>
-          </>
+      <div className='detail-modal-title-container'>
+        <div className='recipe-title'>
+          <h1>{recipe.name}</h1>
+          {isLoggedIn && !fromPlanner &&(
+          <div className='detail-btn-add' id='detail-btn-add' title='Ajouter la recette au planner'><button className="select-button" onClick={togglePlannerModal}>+</button></div>
+          )}
+        </div>
+        {onClose &&  (
+          <button className="detail-close-btn" onClick={onClose} tabIndex={5}>X</button>
         )}
-
-        {error && <div className="error-message">{error}</div>}
       </div>
-
+      <div className='recipe-detail-page'>
+        <div className="detail-modal-content" onClick={(e) => e.stopPropagation()} id='recipe-modal' style={{ '--card-width': cardWidth }}>
+          <RecipeDetailComponent image={recipe.image} duration={recipe.duration} tags={recipe.tags} />
+          <div className='recipe-ingredients-container'>
+            <div className='recipe-ingredients-header'>
+              <h2 className='recipe-ingredients-title'>Ingrédients</h2>
+              <div className='portion-container'>
+                <span className='portion-txt'>Pour &nbsp;</span>
+                <div className='portion-inputs'>
+                  <input type='text'
+                    id='portion-count' 
+                    ref={(el) => setupSecureInput(el, presets.number)}
+                    onChange={handlePortions} value={newPortions ?? ''}
+                    onBlur={() => {
+                      if (newPortions < MIN_PORTIONS) setNewPortions(MIN_PORTIONS);
+                      if (newPortions > MAX_PORTIONS) setNewPortions(MAX_PORTIONS);
+                    }}
+                  >
+                  </input>
+                  <div className='portion-btns'>
+                    <button id='portions-up' onClick={handlePortions} disabled={newPortions == MAX_PORTIONS}>+</button>
+                    <button id='portions-down' onClick={handlePortions} disabled={newPortions == MIN_PORTIONS}>-</button>
+                  </div>
+                </div>
+                <span className='portion-txt'>&nbsp; Personnes</span>
+              </div>
+            </div>
+            <div className='recipe-ingredients-list'>
+              {Object.entries(recipe.ingredients).map(([id, ingredient]) => (
+                id > 0 && (
+                  <RecipeIngredientComponent key={id} name={ingredient.name} image={ingredient.image} quantity={ingredient.quantity} unit={ingredient.unit} ratio={Number((newPortions / portions).toFixed(2))} />
+                )
+              ))}
+            </div>
+          </div>
+          <div className='recipe-steps-container'>
+            <div className='recipe-steps-header'>
+              <h2 className='recipe-steps-title'>Etapes</h2>
+            </div>
+            <div className='recipe-steps-list'>
+              <StepBlocks steps={recipe.steps} ingredients={recipe.ingredients} />
+            </div>
+          </div>
+        </div>
+      </div>
       <BaseModal isOpen={isPlannerModalOpen} cardWidth='60%'>
         <PlannerComponent plannerWidth='60%' plannerModalClose={togglePlannerModal} isPlannerModal={true} recipeFromDetail={recipe}/>
       </BaseModal>
-
       </>
     )}
     </>
@@ -216,4 +215,8 @@ export function RecipeDetail() {
 
 RecipeDetail.propTypes = {
   portionsFromCard: PropTypes.number,
+  recipeSlug: PropTypes.string,
+  onClose: PropTypes.func,
+  cardWidth: PropTypes.string,
+  fromPlanner: PropTypes.bool,
 };

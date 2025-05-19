@@ -105,7 +105,7 @@ export async function getFridgeFromServer (userToken, dispatch) {
       errorMessage = "L'inventaire n'a pas été renvoyé.";
     }
   } catch (error) {
-    console.log('Erreur lors de la connexion :', error.response.data);
+    console.log('Erreur lors de la connexion :', error.message);
     errorMessage = "Erreur lors de la connexion.";
   }
   return errorMessage;

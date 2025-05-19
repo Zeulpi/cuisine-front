@@ -30,8 +30,15 @@ export function FridgeComponent() {
       navigate("/"); // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
     } else {
       setLoading(true);
-      const response = await getFridgeFromServer(userToken, useDispatch); // si connecté, on va chercher l'inventaire sur le serveur
-      setLoading(false);
+      let response;
+      try {
+        response = await getFridgeFromServer(userToken, useDispatch); // si connecté, on va chercher l'inventaire sur le serveur
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'inventaire :", error);
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
       return response;
     }
   }
@@ -154,82 +161,88 @@ export function FridgeComponent() {
   }
 
   return (
-    <div className="fridge">
+    <>
+    {!error && (
+      <>
+      <div className="fridge">
 
-    <LoadingComponent loading={loading} />
+      <LoadingComponent loading={loading} />
 
-    <div className="ingredient-main-container">
-      <div className="ingredient-add-container">
-        <CardComponent
-          cardWidth={cardWidth}
-          childrenTarget='body'
-          cardName='Ajouter un ingredient'
-          cardCursor="default"
-        >
-          <div style={{display:'flex', flexDirection:'column', height:'100%'}}>
-            <button
-              className="select-button"
-              style={{margin:'auto'}}
-              onClick={handleAddButton}
-              disabled={loading}
-            > + </button>
-          </div>
-        </CardComponent>
+      <div className="ingredient-main-container">
+        <div className="ingredient-add-container">
+          <CardComponent
+            cardWidth={cardWidth}
+            childrenTarget='body'
+            cardName='Ajouter un ingredient'
+            cardCursor="default"
+          >
+            <div style={{display:'flex', flexDirection:'column', height:'100%'}}>
+              <button
+                className="select-button"
+                style={{margin:'auto'}}
+                onClick={handleAddButton}
+                disabled={loading}
+              > + </button>
+            </div>
+          </CardComponent>
+        </div>
+
+        <div className="ingredient-list-container">
+          {/* {console.log('fridge : ', userFridge)} */}
+          {
+            Object.keys(userFridge).map((id) => {
+              const ingredientList = userFridge[id];
+              // console.log(ingredientList);
+
+              return ingredientList.map((ingredient, index) => {
+                const allowedUnits = normalizeAllowedUnits(ingredient.allowedUnits);
+                return(
+                  <CardComponent
+                    key={`${id}-${index}`}
+                    cardWidth={ingCardWidth}
+                    cardName={ingredient.name}
+                    cardImg={baseUrl + RESOURCE_ROUTES.INGREDIENT_IMAGE_ROUTE + (ingredient.image)}
+                    cardCursor="default"
+                    isModal={true}
+                    handleRemove={handleIngredientRemove}
+                    childrenFooter={!loading &&
+                      <>
+                      <form data-id={id} data-index={index} className='ingredient-qtys' onSubmit={handleSubmit}>
+                        <input name="quantity" className='ingQty' type='number' style={{maxWidth:'30%', height:'25px', padding:0, borderWidth:1}} min={0} defaultValue={ingredient.quantity} />
+                        <select name="unit" data-unit={ingredient.unit} className='ingUnit' style={{width:'auto'}} defaultValue={ingredient.unit}>
+                          {[
+                            // Ajouter l'option vide en premier si elle existe dans la liste
+                            ...(allowedUnits.includes("") ?[""]:[], allowedUnits.includes(" ") 
+                              ? [" "] : []),  // Si la liste contient une valeur vide, l'ajouter en premier
+                              ...allowedUnits.filter(unit => unit !== "" && unit !== " ") // Le reste des unités
+                              ].map((ingUnit, index) => (
+                              <option key={index} value={ingUnit}>{ingUnit}</option>
+                          ))}
+                        </select>
+                        <button style={{borderRadius:'50%', borderWidth:'1px'}}>OK</button>
+                      </form>
+                      </>
+                    }
+                  />
+                )
+              });
+            })
+          }
+        </div>
       </div>
 
-      <div className="ingredient-list-container">
-        {/* {console.log('fridge : ', userFridge)} */}
-        {
-          Object.keys(userFridge).map((id) => {
-            const ingredientList = userFridge[id];
-            // console.log(ingredientList);
-
-            return ingredientList.map((ingredient, index) => {
-              const allowedUnits = normalizeAllowedUnits(ingredient.allowedUnits);
-              return(
-                <CardComponent
-                  key={`${id}-${index}`}
-                  cardWidth={ingCardWidth}
-                  cardName={ingredient.name}
-                  cardImg={baseUrl + RESOURCE_ROUTES.INGREDIENT_IMAGE_ROUTE + (ingredient.image)}
-                  cardCursor="default"
-                  isModal={true}
-                  handleRemove={handleIngredientRemove}
-                  childrenFooter={!loading &&
-                    <>
-                    <form data-id={id} data-index={index} className='ingredient-qtys' onSubmit={handleSubmit}>
-                      <input name="quantity" className='ingQty' type='number' style={{maxWidth:'30%', height:'25px', padding:0, borderWidth:1}} min={0} defaultValue={ingredient.quantity} />
-                      <select name="unit" data-unit={ingredient.unit} className='ingUnit' style={{width:'auto'}} defaultValue={ingredient.unit}>
-                        {[
-                          // Ajouter l'option vide en premier si elle existe dans la liste
-                          ...(allowedUnits.includes("") ?[""]:[], allowedUnits.includes(" ") 
-                            ? [" "] : []),  // Si la liste contient une valeur vide, l'ajouter en premier
-                            ...allowedUnits.filter(unit => unit !== "" && unit !== " ") // Le reste des unités
-                            ].map((ingUnit, index) => (
-                            <option key={index} value={ingUnit}>{ingUnit}</option>
-                        ))}
-                      </select>
-                      <button style={{borderRadius:'50%', borderWidth:'1px'}}>OK</button>
-                    </form>
-                    </>
-                  }
-                />
-              )
-            });
-          })
-        }
+      <BaseModal isOpen={isIngredientModalOpen} cardWidth='60%' >
+        <IngredientModal
+          onClose={toggleIngredientModal}
+          cardWidth={ingCardWidth}
+          chooseIngredient={handleAddIngredient}
+          modalTitle='Ajoutez un ingrédient a votre inventaire'
+        />
+      </BaseModal>
       </div>
-    </div>
-
-    <BaseModal isOpen={isIngredientModalOpen} cardWidth='60%' >
-      <IngredientModal
-        onClose={toggleIngredientModal}
-        cardWidth={ingCardWidth}
-        chooseIngredient={handleAddIngredient}
-        modalTitle='Ajoutez un ingrédient a votre inventaire'
-      />
-    </BaseModal>
-    </div>
+      </>
+    )}
+    </>
   );
 }
 

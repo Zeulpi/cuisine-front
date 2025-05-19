@@ -10,15 +10,22 @@ import { ROUTES } from '../resources/routes-constants';
 import { getData } from '../resources/api-constants';
 import '../styles/Recipes/RecipeList.css';
 import '../styles/Recipes/FilterComponent.css'
+import { BaseModal } from '../components/Utils/BaseModale';
+import { slugify } from '../utility/slugify';
+import { RecipeDetail } from './RecipeDetail';
 
 export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }) {
   const location = useLocation();
   const [recipes, setRecipes] = useState({});
+  const initialState = {id: null, name: null}
+  const [choosenRecipe, setChoosenRecipe] = useState(initialState);
+  const [recipeSlug, setRecipeSlug] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(location.state?.page || 1);
   const [limit, setLimit] = useState(9); // Nombre de recettes par page
   const [error, setError] = useState(null);
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
   const [filters, setFilters] = useState(location.state?.filters || {
     search: location.state?.fastSearch || '',
     tags: [],
@@ -45,7 +52,7 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
       setRecipes(response.data.recipes);
       setPagination(response.data.pagination);
     } catch (error) {
-      console.error('Erreur lors du chargement des recettes :', error);
+      console.error('Erreur lors du chargement des recettes :', error.message);
       setError(error);
     } finally {
       setLoading(false);
@@ -56,13 +63,43 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
     fetchRecipes();
   }, [page, filters, limit]);
   
+  useEffect(()=>{
+    // console.log(choosenRecipe);
+    // choosenRecipe.id ? toggleRecipeModal() : null;
+    // toggleRecipeModal();
+    if (choosenRecipe.id) {
+      setRecipeSlug(`${choosenRecipe.id}-${slugify(choosenRecipe.name)}`);
+      // setIsRecipeModalOpen(true);
+    }
+  }, [choosenRecipe]);
+
+  useEffect(()=>{
+    // console.log('slug : ',recipeSlug);
+    if (recipeSlug) {
+      // console.log('recipeSlug', recipeSlug);
+      toggleRecipeModal();
+    }
+  }, [recipeSlug]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
     window.scrollTo({top, behavior: "smooth"});
   };
 
+  const chooseRecipe = (recipe) => {
+    setChoosenRecipe(recipe);
+  }
+
+  async function toggleRecipeModal() {
+    isRecipeModalOpen ? (setIsRecipeModalOpen(!isRecipeModalOpen), setRecipeSlug(null), setChoosenRecipe(initialState)) : setIsRecipeModalOpen(!isRecipeModalOpen);
+    choosenRecipe.id ? setIsRecipeModalOpen(!isRecipeModalOpen) : null;
+    // console.log('toggleRecipeModal', recipeSlug);
+  }
+
   return (
+    <>
+    {!error && (
+      <>
     <div id='recipe-list'>
       {!isModal && (
         <title>
@@ -86,15 +123,14 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
         {Object.entries(recipes)
           .sort(([, a], [, b]) => a.name.localeCompare(b.name)) // Tri sur la valeur
           .map(([id, recipe]) => (
-            // <Link to={`/recipes/${id}-${slugify(recipe.name)}`} key={id} className='recipe-link' state={{fromRecipeList: true, filters, page, scroll: window.scrollY}}>
-                <RecipeCardComponent
-                  key={id}
-                  recipe={recipe}
-                  isModal={isModal}
-                  cardWidth={cardWidth}
-                  chooseMeal={chooseMeal}
-                />
-            // </Link>
+            <RecipeCardComponent
+              key={id}
+              recipe={recipe}
+              isModal={isModal}
+              cardWidth={cardWidth}
+              chooseMeal={chooseMeal}
+              chooseRecipe={chooseRecipe}
+            />
           ))}
       </div>
 
@@ -106,6 +142,12 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
       }
       {error && <div className="error-message">{error}</div>}
     </div>
+    <BaseModal isOpen={isRecipeModalOpen} cardWidth='100%'  bodyWidth={'100%'}>
+      <RecipeDetail recipeSlug={recipeSlug} onClose={toggleRecipeModal}/>
+    </BaseModal>
+    </>
+    )}
+    </>
   );
 }
 

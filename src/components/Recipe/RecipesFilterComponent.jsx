@@ -24,7 +24,7 @@ export function RecipesFilterComponent({ filters, onFilterChange, loading }) {
         const response = await axios.get(getData(ROUTES.TAG_ROUTE));
         setAvailableTags(response.data);
       } catch (error) {
-        console.error("Erreur lors du chargement des tags :", error);
+        console.error("Erreur lors du chargement des tags :", error.message);
       }
     };
 

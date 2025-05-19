@@ -12,7 +12,7 @@ import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Recipes/RecipeCardComponent.css';
 
 
-export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null, isMarked=1, handleDestock=null }) {
+export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null, isMarked=1, handleDestock=null, chooseRecipe=null }) {
   const userToken = useAppSelector((state) => state.auth.token);
   const planners = useAppSelector(state => state.auth.userPlanner);
   const navigate = useNavigate();
@@ -62,7 +62,8 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
 
   const handleClick = (recipe, key = null) => {
     if (!isModal) { // vrai si on est sur la page RecipeList
-      navigate(`/recipes/${(recipe.id)}-${slugify(recipe.name)}`);
+      // navigate(`/recipes/${(recipe.id)}-${slugify(recipe.name)}`);
+      chooseRecipe(recipe); // On choisit la recette
       // console.log(recipe.id, slugify(recipe.name));
       
     } else {
@@ -70,9 +71,10 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
         if (chooseDay && dataName && dataKey) { // vrai si on clique sur la Card dans le planner
           // console.log("chooseDay is defined", dataName, dataKey);
           // console.log(recipe.id, slugify(recipe.name));
-          navigate(`/recipes/${recipe.id}-${slugify(recipe.name)}`, {
-            state: { portionsFromCard: newPortions },
-          });
+          chooseRecipe(recipe);
+          // navigate(`/recipes/${recipe.id}-${slugify(recipe.name)}`, {
+          //   state: { portionsFromCard: newPortions },
+          // });
         } else {
           chooseMeal(recipe, null, recipe.portions); // On Ajoute la recette au planner
         }
@@ -176,4 +178,5 @@ RecipeCardComponent.propTypes = {
   isMarked: PropTypes.bool,
   plannerId: PropTypes.number,
   handleDestock: PropTypes.func,
+  chooseRecipe: PropTypes.func,
 };
