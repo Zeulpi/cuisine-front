@@ -7,7 +7,6 @@ import '../../styles/User/UserPlanner.css'
 export function UserPlanner() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAppSelector((state) => state.auth);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [userPlanners, setUserPlanners] = useState(useAppSelector(state => state.auth.userPlanner));
 
   useEffect(() => {
@@ -19,10 +18,6 @@ export function UserPlanner() {
   useEffect(()=>{
     // console.log("planner mis a jour");
   }, [userPlanners]);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
 
   return (
     <>

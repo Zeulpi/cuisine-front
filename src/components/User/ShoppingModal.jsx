@@ -1,14 +1,14 @@
 import React, { useState, useEffect, use } from 'react';
 import PropTypes from 'prop-types';  // Validation des props
 import { useAppDispatch, useAppSelector } from '../../store/reducers/store';
-import { getShoppingIngredients, compareCourseWithInventory, cleanPastPlannerEntries } from '../../utility/shoppingUtils';
+import { compareCourseWithInventory } from '../../utility/shoppingUtils';
 import { addListToInventory } from '../../utility/FridgeUtils';
 import LoadingComponent from '../Utils/loadingComponent';
 import { ProgressBar } from '../Utils/ProgressBar';
 import '../../styles/User/ShoppingModal.css'
 
 
-export default function ShoppingModal({ isOpen, onClose, cardWidth, ingredientList }) {
+export default function ShoppingModal({ isOpen, onClose, cardWidth, ingredientList, shoppingTitle=null }) {
   const COLOR1 = 'lightgreen';
   const COLOR2 = 'LightCoral';
   const userToken = useAppSelector((state) => state.auth.token);
@@ -22,20 +22,6 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, ingredientLi
   const dispatch = useAppDispatch();
   const userFridge = useAppSelector(state => state.fridge.inventory);
   const [updatedList, setUpdatedList] = useState(null);
-  
-
-  // async function fetchShoppingIngredients() {
-  //   setLoading(true);
-  //   try {
-  //     const result = await getShoppingIngredients(recipeList, userToken, shoppingIndex); // Récupérer la liste des ingrédients
-  //     setIngredients(result.ingredients); // Mettre à jour la liste des ingrédients dans le state
-  //   } catch (error) {
-  //     setErrorMessage("Erreur lors de la récupération des ingrédients.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-
 
   useEffect(() => { // des le chargement de la page, recuperer la liste des ingredients
     setIngredients(ingredientList);
@@ -88,7 +74,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, ingredientLi
     <div className='shopping-modal'>
       <div className='shopping-modal-title-container'>
         <div className='shopping-modal-title'>
-          <h2 className='modal-title'>Liste de courses pour la semaine choisie</h2>
+          <h2 className='modal-title'>Liste de courses pour : {shoppingTitle}</h2>
           &nbsp;&nbsp;
           <button
             className="select-button"
@@ -155,4 +141,5 @@ ShoppingModal.propTypes = {
   shoppingIndex: PropTypes.number.isRequired,
   recipeList: PropTypes.Object,
   ingredientList: PropTypes.Object,
+  shoppingTitle: PropTypes.string,
 };

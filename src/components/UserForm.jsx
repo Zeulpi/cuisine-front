@@ -56,7 +56,7 @@ const UserForm = ({ onSubmit, buttonText = "Enregistrer", defaultValues = {}, su
       const input = document.getElementById("userimage");
       if (input) input.value = null;
   
-      // ⏫ Met à jour formData.userImage avec l'image "officielle"
+      // Met à jour formData.userImage avec l'image "officielle"
       setFormData((prev) => ({
         ...prev,
         userImage: defaultValues.userImage || '',

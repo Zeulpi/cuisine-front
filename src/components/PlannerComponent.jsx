@@ -44,6 +44,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   const initialState = {id: null, name: null}
   const [choosenRecipe, setChoosenRecipe] = useState(initialState);
   const [recipeSlug, setRecipeSlug] = useState(null);
+  const [weekTitle, setWeekTitle] = useState(["Semaine prochaine", "Semaine actuelle", "Il y a 1 semaine", "Il y a 2 semaines", "Cette semaine et la suivante"]);
 
   async function retrievePlanner() {
     if (!isLoggedIn) {
@@ -282,24 +283,11 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                   <div className="planner-week">
                     <div></div>
                     <div>
-                      {(() => {
-                        switch (plannerId) {
-                          case 0:
-                            return "Semaine prochaine";
-                          case 1:
-                            return "Semaine actuelle";
-                          case 2:
-                            return "Il y a 1 semaine";
-                          case 3:
-                            return "Il y a 2 semaines";
-                          default:
-                            return "";
-                        }
-                      })()}
+                      {weekTitle[plannerId]}
                     </div>
                     <div className="shopping-container">
                       {plannerId <= 1 &&(
-                        <button className="shopping-button" onClick={toggleShoppingModal} title="Liste de courses pour cette semaine"><FontAwesomeIcon icon={faBars}/></button>
+                        <button className="shopping-button" onClick={toggleShoppingModal} title={`Liste de courses pour : ${weekTitle[plannerId]}`}><FontAwesomeIcon icon={faBars}/></button>
                       )}
                     </div>
                   </div>
@@ -314,7 +302,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                 {/* Colonne vide avant les jours */}
                 <th className="empty-column">
                   <div className="shopping-container">
-                    <button className="shopping-button" onClick={toggleShoppingAllModal} title="Liste de courses pour cette semaine et la suivante"><FontAwesomeIcon icon={faBars}/></button>
+                    <button className="shopping-button" onClick={toggleShoppingAllModal} title={`Liste de courses pour : ${weekTitle[4]}`}><FontAwesomeIcon icon={faBars}/></button>
                   </div>
                 </th>
                 {/* Une cellule pour chaque jour */}
@@ -493,11 +481,11 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
       </BaseModal>
 
       <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%'>
-        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' ingredientList={ingredients}/>
+        <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' ingredientList={ingredients} shoppingTitle={weekTitle[plannerId]}/>
       </BaseModal>
 
       <BaseModal isOpen={isShoppingAllModalOpen} cardWidth='60%'>
-        <ShoppingModal onClose={toggleShoppingAllModal} cardWidth='60%' ingredientList={allIngredients}/>
+        <ShoppingModal onClose={toggleShoppingAllModal} cardWidth='60%' ingredientList={allIngredients} shoppingTitle={weekTitle[4]}/>
       </BaseModal>
     </div>
     </>

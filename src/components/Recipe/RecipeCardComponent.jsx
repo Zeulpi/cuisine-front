@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {CardComponent} from '../Utils/CardComponent.jsx';
-import { useNavigate, useLocation } from 'react-router';
-import { useAppSelector, useAppDispatch } from '../../store/reducers/store';
-import { slugify } from '../../utility/slugify.js';
 import { getTextColor } from '../../utility/getTextColor.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
@@ -13,10 +10,6 @@ import '../../styles/Recipes/RecipeCardComponent.css';
 
 
 export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null, isMarked=1, handleDestock=null, chooseRecipe=null }) {
-  const userToken = useAppSelector((state) => state.auth.token);
-  const planners = useAppSelector(state => state.auth.userPlanner);
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [newPortions, setNewPortions] = useState(localPortions || recipe?.portions || 1); // Si on vient de la card, on prend les portions de la card
   const [firstRender, setFirstRender] = useState(true);
   const rImage = recipe?.image;

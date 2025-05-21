@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import '../../styles/Recipes/FilterComponent.css';
 import { getData } from '../../resources/api-constants';
 import { ROUTES } from '../../resources/routes-constants';
@@ -11,7 +10,6 @@ export function RecipesFilterComponent({ filters, onFilterChange, loading }) {
   const [search, setSearch] = useState(filters?.search || '');
   const [selectedTags, setSelectedTags] = useState(filters?.tags || []);
   const [availableTags, setAvailableTags] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setSearch(filters?.search || '');
@@ -96,9 +94,6 @@ export function RecipesFilterComponent({ filters, onFilterChange, loading }) {
           </div>
           )}
         </form>
-        
-
-
       </div>
   );
 }

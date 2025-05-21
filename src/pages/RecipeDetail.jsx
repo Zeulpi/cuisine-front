@@ -9,14 +9,12 @@ import { slugify } from '../utility/slugify.js';
 import { ROUTES } from '../resources/routes-constants';
 import { getData } from '../resources/api-constants';
 import { setupSecureInput, presets } from '../utility/inputSanitizer.js';
-import LoadingComponent from '../components/Utils/loadingComponent.jsx';
 import RecipeDetailComponent from '../components/Recipe/RecipeDetailComponent.jsx';
 import RecipeIngredientComponent from '../components/Recipe/RecipeIngredientComponent.jsx';
 import StepBlocks from '../components/Recipe/StepBlocks.jsx';
 import '../styles/Recipes/RecipeDetail.css';
 import { BaseModal } from '../components/Utils/BaseModale.jsx';
 import {PlannerComponent} from '../components/PlannerComponent.jsx';
-import { on } from 'events';
 
 
 export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', fromPlanner=false}) {

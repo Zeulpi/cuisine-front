@@ -1,6 +1,5 @@
 import React, { useState, useEffect, use } from 'react';
 import PropTypes from 'prop-types';  // Validation des props
-import { useAppDispatch, useAppSelector } from '../../store/reducers/store';
 import { getIngredients } from '../../utility/FridgeUtils'
 import LoadingComponent from '../Utils/loadingComponent';
 import {PaginationComponent} from '../Utils/PaginationComponent';
@@ -12,7 +11,6 @@ import '../../styles/User/IngredientModal.css'
 
 
 export default function IngredientModal({ isOpen, onClose, cardWidth, chooseIngredient, modalTitle }) {
-  const userToken = useAppSelector((state) => state.auth.token);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [ingredients, setIngredients] = useState(null);

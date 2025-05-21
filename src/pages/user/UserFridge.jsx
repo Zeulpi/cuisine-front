@@ -7,8 +7,6 @@ import '../../styles/User/UserFridge.css'
 export function UserFridge() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAppSelector((state) => state.auth);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userFridge, setUserFridge] = useState(useAppSelector(state => state.fridge.inventory));
 
   useEffect(() => {
     if (!isLoggedIn) {

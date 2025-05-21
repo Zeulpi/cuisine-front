@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import '../../styles/Recipes/FilterComponent.css';
 
 export function IngredientsFilterComponent({ filters, onFilterChange, loading }) {
   const [search, setSearch] = useState(filters?.search || '');
-  const navigate = useNavigate();
 
   useEffect(() => {
     setSearch(filters?.search || '');

@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getTextColor } from '../../utility/getTextColor.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
-import { getResource } from '../../resources/back-constants';
-import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants';
 import '../../styles/Recipes/RecipeStepComponent.css';
 
 export default function RecipeStepComponent({ order, total, description, time, timeUnit, simult, operations, ingredients }) {
