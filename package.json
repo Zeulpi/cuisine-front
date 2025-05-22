@@ -58,7 +58,7 @@
       "typescript": "^5"
     }
   },
-  "homepage": ".",
+  "homepage": "/gb-cook",
   "postcss": {
     "plugins": {
       "autoprefixer": {}
