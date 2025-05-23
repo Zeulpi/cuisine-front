@@ -1,11 +1,11 @@
 /* Cadre infos login */
 .log-info {
   position: absolute;
-  top: 20px;
-  right: 20px;  /* Aligne à droite */
+  top: 10px;
+  right: 10px;
   display: flex;
   align-items: center;
-  gap: 10px;  /* Espacement entre l'email et les boutons */
+  /* gap: 10px; */
 }
 
 .user-mail {
@@ -15,7 +15,7 @@
 }
 
 .login-btn, .logout-btn {
-  padding: 8px 16px;  /* Espacement interne pour rendre les boutons plus larges */
+  padding: 8px 16px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
@@ -23,6 +23,13 @@
   border-radius: 4px;
   transition: background-color 0.3s, transform 0.2s;
 }
+.admin-btn {
+  padding: 5px;
+  background-color: #007bff;  /* Bleu pour le bouton Admin */
+  border-radius: 4px;
+  color: white;
+}
+
 .log-btns {
   display: flex;
   flex-direction: column;

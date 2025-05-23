@@ -1,3 +1,19 @@
+@media (min-width: 769px) {
+  .recipe-list {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 4rem;     /* espace entre lignes (⬆️⬇️) */
+    padding: 2rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .recipe-list {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    row-gap: 2rem;     /* espace entre lignes (⬆️⬇️) */
+  }
+}
+
 .recipe-link{
     text-decoration: none; /* enlever le soulignement des liens */
     color: inherit; /* garder la couleur du texte par défaut */
@@ -7,23 +23,6 @@
 
 .recipe-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     column-gap: 2rem;  /* espace entre colonnes */
-    row-gap: 8rem;     /* espace entre lignes (⬆️⬇️) */
-    padding: 2rem 2rem; /* moins de padding latéral */
-    box-sizing: border-box;
     justify-items: center;
-  }
-  
-  @media (max-width: 1024px) {
-    .recipe-list {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  @media (max-width: 640px) {
-    .recipe-list {
-      grid-template-columns: 1fr;
-      padding: 1rem;
-    }
   }

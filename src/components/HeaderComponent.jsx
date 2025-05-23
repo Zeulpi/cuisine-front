@@ -3,7 +3,6 @@ import SearchBar from './Header/SearchBar/SearchBar';
 import NavComponent from './Header/NavComponent';
 import LoginComponent from './Header/LoginComponent';
 import './../styles/Header/header.css';
-import { useLocation } from 'react-router-dom';
 
 const HeaderComponent = () => {
   return (

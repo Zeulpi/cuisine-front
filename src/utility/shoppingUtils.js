@@ -1,6 +1,6 @@
 import { getData } from '../resources/api-constants'
 import { ROUTES } from '../resources/routes-constants'
-import { daysOfWeek } from './dateUtils';
+import { daysOfWeek, getDayIndex } from './dateUtils';
 import { useAppSelector } from '../store/reducers/store';
 import axios from 'axios'
 
@@ -29,12 +29,7 @@ export async function getShoppingIngredients (recipes=null, userToken, plannerId
   let cleanRecipes;
   let portionsById = {};
 
-  const currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-  let dayIndex = currentDate.getDay() - 1;
-  if (dayIndex === -1) {
-    dayIndex = 6;
-  }
+  const dayIndex = getDayIndex();
 
   // console.log('getShoppingIngredients : ', recipes);
   // console.log('userToken : ', userToken);

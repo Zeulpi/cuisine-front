@@ -105,7 +105,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
             {(isModal && chooseDay && dataName && dataKey && !isExpired) ?
               (
                 <>
-                <div><button id='portions-down' onClick={handleportions}>-</button>portions : {newPortions}<button id='portions-up' onClick={handleportions}>+</button></div>
+                <div className='portions-handler'><button id='portions-down' onClick={handleportions}>-</button>portions : {newPortions}<button id='portions-up' onClick={handleportions}>+</button></div>
                 </>
               ) : ( isMarked == 0 ?
                 (<>

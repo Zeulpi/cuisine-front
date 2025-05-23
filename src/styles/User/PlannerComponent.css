@@ -1,5 +1,27 @@
 /* PlannerComponent.css */
+  @media only screen and (min-width : 769px){
+    .hidden{
+      display: none;
+    }
+    #planner-prev-arrow, #planner-next-arrow {
+      margin: 0 10px;
+    }
+  }
 
+  @media only screen and (min-width : 320px) and (max-width : 769px) {
+    .hidden-cell{
+      display: none;
+    }
+
+    .hidden{
+      display: inline;
+    }
+
+    #planner-prev-arrow, #planner-next-arrow {
+      margin: 0;
+    }
+  }
+  
   .planner {
     display: flex;
     flex-direction: column;
@@ -10,11 +32,11 @@
     border-radius: 10px;
     padding: 10px;
   }
-
   .planner-week{
     display: flex;
     justify-content:space-between ;
     padding: 0 10px;
+    column-gap: 20px;
   }
   .date-title {
     padding: 5px;
@@ -27,6 +49,26 @@
   }
   .shopping-container{
     display: flex;
+  }
+
+  .shopping-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-size: 20px;
+    color: #00796b;
+    font-weight: bold;
+    text-align: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    border : 1px solid red;
+  }
+
+  .dayindex-arrow{
+    cursor: pointer;
+    font-weight: bolder;
+    font-size: 26px;
   }
 
   .planner-update {
@@ -91,12 +133,31 @@
   .planner-table {
     min-width: 70%;
     border-collapse: collapse; /* Fusionner les bordures */
+    margin: 0 auto; /* Centrer le tableau */
   }
   
-  .date-column {
-    color: #00796b;
+  .header-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 5px 0 10px 0;
   }
-  .date-column:nth-of-type(2) div{
+  /* .date-column {
+  } */
+  .planner-week{
+    color: #00796b;
+    font-size: 20px;
+    font-weight: 600;
+    background-color: lightgray;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    text-align: center;
+  }
+  /* .date-column:nth-of-type(2) div{
     display: flex;
     justify-content: start;
     align-items: center;
@@ -107,7 +168,8 @@
     justify-content: end;
     align-items: center;
     gap: 30px;
-  }
+  } */
+
   #planner-prev-arrow, #planner-next-arrow {
     display: flex;
     justify-content: center;
@@ -120,7 +182,7 @@
     background-color: #d0f7fa; /* Couleur de fond plus claire et fraîche (bleu pâle) */
     border: 1px solid #a0f7fa;
     border-radius: 50%; /* Arrondir les coins pour faire un cercle */
-    margin: 0 10px; /* Espacement entre les flèches et le tableau */
+    /* margin: 0 10px; */
   }
 
   #planner-prev-arrow:hover, #planner-next-arrow:hover {
@@ -129,10 +191,12 @@
   
   /* Supprimer toutes les bordures */
   .day-column {
-    height: 40px;  /* Réduire la hauteur des titres des jours */
-    padding: 10px 20px;  /* Ajuster le padding pour ne pas être trop grand */
-    background-color: #e0f7fa;      /* Couleur de fond plus claire et fraîche (bleu pâle) */
+    height: 40px;
+    padding: 10px 20px;
+    background-color: #e0f7fa;
+    text-align: center;
     color: #00796b;
+    font-size: 20px;
   }
   
   .time-slot {

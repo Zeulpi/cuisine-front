@@ -1,10 +1,20 @@
+@media only screen and (min-width: 769px) {
+  
+}
+
+@media  (max-width: 768px) {
+  
+}
+
 .step-container {
   display: flex;
+  background-color: #ffefef;
   flex-direction: column;
   background-size: cover;
   background-position: center;
   border-radius: 1rem;
   overflow: hidden;
+  border: 1px solid #dfdfdf;
   box-shadow: 0 0 12px 3px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   flex-grow: 1;
@@ -40,6 +50,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  row-gap: 5px;
 }
 
 .step-operations {
@@ -57,8 +68,9 @@
   font-weight: 400;
   color: #4b5563;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 2px;
+  border: 1px solid #dfdfdf;
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+  /* padding: 2px; */
 }
 
 .base-ingredient {
@@ -69,23 +81,28 @@
   color: chocolate;
 }
 
-.step-operation-action {
+.step-operation-action, .step-operation-result {
   display: flex;
-  flex-direction: row;
+  background-color: #efefef;
+  border-radius: 5px;
+  flex-direction: column;
   /* gap: 1rem; */
   font-size: 1.2rem;
   font-weight: 400;
   color: #4b5563;
   width: 100%;
+  padding: 2px;
 }
 
 .step-description{
   display: flex;
+  background-color: #efefef;
   flex-direction: row;
   font-size: 1.2rem;
   font-weight: 400;
   color: #4b5563;
-  border-radius: 10px;
+  border-radius: 5px;
+  border: 1px solid #dfdfdf;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   flex-grow: 1;
   padding: 5px;

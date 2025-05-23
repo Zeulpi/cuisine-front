@@ -1,3 +1,17 @@
+@media only screen and (min-width: 769px) {
+  .recipe-ingredients-container, .recipe-steps-container {   
+    width: 85%;
+    margin: 10px 0;
+  }
+}
+
+@media  (max-width: 768px) {
+  .recipe-ingredients-container, .recipe-steps-container {   
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+
 .recipe-detail-page{
   --card-width: 100%;
   display: flex;
@@ -43,13 +57,13 @@ h1, h2 {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 85%;
   flex-wrap: wrap;
   margin: 10px 0;
 }
 
 .portion-container{
   display: flex;
+  margin: 5px 0 20px 0;
 }
 .portion-txt{
   align-content: center;

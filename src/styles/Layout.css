@@ -1,4 +1,16 @@
 /* header et footer fixes */
+@media only screen and (min-width : 769px){
+  footer{
+    display: flex;
+    justify-content: center;
+  }
+}
+@media only screen and (min-width : 320px) and (max-width : 769px) {
+  footer{
+    display: none;
+  }
+}
+
 header {
     background-color: blueviolet;
     position: fixed;
@@ -17,6 +29,6 @@ footer {
 }
 
 main {
-    padding: 0 1rem; /* horizontal */
+    /* padding: 0 1rem; */
     z-index: 99;
-  }
+}

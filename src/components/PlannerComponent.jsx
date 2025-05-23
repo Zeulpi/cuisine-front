@@ -14,9 +14,9 @@ import { getShoppingIngredients } from "../utility/shoppingUtils";
 import { slugify } from "../utility/slugify";
 import ShoppingModal from "./User/ShoppingModal";
 import { sendPlannerToServer, getPlannersFromServer, removeRecipeFromPlanner, adjustTableSize } from "../utility/plannerUtils";
-import {getServerTime, compareDates, daysOfWeek} from "../utility/dateUtils";
+import {getServerTime, compareDates, daysOfWeek, getDayIndex } from "../utility/dateUtils";
 import {CardComponent} from "./Utils/CardComponent";
-import '../styles/User/PlannerComponent.css'
+import '../styles/User/PlannerComponent.css';
 
 export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) {
   const cardWidth = "150px";
@@ -45,6 +45,8 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
   const [choosenRecipe, setChoosenRecipe] = useState(initialState);
   const [recipeSlug, setRecipeSlug] = useState(null);
   const [weekTitle, setWeekTitle] = useState(["Semaine prochaine", "Semaine actuelle", "Il y a 1 semaine", "Il y a 2 semaines", "Cette semaine et la suivante"]);
+  // const dayId = getDayIndex();
+  const [dayIndex, setDayIndex] = useState(getDayIndex()); // Récupérer l'index du jour actuel (0-6) pour le planner
 
   async function retrievePlanner() {
     if (!isLoggedIn) {
@@ -126,6 +128,23 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
 
   const chooseRecipe = (recipe) => {
     setChoosenRecipe(recipe);
+  }
+
+  const handleDayIndex = (action) => {
+    switch (action) {
+      case 'next':
+        if (dayIndex < 6) {
+          setDayIndex(dayIndex + 1);
+        }
+        break;
+      case 'prev':
+        if (dayIndex > 0) {
+          setDayIndex(dayIndex - 1);
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   async function toggleDetailModal() {
@@ -270,51 +289,57 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
           )}
         </div>
         <div>
+          <div className="header-container">
+            <div>
+              <span className="planner-weekstart">{planners[plannerId].weekStart}</span>
+            </div>
+            <div className="planner-week">
+              <div>
+                {weekTitle[plannerId]}
+              </div>
+              <div className="shopping-container">
+                {plannerId <= 1 &&(
+                  <button className="shopping-button" onClick={toggleShoppingModal} title={`Liste de courses pour : ${weekTitle[plannerId]}`}><FontAwesomeIcon icon={faBars}/></button>
+                )}
+              </div>
+            </div>
+            <div>
+              <span className="planner-weekstart">{planners[plannerId].weekEnd}</span>
+            </div>
+          </div>
           <table className="planner-table">
-            <thead>
+            {/* <thead>
               <tr>
                 <th className="empty-column">&nbsp;</th>
-                <th className="date-column" colSpan={2}>
-                  <div>
-                    <span className="planner-weekstart">{planners[plannerId].weekStart}</span>
-                  </div>
+                <th className="date-column" colSpan="7">
+                  
                 </th>
                 <th className="date-title" colSpan={3}>
-                  <div className="planner-week">
-                    <div></div>
-                    <div>
-                      {weekTitle[plannerId]}
-                    </div>
-                    <div className="shopping-container">
-                      {plannerId <= 1 &&(
-                        <button className="shopping-button" onClick={toggleShoppingModal} title={`Liste de courses pour : ${weekTitle[plannerId]}`}><FontAwesomeIcon icon={faBars}/></button>
-                      )}
-                    </div>
-                  </div>
+                  
                 </th>
                 <th className="date-column" colSpan={2}>
-                  <div>
-                    <span className="planner-weekstart">{planners[plannerId].weekEnd}</span>
-                  </div>
+                  
                 </th>
               </tr>
+            </thead> */}
+
+            <tbody>
               <tr>
                 {/* Colonne vide avant les jours */}
-                <th className="empty-column">
+                <td className="empty-column">
                   <div className="shopping-container">
                     <button className="shopping-button" onClick={toggleShoppingAllModal} title={`Liste de courses pour : ${weekTitle[4]}`}><FontAwesomeIcon icon={faBars}/></button>
                   </div>
-                </th>
+                </td>
                 {/* Une cellule pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
-                <th key={index} className="day-column">
-                  {dayObj.day}
-                </th>
+                <td key={index} className={`day-column ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
+                  {dayIndex > 0 ? (<span className="dayindex-arrow hidden" onClick={()=>{handleDayIndex('prev')}}>⇦</span>) : null}
+                  &nbsp;&nbsp;{dayObj.day}&nbsp;&nbsp;
+                  {dayIndex < 6 ? (<span className="dayindex-arrow hidden" onClick={()=>{handleDayIndex('next')}}>⇨</span>) : null}
+                </td>
                 ))}
               </tr>
-            </thead>
-
-            <tbody>
               {/* Premere ligne *Matin* vide */}
               <tr>
                 <td className="time-slot-empty">
@@ -322,7 +347,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                 </td>
                 {/* Autres cellules pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className="morning-cell">
+                <td key={index} className={`morning-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
                   <span className="spacer">&nbsp;</span> {/* Span vide pour aligner correctement */}
                 </td>
                 ))}
@@ -337,7 +362,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                 </td>
                 {/* Autres cellules pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className="day-cell midday-cell">
+                <td key={index} className={`day-cell midday-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
                   <div className="button-container">
                     {/* Bouton pour "Midi" */}
                     {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
@@ -404,7 +429,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                 </td>
                 {/* Autres cellules pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className="day-cell evening-cell">
+                <td key={index} className={`day-cell evening-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
                   <div className="button-container">
                     {/* Bouton pour "Soir" */}
                     {(userPlanner[dayObj.keyE] && userPlanner[dayObj.keyE].length > 0) ? (

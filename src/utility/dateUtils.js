@@ -15,6 +15,16 @@ export function compareDates(currentDate, plannerStart, dayIndex=0) {
   return (currentDate <= plannerDate);
 }
 
+export const getDayIndex = () =>{
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  let dayIndex = currentDate.getDay() - 1;
+  if (dayIndex === -1) {
+    dayIndex = 6;
+  }
+  return dayIndex;
+}
+
 export const daysOfWeek = [
   { day: "Lundi", keyM: "monM", keyE: "monE" },   // Lundi midi et soir
   { day: "Mardi", keyM: "tueM", keyE: "tueE" },   // Mardi midi et soir

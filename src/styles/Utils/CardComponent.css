@@ -1,76 +1,84 @@
-.basic-card {
-    --basic-card-width: 100%;
-    --basic-card-height: 200px;
-    --basic-card-cursor: help;
-    --basic-card-remove-cursor: pointer;
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    background-size: cover;
-    background-position: center;
-    border-radius: 1rem;
-    border: 1px solid lightgray;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    margin-bottom: 50px;
-    width: var(--basic-card-width);
-    max-width: 450px;
-    aspect-ratio: 3 / 2; /* plus compact que 4/3 */
-    min-height: var(--basic-card-height);
-  }
-
-  .basic-card:hover {
-    transform: scale(1.01);
-  }
-
-  .card-remove {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background-color: red;
-    border-radius: 50%;
-    padding: 0.2rem;
-    cursor: var(--basic-card-remove-cursor);
-    z-index: 2;
-    transition: background-color 0.3s ease;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .card-header {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    font-size: 1.125rem;
-    font-weight: 600;
-    text-align: center;
-    padding: 0.5rem 1rem;
-  }
+@media only screen and (min-width: 769px) {
   
-  .card-content {
-    /* position: relative; */
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    height: 100%;
-    cursor: var(--basic-card-cursor);
-    aspect-ratio: 3 / 2;
-  }
-  .card-body {
-    position: relative;
-    top: 0;
-    height: 100%;
-  }
-  .children-body {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-  }
+}
+
+@media  (max-width: 768px) {
+  
+}
+
+.basic-card {
+  --basic-card-width: 100%;
+  --basic-card-height: 200px;
+  --basic-card-cursor: help;
+  --basic-card-remove-cursor: pointer;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  border: 1px solid lightgray;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  margin-bottom: 50px;
+  width: var(--basic-card-width);
+  max-width: 450px;
+  aspect-ratio: 3 / 2; /* plus compact que 4/3 */
+  min-height: var(--basic-card-height);
+}
+
+.basic-card:hover {
+  transform: scale(1.01);
+}
+
+.card-remove {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: red;
+  border-radius: 50%;
+  padding: 0.2rem;
+  cursor: var(--basic-card-remove-cursor);
+  z-index: 2;
+  transition: background-color 0.3s ease;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.card-header {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+}
+
+.card-content {
+  /* position: relative; */
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  cursor: var(--basic-card-cursor);
+  aspect-ratio: 3 / 2;
+}
+.card-body {
+  position: relative;
+  top: 0;
+  height: 100%;
+}
+.children-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
 
 .card-bg-container{
   display: flex;
@@ -104,6 +112,7 @@
 .card-description{
   position: absolute;
   display: none;
+  font-size: 20px;
   background-color: black;
   color: white;
   opacity: 60%;
@@ -112,6 +121,7 @@
   width: 100%;
   padding: 5%;
 }
+
 .card-footer {
   background-color: rgba(255, 255, 255, 0.92);
   display: flex;
@@ -126,7 +136,7 @@
 .footer-content{
   max-width: 100%;
 }
-  
+
 .card-duration {
   display: flex;
   align-items: center;

@@ -15,6 +15,6 @@ body, html {
 /* contenu qui prend l’espace restant entre header et footer */
 .page-content {
     flex-grow: 1;
-    padding: 1rem;
+    /* padding: 1rem; */
     background-color: aliceblue;
 }

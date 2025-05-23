@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './../../../store/reducers/store';  // Importer les hooks Redux
 import { useLocation } from 'react-router';
+import '../../../styles/Header/nav/nav-right.css';
 
 const NavRight = () => {
     // Utilisation de useSelector pour récupérer l'état de l'authentification dans le store Redux
@@ -16,10 +17,10 @@ const NavRight = () => {
     return (
         <div className="right-nav">
             {isLoggedIn && (
-                <ul>
-                    <li><Link to="user/inventory" style={{color: (isFridge) ? locationColor : locationNotColor}}>Frigo</Link></li>
-                    <li><Link to="user/planner" style={{color: (isPlanner) ? locationColor : locationNotColor}}>Planner</Link></li>
-                </ul>
+                <>
+                <div><Link to="user/inventory"><span style={{color: (isFridge) ? locationColor : locationNotColor}}>Frigo</span></Link></div>
+                <div><Link to="user/planner"><span style={{color: (isPlanner) ? locationColor : locationNotColor}}>Planner</span></Link></div>
+                </>
             )}
         </div>
     );

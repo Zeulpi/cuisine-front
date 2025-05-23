@@ -1,76 +1,123 @@
-  .fridge {
-      display: flex;
-      flex-direction: column;
-      width: 85%;
-      min-width: var(--table-width);
-      margin-top: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 10px;
-    }
-
+@media only screen and (min-width: 769px) {
   .ingredient-main-container {
-    display: flex;
-    max-width: 100%;
-    gap: 8vw;
+    flex-direction: row;
   }
+  .ingQty {
+    max-width: 30%;
+    height: 25px;
+    padding: 0;
+    border-width: 1px;
+  }
+}
 
-  .ingredient-add-container {
-    display: flex;
-    align-items: start;
+@media  (max-width: 768px) {
+  .ingredient-main-container {
+    flex-direction: column;
   }
-  .ingredient-list-container {
-    display: flex;
-    max-width: 100%;
-    flex-wrap: wrap;
-    column-gap: 5vw;
-  }
-
-  .fridge-update {
-    display: flex;
+  .ingredient-add-container, .ingredient-list-container {
     justify-content: center;
-    align-items: center;
-    margin: auto;
-    margin-bottom: 20px;
-    padding: 5px;
+  }
+  .ingredient-list-container .basic-card {
+    --basic-card-width: 250px !important;
+    height: 250px !important;
+  }
+  .ingQty {
+    max-width: 30%;
+    height: 35px;
+    padding: 0;
+    border-width: 1px;
     font-size: 20px;
-    color: #00796b;
-    font-weight: bold;
-    text-align: center;
-    background-color: #f1f1f1;
-    border-radius: 10px;
-    border : 1px solid red;
   }
-
-  .fridge-modal-title{
+  .ingUnit {
+    font-size: 20px;
+  }
+  .ingBtn{
+    font-size: 20px;
+  }
+}
+  
+.fridge {
     display: flex;
-    align-items: center;
-    justify-content:space-between;
-  }
-  .fridge-modal-recipe-name{
-    font-size: 1.2rem;
-  }
-  .fridge-close-btn{
-    margin-right: 10px;
-    cursor: pointer;
-    border: none;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    font-size: 16px;
+    flex-direction: column;
+    width: 85%;
+    min-width: var(--table-width);
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
   }
 
-  .fridge-update button {
-    background-color: #00796b73;
-    padding: 5px 10px;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-  }
-  .fridge-update button:hover {
-    background-color: #005f56a2;
-  }
+.ingredient-main-container {
+  display: flex;
+  max-width: 100%;
+  gap: 8vw;
+}
+
+.ingredient-add-container {
+  display: flex;
+  align-items: start;
+}
+.ingredient-list-container {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  column-gap: 5vw;
+}
+
+.fridge-update {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-bottom: 20px;
+  padding: 5px;
+  font-size: 20px;
+  color: #00796b;
+  font-weight: bold;
+  text-align: center;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  border : 1px solid red;
+}
+
+.fridge-modal-title{
+  display: flex;
+  align-items: center;
+  justify-content:space-between;
+}
+.fridge-modal-recipe-name{
+  font-size: 1.2rem;
+}
+.fridge-close-btn{
+  margin-right: 10px;
+  cursor: pointer;
+  border: none;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.fridge-update button {
+  background-color: #00796b73;
+  padding: 5px 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+.fridge-update button:hover {
+  background-color: #005f56a2;
+}
+
+.ingUnit {
+  width: auto;
+}
+
+.ingBtn {
+  border-radius: 50%;
+  border-width: 1px; ;
+}

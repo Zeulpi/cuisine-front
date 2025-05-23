@@ -22,9 +22,7 @@ const Register = () => {
 
   const handleRegister = async (formData) => {
     setAwaitingServResponse(true);
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
+    
     try {
       const response = await axios.post(getData(ROUTES.REGISTER_ROUTE), formData, {
         headers: {
@@ -33,7 +31,6 @@ const Register = () => {
       });
 
       if (response.data.success) {
-        console.log("✅ Utilisateur inscrit :", response.data);
         navigate("/", {
           state: {
             openLoginModal: true,
@@ -42,14 +39,14 @@ const Register = () => {
         });
       }
 
-      // if (response.data.alerts) {
-      //   setFormErrors(response.data.alerts);
-      //   const first = Object.values(response.data.alerts)[0];
-      //   setErrorMessage(first);
-      // }
+      if (response.data.alerts) {
+        setFormErrors(response.data.alerts);
+        const first = Object.values(response.data.alerts)[0];
+        setErrorMessage(first);
+      }
 
     } catch (error) {
-      console.error("❌ Erreur API :", error);
+      console.error(" Erreur API :", error);
       setErrorMessage(error.response?.data?.error || "Erreur inconnue");
     } finally {
       setAwaitingServResponse(false);

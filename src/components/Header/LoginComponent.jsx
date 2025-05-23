@@ -7,10 +7,10 @@ import LoginModal from "./Login/LoginModal";
 import { RESOURCE_ROUTES, baseUrl } from './../../resources/routes-constants';
 import { getResource } from './../../resources/back-constants';
 import { getRolesFromToken } from "../../utility/getUserFromToken";
-import './../../styles/login.css';
-import './../../styles/Header/login/user.css'
 import { Link } from "react-router-dom"; // Importer Link pour la navigation
 import { useNavigate, useLocation } from "react-router-dom";
+import './../../styles/login.css';
+import './../../styles/Header/login/user.css'
 
 const LoginComponent = ({ openLoginModal, prefillEmail }) => {
     const { token, userEmail, userImage, isLoggedIn } = useAppSelector((state) => state.auth);

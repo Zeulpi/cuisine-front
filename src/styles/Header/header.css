@@ -1,9 +1,14 @@
 /* Global Header Style */
+@media only screen and (min-width : 769px){
+  .header{
+    align-items: center;
+  }
+}
 .header {
     display: flex;
-    flex-direction: column; /* Alignement en colonne */
-    align-items: center; /* Centré horizontalement */
+    flex-direction: column;
     /* padding: 20px; */
+    row-gap: 10px;
     background-color: #f1f1f1;
     font-family: Arial, sans-serif;
   }

@@ -22,9 +22,8 @@ export default function RecipeStepComponent({ order, total, description, time, t
               {Object.entries(operations).map(([opId, operation]) => (
                 <span key={opId} className='step-operation-item'>
                   <div className='step-operation-action'>
-                    <p>{operation.operation}</p>
-                    <p> - </p>
-                    <p>{operation.ingredient && <span className={`step-ingredient ${operation.ingredient < 0 ? 'intermediate-ingredient' : 'base-ingredient'}`}> {ingredients[operation.ingredient].name}</span>}</p>
+                    <span>{operation.operation}</span>
+                    <span>{operation.ingredient && <span className={`step-ingredient ${operation.ingredient < 0 ? 'intermediate-ingredient' : 'base-ingredient'}`}> {ingredients[operation.ingredient].name}</span>}</span>
                   </div>
                   <div className='step-operation-result'>
                     {operation.resultId &&(

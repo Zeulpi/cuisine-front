@@ -12,9 +12,9 @@ import { setupSecureInput, presets } from '../utility/inputSanitizer.js';
 import RecipeDetailComponent from '../components/Recipe/RecipeDetailComponent.jsx';
 import RecipeIngredientComponent from '../components/Recipe/RecipeIngredientComponent.jsx';
 import StepBlocks from '../components/Recipe/StepBlocks.jsx';
-import '../styles/Recipes/RecipeDetail.css';
 import { BaseModal } from '../components/Utils/BaseModale.jsx';
 import {PlannerComponent} from '../components/PlannerComponent.jsx';
+import '../styles/Recipes/RecipeDetail.css';
 
 
 export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', fromPlanner=false}) {

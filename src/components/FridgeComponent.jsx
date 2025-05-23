@@ -208,8 +208,8 @@ export function FridgeComponent() {
                     childrenFooter={!loading &&
                       <>
                       <form data-id={id} data-index={index} className='ingredient-qtys' onSubmit={handleSubmit}>
-                        <input name="quantity" className='ingQty' type='number' style={{maxWidth:'30%', height:'25px', padding:0, borderWidth:1}} min={0} defaultValue={ingredient.quantity} />
-                        <select name="unit" data-unit={ingredient.unit} className='ingUnit' style={{width:'auto'}} defaultValue={ingredient.unit}>
+                        <input name="quantity" className='ingQty' type='number' min={0} defaultValue={ingredient.quantity} />
+                        <select name="unit" data-unit={ingredient.unit} className='ingUnit' defaultValue={ingredient.unit}>
                           {[
                             // Ajouter l'option vide en premier si elle existe dans la liste
                             ...(allowedUnits.includes("") ?[""]:[], allowedUnits.includes(" ") 
@@ -219,7 +219,7 @@ export function FridgeComponent() {
                               <option key={index} value={ingUnit}>{ingUnit}</option>
                           ))}
                         </select>
-                        <button style={{borderRadius:'50%', borderWidth:'1px'}}>OK</button>
+                        <button className="ingBtn">OK</button>
                       </form>
                       </>
                     }

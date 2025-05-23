@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router';
+import '../../../styles/Header/nav/nav-left.css';
 
 const NavLeft = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -16,16 +17,8 @@ const NavLeft = () => {
 
     return (
         <div className="left-nav">
-            <ul>
-                <li><Link to="/"><FontAwesomeIcon icon={faHouse} color={isHome? locationColor : locationNotColor} /></Link></li>
-                <li><Link to="/recipes"><span style={{color: (isRecipe) ? locationColor : locationNotColor}}>Recettes</span></Link></li>
-                <li>
-                {/* <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                    Saison {isDropdownOpen && "↓"}
-                </button>
-                {isDropdownOpen && <ul><li>Option 1</li><li>Option 2</li></ul>} */}
-                </li>
-            </ul>
+            <div><Link to="/"><FontAwesomeIcon icon={faHouse} color={isHome? locationColor : locationNotColor} /></Link></div>
+            <div><Link to="/recipes"><span style={{color: (isRecipe) ? locationColor : locationNotColor}}>Recettes</span></Link></div>
         </div>
     );
 }

@@ -4,7 +4,7 @@ import FeatureComponent from '../components/Home/FeatureComponent'
 import '../styles/home.css'
 
 export function HomePage() {
-    const featureWidth = "20vw";
+    const featureWidth = "100%";
 
 
     return (
@@ -15,7 +15,7 @@ export function HomePage() {
 
             <div className='home-container'>
                 <div className='home-header'>
-                <h1 style={{ fontSize: '3em' }}>Fonctionnalités de l&#39;application</h1>
+                <h1>Fonctionnalités de l&#39;application</h1>
                 </div>
                 <div className='home-cards-container'>
                     <CardComponent cardWidth={featureWidth}>
