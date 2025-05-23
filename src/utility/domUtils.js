@@ -30,3 +30,17 @@ export const normalizeAllowedUnits = (units) => {
     // Autres cas : on renvoie tableau vide
     return [];
 }
+
+export const sanitizeHtml = (text) => {
+    if (!text) return '';
+
+  return text
+    // Remplace <p> et <div> par un retour à la ligne
+    .replace(/<\/?(p|div)>/gi, '\n')
+    // Supprime toutes les autres balises HTML
+    .replace(/<[^>]*>/g, '')
+    // Remplace les multiples sauts de ligne par un seul
+    .replace(/\n\s*\n/g, '\n')
+    // Trim pour supprimer les espaces inutiles
+    .trim();
+}

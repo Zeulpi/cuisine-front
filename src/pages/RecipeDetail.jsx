@@ -67,9 +67,9 @@ export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', f
 
     setLoading(true);
     try {
-      console.log('Fetching recipe with ID:', id); // Debugging line
+      // console.log('Fetching recipe with ID:', id);
       const response = await axios.get(getData(ROUTES.RECIPE_DETAIL(id)));
-      // console.log('Response:', response.data); // Debugging line
+      // console.log('Response:', response.data);
 
       // Vérifie que l’ID est toujours le bon avant de set le state
       // Peut arriver si l'utilisateur navigue rapidement entre les recettes

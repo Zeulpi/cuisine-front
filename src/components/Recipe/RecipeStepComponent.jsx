@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { sanitizeHtml } from '../../utility/domUtils';
 import { faClock, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/Recipes/RecipeStepComponent.css';
 
@@ -36,7 +37,9 @@ export default function RecipeStepComponent({ order, total, description, time, t
           </div>
         )}
         <div className='step-description'>
-            <span>{description}</span>
+          <span style={{ whiteSpace: 'pre-line' }}>
+            {sanitizeHtml(description)}
+          </span>
         </div>
       </div>
     </div>
