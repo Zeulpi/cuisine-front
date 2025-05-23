@@ -19,7 +19,7 @@ import {CardComponent} from "./Utils/CardComponent";
 import '../styles/User/PlannerComponent.css';
 
 export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null, isPlannerModal=false, recipeFromDetail=null }) {
-  const cardWidth = "150px";
+  const cardWidth = "140px";
   const useDispatch = useAppDispatch();
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const [loading, setLoading] = useState(true);
@@ -270,11 +270,11 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
     <>
     {!error && isLoggedIn &&(
     <>
-    <div className="planner" style={{ '--table-width': plannerWidth }}>
+    {/* <div className="planner" id="planner-body" style={{ '--table-width': plannerWidth }}> */}
       {isPlannerModal && recipeFromDetail && (
         <div className='planner-modal-title'>
-          <div className="spacer-div"></div>
-          <h3 className="planner-modal-recipe-name">Choisissez un créneau pour {`"${recipeFromDetail.name}"`}</h3>
+          {/* <div className="spacer-div"></div> */}
+          <h3 className="planner-modal-recipe-name">Choisissez un créneau pour <br/>{`"${recipeFromDetail.name}"`}</h3>
           <button className="planner-close-btn" onClick={plannerModalClose} tabIndex={5}>X</button>
         </div>
       )}
@@ -283,6 +283,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
       )}
       <LoadingComponent loading={loading} />
       <div className="planner-frame">
+        <div className="planner-table-container">
         <div className="planner-prev">
           {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
             <span id="planner-prev-arrow" onClick={handlePlannerChange}>&#8678;</span>    
@@ -341,18 +342,17 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                 ))}
               </tr>
               {/* Premere ligne *Matin* vide */}
-              <tr>
+              {/* <tr>
                 <td className="time-slot-empty">
                   <span className="spacer">&nbsp;</span>
                 </td>
-                {/* Autres cellules pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
                 <td key={index} className={`morning-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
-                  <span className="spacer">&nbsp;</span> {/* Span vide pour aligner correctement */}
+                  <span className="spacer">&nbsp;</span>
                 </td>
                 ))}
                 <td className="empty-column"></td>
-              </tr>
+              </tr> */}
 
               {/* Deuxieme ligne *Midi* */}
               <tr>
@@ -363,7 +363,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
                 {/* Autres cellules pour chaque jour */}
                 {daysOfWeek.map((dayObj, index) => (
                 <td key={index} className={`day-cell midday-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
-                  <div className="button-container">
+                  <div className="button-container" style={{'--card-width': cardWidth}}>
                     {/* Bouton pour "Midi" */}
                     {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
                     // Si une recette existe pour ce jour, ne pas afficher le bouton
@@ -495,6 +495,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
           )}
         </div>
       </div>
+      </div>
       
 
       <BaseModal isOpen={isRecipeModalOpen} cardWidth='60%' >
@@ -505,14 +506,14 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
         <RecipeDetail recipeSlug={recipeSlug} onClose={toggleDetailModal} fromPlanner={true}/>
       </BaseModal>
 
-      <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%'>
+      <BaseModal isOpen={isShoppingModalOpen} cardWidth='60%' bodyWidth={'100%'}>
         <ShoppingModal onClose={toggleShoppingModal} cardWidth='60%' ingredientList={ingredients} shoppingTitle={weekTitle[plannerId]}/>
       </BaseModal>
 
-      <BaseModal isOpen={isShoppingAllModalOpen} cardWidth='60%'>
+      <BaseModal isOpen={isShoppingAllModalOpen} cardWidth='60%' bodyWidth={'100%'}>
         <ShoppingModal onClose={toggleShoppingAllModal} cardWidth='60%' ingredientList={allIngredients} shoppingTitle={weekTitle[4]}/>
       </BaseModal>
-    </div>
+    {/* </div> */}
     </>
     )}
     </>

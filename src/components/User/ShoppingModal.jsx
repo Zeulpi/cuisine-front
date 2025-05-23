@@ -81,7 +81,7 @@ export default function ShoppingModal({ isOpen, onClose, cardWidth, ingredientLi
             disabled={loading}
             title='Ajouter la liste a votre inventaire'
           >+</button>)}
-          <h2 className='modal-title'>Liste de courses pour : {shoppingTitle}</h2>
+          <h2 className='modal-title'>Liste de courses pour : <br/>{shoppingTitle}</h2>
         </div>
         <div className='shopping-add-message'>{addMessage && (<span className='shopping-message'>{addMessage}</span>)}</div>
         <button className="shopping-close-btn" onClick={onClose} tabIndex={5}>X</button>

@@ -4,7 +4,7 @@
       display: none;
     }
     #planner-prev-arrow, #planner-next-arrow {
-      margin: 0 10px;
+      margin: 0 5px;
     }
   }
 
@@ -35,6 +35,7 @@
   .planner-week{
     display: flex;
     justify-content:space-between ;
+    background-color: #ffffff;
     padding: 0 10px;
     column-gap: 20px;
   }
@@ -89,20 +90,26 @@
 
   .planner-modal-title{
     display: flex;
+    background-color: #ffffff;
+    width: 100%;
     align-items: center;
-    justify-content:space-between;
+    justify-content:center;
+    position: relative;
   }
   .planner-modal-recipe-name{
     font-size: 1.2rem;
   }
   .planner-close-btn{
-    margin-right: 10px;
-    cursor: pointer;
-    border: none;
-    padding: 10px 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    padding: 3px 8px;
     background-color: #007bff;
     color: white;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
     font-size: 16px;
   }
 
@@ -121,14 +128,29 @@
   }
 
   .planner-frame{
+    height: 100%;
+    width: 100%;
+    background-color: #ffffff;
     display: flex;
+    justify-content: center;
+    position: relative;
+    overflow-y: scroll;
   }
 
+  .planner-table-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
   .planner-prev, .planner-next {
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
 /* Styles généraux du tableau */
   .planner-table {
     min-width: 70%;
@@ -177,8 +199,8 @@
     cursor: pointer;
     color: #00796b;
     font-size: 20px;
-    width: 50px; /* Largeur de la flèche */
-    height: 50px; /* Hauteur de la flèche */
+    width: 45px; /* Largeur de la flèche */
+    height: 45px; /* Hauteur de la flèche */
     background-color: #d0f7fa; /* Couleur de fond plus claire et fraîche (bleu pâle) */
     border: 1px solid #a0f7fa;
     border-radius: 50%; /* Arrondir les coins pour faire un cercle */
@@ -217,8 +239,8 @@
   /* Style des cellules de chaque jour (Midi et Soir) */
   .day-cell {
     border: 1px solid lightgray;
-    min-height: calc(var(--table-width) * 0.2);   /* Hauteur plus grande pour les cellules de Midi et Soir */
-    padding: 10px; /* Ajuster le padding pour ne pas être trop grand */
+    /* min-height: calc(var(--table-width) * 0.2); */
+    padding: 5px; /* Ajuster le padding pour ne pas être trop grand */
   }
   .morning-cell{
     border-bottom: none;;
@@ -254,8 +276,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    /* height: 100%; */
     padding: 0;
+    margin: 10px 0;
   }
   
   .button-card {

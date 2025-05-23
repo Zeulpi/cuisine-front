@@ -17,7 +17,7 @@ import {PlannerComponent} from '../components/PlannerComponent.jsx';
 import '../styles/Recipes/RecipeDetail.css';
 
 
-export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', fromPlanner=false}) {
+export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', fromPlanner=false, togglePlannerModal=null}) {
   const { sluggedId } = useParams() || recipeSlug;
   const { id, slug } = recipeSlug ? extractIdAndSlug(recipeSlug) : extractIdAndSlug(sluggedId);
   const [recipe, setRecipe] = useState(null);
@@ -56,9 +56,9 @@ export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', f
     };
   }, [isLoggedIn, recipe]);
 
-  const togglePlannerModal = () => {
-    setIsPlannerModalOpen(!isPlannerModalOpen);
-  }
+  // const togglePlannerModal = () => {
+  //   setIsPlannerModalOpen(!isPlannerModalOpen);
+  // }
 
   const fetchRecipeDetail = async () => {
     const currentId = id; // snapshot de l’ID actuel
@@ -202,9 +202,9 @@ export function RecipeDetail({recipeSlug=null, onClose=null, cardWidth='100%', f
           </div>
         </div>
       </div>
-      <BaseModal isOpen={isPlannerModalOpen} cardWidth='60%'>
+      {/* <BaseModal isOpen={isPlannerModalOpen} cardWidth='60%'>
         <PlannerComponent plannerWidth='60%' plannerModalClose={togglePlannerModal} isPlannerModal={true} recipeFromDetail={recipe}/>
-      </BaseModal>
+      </BaseModal> */}
       </>
     )}
     </>
@@ -217,4 +217,5 @@ RecipeDetail.propTypes = {
   onClose: PropTypes.func,
   cardWidth: PropTypes.string,
   fromPlanner: PropTypes.bool,
+  togglePlannerModal: PropTypes.func,
 };

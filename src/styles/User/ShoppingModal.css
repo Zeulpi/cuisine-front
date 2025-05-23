@@ -83,6 +83,7 @@
   .modal-title{
     text-decoration: none;
     text-align: center;
+    padding-top: 8px;
   }
   /* Section des boutons */
   /* .recipe-modal-content button {
@@ -101,14 +102,10 @@
   
   .shopping-close-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    border: none;
+    top: 5px;
+    right: 5px;
     background: none;
-    cursor: pointer;
-    color: #333;
-    padding: 10px 20px;
+    padding: 3px 8px;
     background-color: #007bff;
     color: white;
     border: none;

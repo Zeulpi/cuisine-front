@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';  // Validation des props
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { PlannerComponent } from '../components/PlannerComponent';
 import RecipeCardComponent from '../components/Recipe/RecipeCardComponent';
 import {PaginationComponent} from '../components/Utils/PaginationComponent';
 import RecipesFilterComponent from '../components/Recipe/RecipesFilterComponent';
@@ -16,6 +17,7 @@ import { RecipeDetail } from './RecipeDetail';
 
 export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }) {
   const location = useLocation();
+  const cardRatio = '3/2';
   const [recipes, setRecipes] = useState({});
   const initialState = {id: null, name: null}
   const [choosenRecipe, setChoosenRecipe] = useState(initialState);
@@ -26,6 +28,7 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
   const [limit, setLimit] = useState(9); // Nombre de recettes par page
   const [error, setError] = useState(null);
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isPlannerModalOpen, setIsPlannerModalOpen] = useState(false);
   const [filters, setFilters] = useState(location.state?.filters || {
     search: location.state?.fastSearch || '',
     tags: [],
@@ -81,6 +84,10 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
     }
   }, [recipeSlug]);
 
+  useEffect(()=>{
+    // console.log('isPlannerModalOpen', isPlannerModalOpen);
+  }, [isPlannerModalOpen])
+
   const handlePageChange = (newPage) => {
     setPage(newPage);
     window.scrollTo({top, behavior: "smooth"});
@@ -94,6 +101,11 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
     isRecipeModalOpen ? (setIsRecipeModalOpen(!isRecipeModalOpen), setRecipeSlug(null), setChoosenRecipe(initialState)) : setIsRecipeModalOpen(!isRecipeModalOpen);
     choosenRecipe.id ? setIsRecipeModalOpen(!isRecipeModalOpen) : null;
     // console.log('toggleRecipeModal', recipeSlug);
+  }
+
+  const togglePlannerModal = () => {
+    setIsRecipeModalOpen(!isRecipeModalOpen);
+    setIsPlannerModalOpen(!isPlannerModalOpen);
   }
 
   return (
@@ -128,6 +140,7 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
               recipe={recipe}
               isModal={isModal}
               cardWidth={cardWidth}
+              cardRatio={isModal ? 4/5 : cardRatio}
               chooseMeal={chooseMeal}
               chooseRecipe={chooseRecipe}
             />
@@ -142,8 +155,11 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
       }
       {error && <div className="error-message">{error}</div>}
     </div>
-    <BaseModal isOpen={isRecipeModalOpen} cardWidth='100%'  bodyWidth={'100%'}>
-      <RecipeDetail recipeSlug={recipeSlug} onClose={toggleRecipeModal}/>
+    <BaseModal isOpen={isRecipeModalOpen} cardWidth='100%' bodyWidth={'100%'}>
+      <RecipeDetail recipeSlug={recipeSlug} onClose={toggleRecipeModal} togglePlannerModal={togglePlannerModal}/>
+    </BaseModal>
+    <BaseModal isOpen={isPlannerModalOpen} cardWidth='60%' bodyWidth={'100%'}>
+      <PlannerComponent plannerWidth='60%' plannerModalClose={togglePlannerModal} isPlannerModal={true} recipeFromDetail={choosenRecipe}/>
     </BaseModal>
     </>
     )}

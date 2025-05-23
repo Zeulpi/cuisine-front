@@ -9,7 +9,7 @@ import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Recipes/RecipeCardComponent.css';
 
 
-export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null, isMarked=1, handleDestock=null, chooseRecipe=null }) {
+export default function RecipeCardComponent({ recipe, isModal = false, isExpired=false, cardWidth='100%', cardRatio=null,  chooseMeal=null, chooseDay=null, addRecipe=null, removeKey= null, dataName=null, dataKey=null, localPortions=null, isMarked=1, handleDestock=null, chooseRecipe=null }) {
   const [newPortions, setNewPortions] = useState(localPortions || recipe?.portions || 1); // Si on vient de la card, on prend les portions de la card
   const [firstRender, setFirstRender] = useState(true);
   const rImage = recipe?.image;
@@ -82,7 +82,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
   return (
     <>
     {recipe && (
-      <CardComponent cardWidth={cardWidth}>
+      <CardComponent cardWidth={cardWidth} cardRatio={cardRatio}>
       <>
         {!isExpired && isModal && (
           <button className='recipe-remove' style={{display: (isModal && removeKey) ? 'block' : 'none'}} onClick={() => {(isModal && removeKey) ?handleClick(recipe, removeKey):null}}>X</button>
@@ -161,6 +161,7 @@ RecipeCardComponent.propTypes = {
   isModal: PropTypes.bool,
   isExpired: PropTypes.bool,
   cardWidth: PropTypes.string,
+  cardRatio: PropTypes.string,
   chooseMeal: PropTypes.func,
   chooseDay: PropTypes.func,
   addRecipe: PropTypes.func,

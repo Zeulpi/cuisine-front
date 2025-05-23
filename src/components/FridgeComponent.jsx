@@ -236,7 +236,7 @@ export function FridgeComponent() {
           onClose={toggleIngredientModal}
           cardWidth={ingCardWidth}
           chooseIngredient={handleAddIngredient}
-          modalTitle='Ajoutez un ingrédient a votre inventaire'
+          modalTitle={<>Ajoutez un ingrédient<br/>a votre inventaire</>}
         />
       </BaseModal>
       </div>

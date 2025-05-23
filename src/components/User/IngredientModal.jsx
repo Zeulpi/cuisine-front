@@ -6,7 +6,7 @@ import {PaginationComponent} from '../Utils/PaginationComponent';
 import {CardComponent} from '../Utils/CardComponent';
 import { baseUrl, RESOURCE_ROUTES } from '../../resources/routes-constants';
 import { IngredientsFilterComponent } from './IngredientsFilterComponent';
-import {findElementWithClass, normalizeAllowedUnits} from '../../utility/domUtils'
+import {findElementWithClass, normalizeAllowedUnits, sanitizeHtml} from '../../utility/domUtils'
 import '../../styles/User/IngredientModal.css'
 
 

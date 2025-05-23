@@ -8,9 +8,10 @@
 
 .basic-card {
   --basic-card-width: 100%;
-  --basic-card-height: 200px;
+  /* --basic-card-height: 200px; */
   --basic-card-cursor: help;
   --basic-card-remove-cursor: pointer;
+  /* --basic-card-aspect-ratio : 4/5; */
   display: flex;
   position: relative;
   flex-direction: column;
@@ -23,10 +24,10 @@
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  margin-bottom: 50px;
+  /* margin-bottom: 50px; */
   width: var(--basic-card-width);
   max-width: 450px;
-  aspect-ratio: 3 / 2; /* plus compact que 4/3 */
+  aspect-ratio: var(--basic-card-aspect-ratio, 4/5) ;
   min-height: var(--basic-card-height);
 }
 
@@ -112,14 +113,14 @@
 .card-description{
   position: absolute;
   display: none;
-  font-size: 20px;
+  font-size: 16px;
   background-color: black;
   color: white;
   opacity: 60%;
   top: 0;
   height: 100%;
   width: 100%;
-  padding: 5%;
+  padding: 2% 5%;
 }
 
 .card-footer {

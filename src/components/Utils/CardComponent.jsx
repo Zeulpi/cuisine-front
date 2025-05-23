@@ -10,7 +10,7 @@ import { ROUTES, RESOURCE_ROUTES } from '../../resources/routes-constants.js';
 import '../../styles/Utils/CardComponent.css';
 
 
-export function CardComponent({ isModal = false, cardWidth='100%', cardName=null, cardImg=null, cardCursor="help", cardDescription = null, cardFooter=null, children = null, childrenFooter=null, childrenTarget=null, handleRemove=null, handleClickContent=null, handleClickImg=null, handleMouseOver=null, handleMouseOut=null, handleFuncOne=null, handleFuncTwo=null }) {
+export function CardComponent({ isModal = false, cardWidth='100%', cardRatio=null, cardName=null, cardImg=null, cardCursor="help", cardDescription = null, cardFooter=null, children = null, childrenFooter=null, childrenTarget=null, handleRemove=null, handleClickContent=null, handleClickImg=null, handleMouseOver=null, handleMouseOut=null, handleFuncOne=null, handleFuncTwo=null }) {
   const navigate = useNavigate();
   const [firstRender, setFirstRender] = useState(true);
   const bgImage = cardImg || '';
@@ -25,7 +25,7 @@ export function CardComponent({ isModal = false, cardWidth='100%', cardName=null
 
   return (
     <>
-      <div className="basic-card" style={{ '--basic-card-width': cardWidth }} >
+      <div className="basic-card" style={{ '--basic-card-width': cardWidth, '--basic-card-aspect-ratio': cardRatio }} >
         {children && !childrenTarget ?
           (children) :
           (
@@ -82,6 +82,7 @@ export function CardComponent({ isModal = false, cardWidth='100%', cardName=null
 CardComponent.propTypes = {
   isModal: PropTypes.bool,
   cardWidth: PropTypes.string,
+  cardRatio: PropTypes.string,
   cardName: PropTypes.string,
   cardImg: PropTypes.string,
   cardCursor: PropTypes.string,
