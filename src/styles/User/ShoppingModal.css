@@ -1,8 +1,4 @@
 /* Général pour tous les éléments */
-* {
-    box-sizing: border-box;
-  }
-
   .shopping-modal{
     display: flex;
     flex-direction: column;

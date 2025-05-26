@@ -34,7 +34,7 @@ const SearchBar = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           ref={inputRef}
         />
-        <button type="submit">✓</button>
+        <button type="submit"><span>⇨</span></button>
       </form>
     </div>
   );

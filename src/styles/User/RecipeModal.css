@@ -1,7 +1,4 @@
 /* Général pour tous les éléments */
-* {
-    box-sizing: border-box;
-  }
   .recipe-modal-title{
     background-color: white;
     border-bottom: 1px solid lightgray;

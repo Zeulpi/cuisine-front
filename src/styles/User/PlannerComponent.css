@@ -3,9 +3,9 @@
     .hidden{
       display: none;
     }
-    #planner-prev-arrow, #planner-next-arrow {
+    /* #planner-prev-arrow, #planner-next-arrow {
       margin: 0 5px;
-    }
+    } */
   }
 
   @media only screen and (min-width : 320px) and (max-width : 769px) {
@@ -17,9 +17,9 @@
       display: inline;
     }
 
-    #planner-prev-arrow, #planner-next-arrow {
+    /* #planner-prev-arrow, #planner-next-arrow {
       margin: 0;
-    }
+    } */
   }
   
   /* .planner {
@@ -32,13 +32,7 @@
     border-radius: 10px;
     padding: 10px;
   } */
-  .planner-week{
-    display: flex;
-    justify-content:space-between ;
-    background-color: #ffffff;
-    padding: 0 10px;
-    column-gap: 20px;
-  }
+  
   .date-title {
     padding: 5px;
     font-size: 20px;
@@ -150,13 +144,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0 5px;
   }
 
+  .table-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
 /* Styles généraux du tableau */
   .planner-table {
-    min-width: 70%;
+    /* min-width: 70%; */
     border-collapse: collapse; /* Fusionner les bordures */
-    margin: 0 auto; /* Centrer le tableau */
+    /* margin: 0 auto; */
   }
   
   .header-container{
@@ -164,21 +167,37 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin: 5px 0 10px 0;
+    /* margin: 5px 0 10px 0; */
+    padding: 5px 55px;
   }
   /* .date-column {
   } */
   .planner-week{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: #00796b;
     font-size: 20px;
     font-weight: 600;
     background-color: lightgray;
     border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 5px 10px;
     text-align: center;
+  }
+  .planner-weekstart, .planner-weekend {
+    display: flex;
+    align-items: center;
+    color: #00796b;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .planner-weekstart{
+    /* justify-content: start; */
+    text-align: left;
+  }
+  .planner-weekend{
+    /* justify-content: end; */
+    text-align: right;
   }
   /* .date-column:nth-of-type(2) div{
     display: flex;
@@ -211,7 +230,6 @@
   #planner-prev-arrow:hover, #planner-next-arrow:hover {
     background-color: #a0e7fa;
   }
-  
   /* Supprimer toutes les bordures */
   .day-column {
     height: 40px;
