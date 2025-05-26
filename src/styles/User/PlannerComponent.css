@@ -22,7 +22,7 @@
     }
   }
   
-  .planner {
+  /* .planner {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,7 +31,7 @@
     background-color: #ffffff;
     border-radius: 10px;
     padding: 10px;
-  }
+  } */
   .planner-week{
     display: flex;
     justify-content:space-between ;
@@ -128,10 +128,11 @@
   }
 
   .planner-frame{
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* height: 100%; */
     width: 100%;
     background-color: #ffffff;
-    display: flex;
     justify-content: center;
     position: relative;
     overflow-y: scroll;
@@ -201,9 +202,9 @@
     font-size: 20px;
     width: 45px; /* Largeur de la flèche */
     height: 45px; /* Hauteur de la flèche */
-    background-color: #d0f7fa; /* Couleur de fond plus claire et fraîche (bleu pâle) */
+    background-color: #d0f7fa;
     border: 1px solid #a0f7fa;
-    border-radius: 50%; /* Arrondir les coins pour faire un cercle */
+    border-radius: 50%;
     /* margin: 0 10px; */
   }
 

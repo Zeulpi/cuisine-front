@@ -22,28 +22,24 @@ export function buildRecipeList(rawData){
   return cleanList;
 }
 
-export async function getShoppingIngredients (recipes=null, userToken, plannerId=null) {
+export async function getShoppingIngredients (recipes=null, userToken, plannerId=null, destock=0) {
   let errorMessage = null;
   let ingredients = null;
   let allRecipes = {};
-  let cleanRecipes;
+  let cleanRecipes = {};
   let portionsById = {};
 
   const dayIndex = getDayIndex();
-
-  // console.log('getShoppingIngredients : ', recipes);
-  // console.log('userToken : ', userToken);
-  
-  // console.log('getShoppingIngredients : ', recipes);
+  // console.log('plannerId (getshopings) : ', plannerId);
 
   if (plannerId >= 0) {
-    // console.log('plannerId : ', plannerId);
     switch (plannerId) {
       case 0:
-        cleanRecipes = recipes;
+        cleanRecipes = {...recipes};
         break;
       case 1: {
-        cleanRecipes = cleanPastPlannerEntries(recipes, daysOfWeek, dayIndex);
+        cleanRecipes = cleanPastPlannerEntries(recipes, daysOfWeek, dayIndex, destock);
+        // console.log('case 1');
         break;
       }
       default:
@@ -121,10 +117,12 @@ export function compareCourseWithInventory(courseList, inventoryList) {
   return result;
 }
 
-export function cleanPastPlannerEntries(plannerData, dayMetaList, dayIndex) {
+export function cleanPastPlannerEntries(plannerData, dayMetaList, dayIndex, destock=0) {
   const updatedPlanner = { ...plannerData };
+  // console.log('plannerData : ', plannerData);
+  // console.log('updated planner : ', updatedPlanner);
 
-  for (let i = 0; i < dayIndex; i++) {
+  for (let i = 0; i < dayIndex-destock; i++) {
     const { keyM, keyE } = dayMetaList[i];
     delete updatedPlanner[keyM];
     delete updatedPlanner[keyE];

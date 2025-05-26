@@ -47,10 +47,11 @@ export async function sendPlannerToServer (keyWord, recipe, portions, dispatch, 
 
 export async function destockIngredients (recipes, keyWord, plannerIndex, userToken, dispatch, destock = false) {
   let ingredientList;
-  const result = await getShoppingIngredients (recipes, userToken);
+  const result = await getShoppingIngredients (recipes, userToken, plannerIndex, 1);
+  // console.log('recipes : ', recipes);
+  // console.log('result : ', result);
   if(result.ingredients){
     ingredientList = result.ingredients;
-    console.log(ingredientList);
     Object.keys(ingredientList).map((id) => {
       const ingredient = (result.ingredients)[id];
       // console.log(ingredient);
@@ -61,7 +62,7 @@ export async function destockIngredients (recipes, keyWord, plannerIndex, userTo
     });
 
     if (destock) {
-      console.log('liste : ', ingredientList);
+      // console.log('liste : ', ingredientList);
       try {
         const result = await addListToInventory (dispatch, userToken, ingredientList);
       } catch (error) {

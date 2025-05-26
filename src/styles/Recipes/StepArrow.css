@@ -2,11 +2,17 @@
   .arrow-right-down, .arrow-left-down {
     display: flex;
   }
+  .hide-arrow {
+    display: none !important;
+  }
 }
 
 @media  (max-width: 768px) {
   .arrow-right-down, .arrow-left-down {
     display: none;
+  }
+  .hide-arrow {
+    display: flex !important;
   }
 }
 

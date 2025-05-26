@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import '../../../styles/Recipes/StepArrow.css'
 
-export default function StepArrow({ direction = 'right-down', color = 'black' }) {
+export default function StepArrow({ direction = 'down', color = 'black', showArrow=true}) {
   switch (direction) {
     case 'right-down':
       return (
-        <div className="arrow-right-down">
+        <div className={`arrow-right-down ${showArrow ? '' : 'hide-arrow'}`}>
             <div className='arrow-rd'>
                 <div className="arrow-line-horizontal" />
                 <svg className="arrow-turn" viewBox="0 0 50 50" width="50" height="50">
@@ -20,7 +20,7 @@ export default function StepArrow({ direction = 'right-down', color = 'black' })
 
     case 'left-down':
       return (
-        <div className="arrow-left-down">
+        <div className={`arrow-left-down ${showArrow ? '' : 'hide-arrow'}`}>
             <div className='arrow-text-ld'><p></p></div>
             <div className='arrow-rd'>
                 <svg className="arrow-turn" viewBox="0 0 50 50" width="50" height="50">
@@ -34,7 +34,7 @@ export default function StepArrow({ direction = 'right-down', color = 'black' })
 
     case 'down':
       return (
-        <div className="arrow-container arrow-d-container">
+        <div className={`arrow-container arrow-d-container ${showArrow ? '' : 'hide-arrow'}`}>
           <svg width="40" height="50" viewBox="0 0 40 60" preserveAspectRatio="none">
             <path d="M20 0 V50" stroke={color} fill="transparent" strokeWidth="2"/>
             <path d="M15 45 L20 50 L25 45" stroke={color} fill="transparent" strokeWidth="2"/>
@@ -42,15 +42,15 @@ export default function StepArrow({ direction = 'right-down', color = 'black' })
         </div>
       );
 
-    case 'down-down':
-      return (
-        <div className="arrow-d-d-container">
-          <svg width="40" height="50" viewBox="0 0 40 60" preserveAspectRatio="none">
-            <path d="M20 0 V50" stroke={color} fill="transparent" strokeWidth="2"/>
-            <path d="M15 45 L20 50 L25 45" stroke={color} fill="transparent" strokeWidth="2"/>
-          </svg>
-        </div>
-      );
+    // case 'down-down':
+    //   return (
+    //     <div className={`arrow-d-d-container ${showArrow ? '' : 'hide-arrow'}`}>
+    //       <svg width="40" height="50" viewBox="0 0 40 60" preserveAspectRatio="none">
+    //         <path d="M20 0 V50" stroke={color} fill="transparent" strokeWidth="2"/>
+    //         <path d="M15 45 L20 50 L25 45" stroke={color} fill="transparent" strokeWidth="2"/>
+    //       </svg>
+    //     </div>
+    //   );
 
     default:
       return null;
@@ -60,4 +60,5 @@ export default function StepArrow({ direction = 'right-down', color = 'black' })
 StepArrow.propTypes = {
   direction: PropTypes.oneOf(['right-down', 'left-down', 'down']),
   color: PropTypes.string,
+  showArrow: PropTypes.bool,
 };

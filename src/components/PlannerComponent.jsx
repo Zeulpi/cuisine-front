@@ -260,9 +260,14 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
 
   async function handleDestock(mealKey, destock=false) {
     setLoading(true);
+    // console.log(mealKey);
     const destockRecipes = {};
-    destockRecipes[mealKey] = (planners[plannerId].recipes)[mealKey] ;
-    const ings = await destockIngredients (destockRecipes, mealKey, plannerId, userToken, useDispatch, destock);
+    destockRecipes[mealKey] = (planners[plannerId].recipes)[mealKey];
+    // console.log('plannerId', plannerId);
+    if (mealKey) {
+      const ings = await destockIngredients (destockRecipes, mealKey, plannerId, userToken, useDispatch, destock);
+    }
+    // console.log('handleDestock', ings);
     setLoading(false);
   }
 
@@ -272,7 +277,7 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
     <>
     {/* <div className="planner" id="planner-body" style={{ '--table-width': plannerWidth }}> */}
       {isPlannerModal && recipeFromDetail && (
-        <div className='planner-modal-title'>
+        <div className='planner-modal-title' id="planner-modal-title">
           {/* <div className="spacer-div"></div> */}
           <h3 className="planner-modal-recipe-name">Choisissez un créneau pour <br/>{`"${recipeFromDetail.name}"`}</h3>
           <button className="planner-close-btn" onClick={plannerModalClose} tabIndex={5}>X</button>
@@ -281,220 +286,221 @@ export function PlannerComponent({ plannerWidth = '40vw', plannerModalClose=null
       {updated == true && (
         <div className="planner-update">Nouvelle semaine : Planner mis a jour &nbsp; <button onClick={()=>{setUpdated(false)}}>X</button></div>
       )}
-      <LoadingComponent loading={loading} />
-      <div className="planner-frame">
+      
+      <div className="planner-frame" id="planner-frame">
+        <LoadingComponent loading={loading} />
         <div className="planner-table-container">
-        <div className="planner-prev">
-          {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
-            <span id="planner-prev-arrow" onClick={handlePlannerChange}>&#8678;</span>    
-          )}
-        </div>
-        <div>
-          <div className="header-container">
-            <div>
-              <span className="planner-weekstart">{planners[plannerId].weekStart}</span>
-            </div>
-            <div className="planner-week">
-              <div>
-                {weekTitle[plannerId]}
-              </div>
-              <div className="shopping-container">
-                {plannerId <= 1 &&(
-                  <button className="shopping-button" onClick={toggleShoppingModal} title={`Liste de courses pour : ${weekTitle[plannerId]}`}><FontAwesomeIcon icon={faBars}/></button>
-                )}
-              </div>
-            </div>
-            <div>
-              <span className="planner-weekstart">{planners[plannerId].weekEnd}</span>
-            </div>
+          <div className="planner-prev">
+            {((plannerId < 3 && isPlannerModal == false) || (plannerId < 1 && isPlannerModal == true) ) && (
+              <span id="planner-prev-arrow" onClick={handlePlannerChange}>&#8678;</span>    
+            )}
           </div>
-          <table className="planner-table">
-            {/* <thead>
-              <tr>
-                <th className="empty-column">&nbsp;</th>
-                <th className="date-column" colSpan="7">
-                  
-                </th>
-                <th className="date-title" colSpan={3}>
-                  
-                </th>
-                <th className="date-column" colSpan={2}>
-                  
-                </th>
-              </tr>
-            </thead> */}
+          <div>
+            <div className="header-container">
+              <div>
+                <span className="planner-weekstart">{planners[plannerId].weekStart}</span>
+              </div>
+              <div className="planner-week">
+                <div>
+                  {weekTitle[plannerId]}
+                </div>
+                <div className="shopping-container">
+                  {plannerId <= 1 &&(
+                    <button className="shopping-button" onClick={toggleShoppingModal} title={`Liste de courses pour : ${weekTitle[plannerId]}`}><FontAwesomeIcon icon={faBars}/></button>
+                  )}
+                </div>
+              </div>
+              <div>
+                <span className="planner-weekstart">{planners[plannerId].weekEnd}</span>
+              </div>
+            </div>
+            <table className="planner-table">
+              {/* <thead>
+                <tr>
+                  <th className="empty-column">&nbsp;</th>
+                  <th className="date-column" colSpan="7">
+                    
+                  </th>
+                  <th className="date-title" colSpan={3}>
+                    
+                  </th>
+                  <th className="date-column" colSpan={2}>
+                    
+                  </th>
+                </tr>
+              </thead> */}
 
-            <tbody>
-              <tr>
-                {/* Colonne vide avant les jours */}
-                <td className="empty-column">
-                  <div className="shopping-container">
-                    <button className="shopping-button" onClick={toggleShoppingAllModal} title={`Liste de courses pour : ${weekTitle[4]}`}><FontAwesomeIcon icon={faBars}/></button>
-                  </div>
-                </td>
-                {/* Une cellule pour chaque jour */}
-                {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className={`day-column ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
-                  {dayIndex > 0 ? (<span className="dayindex-arrow hidden" onClick={()=>{handleDayIndex('prev')}}>⇦</span>) : null}
-                  &nbsp;&nbsp;{dayObj.day}&nbsp;&nbsp;
-                  {dayIndex < 6 ? (<span className="dayindex-arrow hidden" onClick={()=>{handleDayIndex('next')}}>⇨</span>) : null}
-                </td>
-                ))}
-              </tr>
-              {/* Premere ligne *Matin* vide */}
-              {/* <tr>
-                <td className="time-slot-empty">
-                  <span className="spacer">&nbsp;</span>
-                </td>
-                {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className={`morning-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
-                  <span className="spacer">&nbsp;</span>
-                </td>
-                ))}
-                <td className="empty-column"></td>
-              </tr> */}
+              <tbody>
+                <tr>
+                  {/* Colonne vide avant les jours */}
+                  <td className="empty-column">
+                    <div className="shopping-container">
+                      <button className="shopping-button" onClick={toggleShoppingAllModal} title={`Liste de courses pour : ${weekTitle[4]}`}><FontAwesomeIcon icon={faBars}/></button>
+                    </div>
+                  </td>
+                  {/* Une cellule pour chaque jour */}
+                  {daysOfWeek.map((dayObj, index) => (
+                  <td key={index} className={`day-column ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
+                    {dayIndex > 0 ? (<span className="dayindex-arrow hidden" onClick={()=>{handleDayIndex('prev')}}>⇦</span>) : null}
+                    &nbsp;&nbsp;{dayObj.day}&nbsp;&nbsp;
+                    {dayIndex < 6 ? (<span className="dayindex-arrow hidden" onClick={()=>{handleDayIndex('next')}}>⇨</span>) : null}
+                  </td>
+                  ))}
+                </tr>
+                {/* Premere ligne *Matin* vide */}
+                {/* <tr>
+                  <td className="time-slot-empty">
+                    <span className="spacer">&nbsp;</span>
+                  </td>
+                  {daysOfWeek.map((dayObj, index) => (
+                  <td key={index} className={`morning-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
+                    <span className="spacer">&nbsp;</span>
+                  </td>
+                  ))}
+                  <td className="empty-column"></td>
+                </tr> */}
 
-              {/* Deuxieme ligne *Midi* */}
-              <tr>
-                {/* Première cellule avec "Midi" */}
-                <td className="time-slot midday-slot">
-                  <span>Midi</span> {/* Midi centré */}
-                </td>
-                {/* Autres cellules pour chaque jour */}
-                {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className={`day-cell midday-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
-                  <div className="button-container" style={{'--card-width': cardWidth}}>
-                    {/* Bouton pour "Midi" */}
-                    {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
-                    // Si une recette existe pour ce jour, ne pas afficher le bouton
-                    (() => {
-                      // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                      const [recipeId, localPortions] = userPlanner[dayObj.keyM];
-                      // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
-                      const recipe = userRecipes[recipeId];
-                      // Passer la recette en prop à RecipeCardComponent et gérer la suppression
-                      if (recipe) {
-                        // console.log(dayObj.keyM, compareDates(serverDate, planners[plannerId].weekStart, index), index);
-                        return (
-                          <RecipeCardComponent
-                            key={`${recipe.id}${dayObj.keyM}`}
-                            recipe={recipe} // Passer la recette complète en prop
-                            // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
-                            isModal={plannerId <= 1} 
-                            isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
-                            cardWidth={cardWidth}
-                            chooseMeal={chooseMeal}
-                            chooseDay={chooseDay}
-                            removeKey={dayObj.keyM}
-                            addRecipe = {handleAddRecipe}
-                            dataName={`${dayObj.day} midi`}
-                            dataKey={dayObj.keyM}
-                            localPortions={localPortions}
-                            isMarked={(userPlanner[dayObj.keyM])[2]}
-                            handleDestock={handleDestock}
-                            chooseRecipe={chooseRecipe}
-                          />
-                        );
-                      }
-                      return null;
-                    })()
-                    ) : (
-                      plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
-                      // Si aucune recette n'est présente, afficher le bouton
-                        <CardComponent cardWidth={cardWidth}>
-                          <button
-                            key={`${dayObj.keyM}`}
-                            className="select-button"
-                            style={{margin:'auto'}}
-                            onClick={() => {handleAddButton(index, dayObj.keyM, dayObj.day)}}
-                            data-name={`${dayObj.day} midi`}
-                            data-key={dayObj.keyM}
-                            disabled={loading}
-                          >
-                            +
-                          </button>
-                        </CardComponent>
-                      )
-                    )}
-                  </div>
-                </td>
-                ))}
-              </tr>
+                {/* Deuxieme ligne *Midi* */}
+                <tr>
+                  {/* Première cellule avec "Midi" */}
+                  <td className="time-slot midday-slot">
+                    <span>Midi</span> {/* Midi centré */}
+                  </td>
+                  {/* Autres cellules pour chaque jour */}
+                  {daysOfWeek.map((dayObj, index) => (
+                  <td key={index} className={`day-cell midday-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
+                    <div className="button-container" style={{'--card-width': cardWidth}}>
+                      {/* Bouton pour "Midi" */}
+                      {(userPlanner[dayObj.keyM]  && userPlanner[dayObj.keyM].length > 0) ? (
+                      // Si une recette existe pour ce jour, ne pas afficher le bouton
+                      (() => {
+                        // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
+                        const [recipeId, localPortions] = userPlanner[dayObj.keyM];
+                        // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
+                        const recipe = userRecipes[recipeId];
+                        // Passer la recette en prop à RecipeCardComponent et gérer la suppression
+                        if (recipe) {
+                          // console.log(dayObj.keyM, compareDates(serverDate, planners[plannerId].weekStart, index), index);
+                          return (
+                            <RecipeCardComponent
+                              key={`${recipe.id}${dayObj.keyM}`}
+                              recipe={recipe} // Passer la recette complète en prop
+                              // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isModal={plannerId <= 1} 
+                              isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
+                              cardWidth={cardWidth}
+                              chooseMeal={chooseMeal}
+                              chooseDay={chooseDay}
+                              removeKey={dayObj.keyM}
+                              addRecipe = {handleAddRecipe}
+                              dataName={`${dayObj.day} midi`}
+                              dataKey={dayObj.keyM}
+                              localPortions={localPortions}
+                              isMarked={(userPlanner[dayObj.keyM])[2]}
+                              handleDestock={handleDestock}
+                              chooseRecipe={chooseRecipe}
+                            />
+                          );
+                        }
+                        return null;
+                      })()
+                      ) : (
+                        plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
+                        // Si aucune recette n'est présente, afficher le bouton
+                          <CardComponent cardWidth={cardWidth}>
+                            <button
+                              key={`${dayObj.keyM}`}
+                              className="select-button"
+                              style={{margin:'auto'}}
+                              onClick={() => {handleAddButton(index, dayObj.keyM, dayObj.day)}}
+                              data-name={`${dayObj.day} midi`}
+                              data-key={dayObj.keyM}
+                              disabled={loading}
+                            >
+                              +
+                            </button>
+                          </CardComponent>
+                        )
+                      )}
+                    </div>
+                  </td>
+                  ))}
+                </tr>
 
-              {/* Troisieme ligne *Soir* */}
-              <tr>
-                {/* Première cellule avec "Soir" */}
-                <td className="time-slot evening-slot">
-                    <span>Soir</span> {/* Soir aligné en bas */}
-                </td>
-                {/* Autres cellules pour chaque jour */}
-                {daysOfWeek.map((dayObj, index) => (
-                <td key={index} className={`day-cell evening-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
-                  <div className="button-container">
-                    {/* Bouton pour "Soir" */}
-                    {(userPlanner[dayObj.keyE] && userPlanner[dayObj.keyE].length > 0) ? (
-                    // Si une recette existe pour ce jour, ne pas afficher le bouton
-                    (() => {
-                      // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
-                      const [recipeId, localPortions] = userPlanner[dayObj.keyE];
-                      // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
-                      const recipe = userRecipes[recipeId];
-                      // Passer la recette en prop à RecipeCardComponent et gérer la suppression
-                      if (recipe) {
-                        return (
-                          <RecipeCardComponent
-                            key={`${recipe.id}${dayObj.keyE}`}
-                            recipe={recipe} // Passer la recette complète en prop
-                            // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
-                            isModal={plannerId <= 1}
-                            isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
-                            cardWidth={cardWidth}
-                            chooseMeal={chooseMeal}
-                            chooseDay={chooseDay}
-                            addRecipe = {handleAddRecipe}
-                            removeKey={dayObj.keyE}
-                            dataName={`${dayObj.day} midi`}
-                            dataKey={dayObj.keyM}
-                            localPortions={localPortions} // Passer les portions locales en prop
-                            isMarked={(userPlanner[dayObj.keyE])[2]}
-                            handleDestock={handleDestock}
-                            chooseRecipe={chooseRecipe}
-                          />
-                        );
-                      }
-                      return null;
-                    })()
-                    ) : (
-                      plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
-                      // Si aucune recette n'est présente, afficher le bouton
-                        <CardComponent cardWidth={cardWidth}>
-                          <button
-                            key={`${dayObj.keyE}`}
-                            className="select-button"
-                            style={{margin:'auto'}}
-                            onClick={() => {handleAddButton(index, dayObj.keyE, dayObj.day)}}
-                            data-name={`${dayObj.day} soir`}
-                            data-key={dayObj.keyE}
-                            disabled={loading}
-                          >
-                            +
-                          </button>
-                        </CardComponent>
-                      )
-                    )}
-                  </div>
-                </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
+                {/* Troisieme ligne *Soir* */}
+                <tr>
+                  {/* Première cellule avec "Soir" */}
+                  <td className="time-slot evening-slot">
+                      <span>Soir</span> {/* Soir aligné en bas */}
+                  </td>
+                  {/* Autres cellules pour chaque jour */}
+                  {daysOfWeek.map((dayObj, index) => (
+                  <td key={index} className={`day-cell evening-cell ${dayIndex === index ? '' : 'hidden-cell'}`} data-dayindex={index} >
+                    <div className="button-container">
+                      {/* Bouton pour "Soir" */}
+                      {(userPlanner[dayObj.keyE] && userPlanner[dayObj.keyE].length > 0) ? (
+                      // Si une recette existe pour ce jour, ne pas afficher le bouton
+                      (() => {
+                        // Récupérer l'ID de la recette pour ce jour spécifique (par exemple 'monM')
+                        const [recipeId, localPortions] = userPlanner[dayObj.keyE];
+                        // Utilise cet ID pour récupérer l'objet recette complet dans userRecipes
+                        const recipe = userRecipes[recipeId];
+                        // Passer la recette en prop à RecipeCardComponent et gérer la suppression
+                        if (recipe) {
+                          return (
+                            <RecipeCardComponent
+                              key={`${recipe.id}${dayObj.keyE}`}
+                              recipe={recipe} // Passer la recette complète en prop
+                              // Si on est sur le planner 0 ou 1, on active les features d'ajout/suppression, sinon la vignette sera normale, mais seulement si la date n'est pas encore passée
+                              isModal={plannerId <= 1}
+                              isExpired = {!compareDates(serverDate, planners[plannerId].weekStart, index)}
+                              cardWidth={cardWidth}
+                              chooseMeal={chooseMeal}
+                              chooseDay={chooseDay}
+                              addRecipe = {handleAddRecipe}
+                              removeKey={dayObj.keyE}
+                              dataName={`${dayObj.day} midi`}
+                              dataKey={dayObj.keyE}
+                              localPortions={localPortions} // Passer les portions locales en prop
+                              isMarked={(userPlanner[dayObj.keyE])[2]}
+                              handleDestock={handleDestock}
+                              chooseRecipe={chooseRecipe}
+                            />
+                          );
+                        }
+                        return null;
+                      })()
+                      ) : (
+                        plannerId <= 1 && compareDates(serverDate, planners[plannerId].weekStart, index) &&( // Si planner active ou future, on affiche le bouton
+                        // Si aucune recette n'est présente, afficher le bouton
+                          <CardComponent cardWidth={cardWidth}>
+                            <button
+                              key={`${dayObj.keyE}`}
+                              className="select-button"
+                              style={{margin:'auto'}}
+                              onClick={() => {handleAddButton(index, dayObj.keyE, dayObj.day)}}
+                              data-name={`${dayObj.day} soir`}
+                              data-key={dayObj.keyE}
+                              disabled={loading}
+                            >
+                              +
+                            </button>
+                          </CardComponent>
+                        )
+                      )}
+                    </div>
+                  </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="planner-next">
+            {plannerId > 0 && (
+              <span id="planner-next-arrow" onClick={handlePlannerChange}>&#8680;</span>
+            )}
+          </div>
         </div>
-        <div className="planner-next">
-          {plannerId > 0 && (
-            <span id="planner-next-arrow" onClick={handlePlannerChange}>&#8680;</span>
-          )}
-        </div>
-      </div>
       </div>
       
 

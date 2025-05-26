@@ -24,6 +24,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
     switch (e.target.id) {
       case 'portions-up':
         if (newPortions < 20) {
+          addRecipe(dataKey, recipe, (newPortions+1));
           setNewPortions(newPortions + 1);
         } else {
           setNewPortions(20);
@@ -31,6 +32,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
         break;
       case 'portions-down':
         if (newPortions > 1) {
+          addRecipe(dataKey, recipe, (newPortions-1));
           setNewPortions(newPortions - 1);
         } else {
           setNewPortions(1);
@@ -44,14 +46,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
   useEffect(()=>{
     // console.log(removeKey, isExpired);
   }, [isExpired])
-
-  useEffect(() => { // Quand les portions changent (avec les boutons - et +), on appelle addRecipe pour modifier la recette dans le planner (sauf au 1er render)
-    if (!firstRender) {
-      // console.log(dataKey, newPortions);
-      addRecipe(dataKey, recipe, newPortions); // On ajoute la recette au planner
-    }
-    setFirstRender(false);
-  }, [newPortions]);
+  
 
   const handleClick = (recipe, key = null) => {
     if (!isModal) { // vrai si on est sur la page RecipeList
@@ -60,7 +55,7 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
       // console.log(recipe.id, slugify(recipe.name));
       
     } else {
-      if (chooseMeal && key === null) { // vrai si on ajoute une recette au planner (click depuis le div, modale ouverte avec bouton '+')
+      if (chooseMeal && key === null) { // vrai si on ajoute une recette depuis le planner (click depuis le div, modale ouverte avec bouton '+')
         if (chooseDay && dataName && dataKey) { // vrai si on clique sur la Card dans le planner
           // console.log("chooseDay is defined", dataName, dataKey);
           // console.log(recipe.id, slugify(recipe.name));
@@ -89,17 +84,18 @@ export default function RecipeCardComponent({ recipe, isModal = false, isExpired
         )}
         
         <div className="recipe-content"
-          onClick={() => {(isModal && chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
+          // onClick={() => {(isModal && chooseDay && dataName && dataKey) ? null : handleClick(recipe)}}
           data-id={recipe.id}
-          style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'default' : 'pointer'}}
+          // style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'default' : 'pointer'}}
         >
           <div className="recipe-header">
             {recipe.name}
           </div>
           <img className={`recipe-background ${isDefaultImage ? 'default-background' : ''}`}
             src={bgImage} alt=""
-            onClick={() => {(isModal && chooseDay && dataName && dataKey) ? handleClick(recipe) : null}}
-            style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'pointer' : 'var(--card-cursor)'}}
+            onClick={(e) => {handleClick(recipe)}}
+            // style={{cursor: (isModal && chooseDay && dataName && dataKey) ? 'pointer' : 'var(--card-cursor)'}}
+            style={{cursor: 'pointer'}}
           />
           <div className="recipe-footer">
             {(isModal && chooseDay && dataName && dataKey && !isExpired) ?

@@ -9,7 +9,7 @@ const StepBlocks = ({ steps, ingredients }) => {
       .map(([index, step]) => ({ ...step, order: parseInt(index), direction: '' }))
       .sort((a, b) => a.order - b.order);
     const total = stepEntries.length;
-    stepEntries.length > 0 ? stepEntries[0].stepSimult = false : null; // Si l'etape 1 est restée en simult, on l'enleve
+    stepEntries.length > 0 ? stepEntries[0].stepSimult = false : null; // Si l'etape 1 est restée en simult, on enlève la simultanéité pour qu'elle soit affichée normalement
     
     const blocks = [];
     let currentBlock = [];
@@ -43,7 +43,7 @@ const StepBlocks = ({ steps, ingredients }) => {
             step.direction = 'down';
             break;
           default:
-            step.direction = ''; // fallback, au cas où
+            step.direction = '';
         }
       }
     });
@@ -53,7 +53,7 @@ const StepBlocks = ({ steps, ingredients }) => {
     return (
       <div className="step-blocks">
         {blocks.map((block, blockIndex) => (
-          <div className="step-block" key={blockIndex}>
+          <div className="step-block" id={`block-${blockIndex}`} key={blockIndex}>
             <div className="step-main">
               {blockIndex !== 0 && (
                 <StepArrow direction={stepEntries.find(s => s.order === block[0].order)?.direction} />
@@ -70,7 +70,7 @@ const StepBlocks = ({ steps, ingredients }) => {
                 ingredients={ingredients}
               />
               {blocks[blockIndex+1] && blockIndex === 0 && block.length >1 && (
-                <StepArrow direction='down-down' />
+                <StepArrow direction='down' />
               )}
             </div>
             {block.length > 1 && (
@@ -93,6 +93,11 @@ const StepBlocks = ({ steps, ingredients }) => {
                     </React.Fragment>
                   );
                 })}
+                {/* Une fleche vers le bas apres les etapes simult si il y a un block suivant */}
+                {/* Cette fleche est la uniquement pour l'affichage mobile, ou toutes les fleches sont down */}
+                {(blocks.length) > blockIndex+1 && blockIndex === 0 && block.length > 1 && (
+                  <StepArrow direction='down' showArrow={false}/>
+                )}
               </div>
             )}
           </div>
