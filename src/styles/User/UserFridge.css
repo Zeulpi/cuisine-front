@@ -15,6 +15,10 @@
     justify-content: center;
 }
 
+.fridge-recipes{
+    display: flex;
+    justify-content: center;
+}
 .fridge-container {
     display: flex;
     justify-content: center;

@@ -14,7 +14,7 @@ import Register from './pages/Register'
 
 const RootComponent: React.FC = () => {
   return (
-    <Router basename="/gb-cook">
+    <Router basename={process.env.PUBLIC_URL}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />

@@ -32,7 +32,10 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
   const [filters, setFilters] = useState(location.state?.filters || {
     search: location.state?.fastSearch || '',
     tags: [],
+    ingredients: location.state?.ingredients || {},
   });
+
+  // console.log('filters', filters);
 
   useEffect(() => {
     if (location.state?.fastSearch) {
@@ -50,6 +53,7 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
           limit,
           tags: filters.tags?.join(',') || '', // Passer les tags sélectionnés
           search: filters.search || '',
+          // ingredients: filters.ingredients || {}, // Passer les ingrédients sélectionnés
         },
       });
       setRecipes(response.data.recipes);
@@ -64,6 +68,7 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
 
   useEffect(() => {
     fetchRecipes();
+    console.log(filters);
   }, [page, filters, limit]);
   
   useEffect(()=>{

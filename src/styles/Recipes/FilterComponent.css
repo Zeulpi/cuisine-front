@@ -13,6 +13,18 @@
     margin: 2rem;
   }
   
+  .filters-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    row-gap: 1rem;
+  }
+
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .filter-actions {
     display: flex;
     gap: 1rem;
@@ -64,7 +76,6 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: center;
-    margin-top: 1rem;
   }
   
   .tag-button {
@@ -94,3 +105,23 @@
     filter: brightness(1.1);
   }
   
+  .filter-ingredients {
+    display: flex;
+    justify-content: center;
+  }
+  .ing-button {
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #cfcfcf;
+    color: black;
+    border: none;
+    transition: all 0.2s ease;
+  }
+  .ing-button.selected {
+    border: 2px solid #000;
+    transform: scale(1.05);
+    font-weight: 600;
+  }

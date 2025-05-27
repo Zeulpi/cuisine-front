@@ -1,0 +1,17 @@
+@media only screen and (min-width: 769px) {
+  
+}
+
+@media  (max-width: 768px) {
+  
+}
+  
+.fridge-search-button{
+  padding: 5px;
+  background-color: PaleTurquoise;  /* Bleu pour le bouton Admin */
+  border-radius: 4px;
+  color: black;
+  cursor: pointer;
+  border: 1px solid DarkTurquoise;
+  border-radius: 5px;
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/reducers/store';
 import {FridgeComponent} from '../../components/FridgeComponent';
+import { FridgeSearchComponent } from '../../components/FridgeSearchComponent';
 import '../../styles/User/UserFridge.css'
 
 export function UserFridge() {
@@ -20,7 +21,10 @@ export function UserFridge() {
       </title>
 
       <div className="user-fridge">
-        <div className='fridge-title'><h1>Mon Inventaire</h1></div>
+        <div className='fridge-title'><h1>Mon Inventairee</h1></div>
+        <div className='fridge-recipes'>
+          <FridgeSearchComponent />
+        </div>
         <div className="fridge-container">
           <FridgeComponent />
         </div>
