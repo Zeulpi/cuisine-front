@@ -21,6 +21,9 @@
     --basic-card-width: 250px !important;
     height: 250px !important;
   }
+  .ingredient-list-container{
+    row-gap: 25px;
+  }
   .ingQty {
     max-width: 30%;
     height: 35px;

@@ -56,7 +56,7 @@ export function CardComponent({ isModal = false, cardWidth='100%', cardRatio=nul
                   {cardImg && (
                     <img className='card-background'
                       src={bgImage} alt=""
-                      onClick={handleClickImg}
+                      {...(handleClickImg ? { onClick: handleClickImg } : {})}
                       style={{cursor: (isModal) ? 'pointer' : 'var(--card-cursor)'}}
                     />
                   )}

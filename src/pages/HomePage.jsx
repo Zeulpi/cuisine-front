@@ -37,7 +37,7 @@ export function HomePage() {
                         <FeatureComponent
                             cardName="Liste de recettes"
                             cardImg={null}
-                            cardDescription="Recherchez parmi toutes les recettes de l'application, et filtrez les recettes par nom/tags/..."
+                            cardDescription="Recherchez parmi toutes les recettes de l'application, et filtrez les recettes par nom/tags/ingrédients/..."
                         />
                     </CardComponent>
                     <CardComponent cardWidth={featureWidth} cardRatio={featureRatio}>
@@ -51,7 +51,7 @@ export function HomePage() {
                         <FeatureComponent
                             cardName="Gestionnaire d'inventaire"
                             cardImg={null}
-                            cardDescription="Visualisez et modifiez la liste des ingrédients que vous avez en stock : Ajoutez, modifiez, ou supprimer le contenu de votre inventaire. Vous pouvez stocker des ingrédients avec des unités différentes"
+                            cardDescription="Ajoutez, modifiez, ou supprimer le contenu de votre inventaire. Vous pouvez stocker des ingrédients avec des unités différentes. Vous pouvez aussi rechercher des recettes qui correspondent aux ingrédients dont vous disposez."
                         />
                     </CardComponent>
                     <CardComponent cardWidth={featureWidth} cardRatio={featureRatio}>

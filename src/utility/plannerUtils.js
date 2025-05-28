@@ -65,6 +65,9 @@ export async function destockIngredients (recipes, keyWord, plannerIndex, userTo
       // console.log('liste : ', ingredientList);
       try {
         const result = await addListToInventory (dispatch, userToken, ingredientList);
+        setTimeout(() => {
+          // un petit timer pour attendre que le store soit mis a jour avant de re-render
+        }, 200);
       } catch (error) {
         console.log("Erreur lors du traitement de la liste", error);
       }
@@ -74,7 +77,7 @@ export async function destockIngredients (recipes, keyWord, plannerIndex, userTo
   // Ensuite marquer le repas comme marqué dans le planner
   try{
     const isMarked = await setMealMarked(dispatch, userToken, keyWord, plannerIndex);
-    console.log(isMarked);
+    // console.log(isMarked);
   } catch (error) {
     console.log("Erreur, repas non marqué", error);
   }

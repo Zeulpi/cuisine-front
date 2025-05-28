@@ -47,19 +47,20 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
   const fetchRecipes = async () => {
     setLoading(true);
     try {
+      // console.log(JSON.stringify(filters.ingredients));
       const response = await axios.get(getData(ROUTES.RECIPE_ROUTE), {
         params: {
           page,
           limit,
           tags: filters.tags?.join(',') || '', // Passer les tags sélectionnés
           search: filters.search || '',
-          // ingredients: filters.ingredients || {}, // Passer les ingrédients sélectionnés
+          ingredients: JSON.stringify(filters.ingredients || {})
         },
       });
       setRecipes(response.data.recipes);
       setPagination(response.data.pagination);
     } catch (error) {
-      console.error('Erreur lors du chargement des recettes :', error.message);
+      console.error('Erreur lors du chargement des recettes :', error);
       setError(error);
     } finally {
       setLoading(false);
@@ -68,7 +69,7 @@ export function RecipeList({isModal = false, cardWidth='100%', chooseMeal=null }
 
   useEffect(() => {
     fetchRecipes();
-    console.log(filters);
+    // console.log(filters);
   }, [page, filters, limit]);
   
   useEffect(()=>{
