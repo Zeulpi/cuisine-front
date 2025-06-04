@@ -1,99 +1,55 @@
-<h1 align="center">New React App</h1>
+<h1 align="center">Projet perso : App de cuisine</h1>
+<h1 align="center">Front REACT</h1>
+https://guillaume-besson.name/gb-cook/
 
 <br />
 
-This is a blank README file that you can customize at your needs.\
-Describe your project, how it works and how to contribute to it.
+Cette app React est un projet personnel. Il s'agit d'une app de cuisine pour la préparation et la planification de recettes hebdomadaires. Les features principales sont détaillées plus loin. Ce projet est entièrement réalisé en solo.
+Il s'agit de la partie frontend de l'app seulement. Le back est réalisé en php avec symfony, et se trouve dans un autre repo (https://github.com/Zeulpi/cuisine)
+L'objectif était de réaliser une app selon des critères pré-établis :
+<ul>
+<li> Back en php, avec symfony
+<li> Front en React
+<li> Front séparé du back, pour pouvoir plus tard expérimenter sur les parties back ou front selon d'autres technos (Node.js, VueJS, etc ...)
+<li> Design et features établis avant le début du développement
+<li> Mise en place et utilisation d'un environnement Docker
+<li> Utilisation de React-redux pour la gestion du state global
+<li> App responsive (desktop/mobile)
+<li> Déploiement de l'app sur une plateforme d'hébergement
+</ul>
 
 <br />
 
-# 🚀 Available Scripts
+## ⚡️ Features
 
-In the project directory, you can run:
+```
+Les features établies au début du projet étaient les suivantes
+```
+<ul>
+<li> Listing de recettes et tri selon certaine critères (nom, tags, etc ...)
+<li> Détail de chaque recette (prix, durée de préparation, ingrédients, étapes, etc ...)
+<li> Déroulé des recettes pas à pas, affichage chronologique des etapes.
+<li> Affichage responsive desktop/mobile
+<li> Gestion de compte utilisateur sécurisé (login/logout, gestion des données perso, etc ...)
+<li> Planning hebdomadaire par utilisateur
+<li> Gestion d'inventaire par utilisateur
+<li> Déterminer une liste de courses en fonction du planning hebdo
+<li> Trouver les recettes réalisables en fonction de l'inventaire
+</ul>
 
 <br />
 
-## ⚡️ start
+# 🚀 Libs externes (& autre) utilisées
 
-```
-npm start
-```
-
-or
-
-```
-yarn start
-```
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-<br />
-
-## 🧪 test
-
-```
-npm test
-```
-
-or
-
-```
-yarn test
-```
-
-Launches the test runner in the interactive watch mode.
-
-<br />
-
-## 🦾 build
-
-```
-npm build
-```
-
-or
-
-```
-yarn build
-```
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.
-
-<br />
-
-## 🧶 lint
-
-```
-npm lint
-```
-
-or
-
-```
-yarn lint
-```
-
-Creates a `.eslintcache` file in which ESLint cache is stored. Running this command can dramatically improve ESLint's running time by ensuring that only changed files are linted.
-
-<br />
-
-## 🎯 format
-
-```
-npm format
-```
-
-or
-
-```
-yarn format
-```
-
-Checks if your files are formatted. This command will output a human-friendly message and a list of unformatted files, if any.
+<ul>
+<li> Google grecaptcha v2
+<li> React helmet
+<li> Gestionnaire de state : React-redux
+<li> Font-awesome
+<li> Jwt Token manager
+<li> Bootstrap
+<li> Axios
+</ul>
 
 <br />
 
@@ -105,7 +61,7 @@ This is the structure of the files in the project:
     │
     ├── public                  # public files (favicon, .htaccess, manifest, ...)
     ├── src                     # source files
-    │   ├── components
+    │   ├── components          # custom components
     │   ├── pages
     │   ├── resources           # images, constants and other static resources
     │   ├── store               # Redux store
@@ -114,7 +70,7 @@ This is the structure of the files in the project:
     │   ├── styles
     │   ├── tests               # all test files
     │   ├── types               # data interfaces
-    │   ├── utility             # utilities functions and custom components
+    │   ├── utility             # utilities functions
     │   ├── App.tsx
     │   ├── index.tsx
     │   ├── react-app-env.d.ts
@@ -128,13 +84,3 @@ This is the structure of the files in the project:
     ├── README.md
     └── tsconfig.json
 ```
-
-# 📖 Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-#
-
-<p align="center">Bootstrapped with Create React App.</p>
